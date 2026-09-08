@@ -670,8 +670,8 @@ For each phase:
 
 | Phase | Status | Verification report | Notes |
 | --- | --- | --- | --- |
-| 1. Three-layer structure | next | Not started | First implementation priority |
-| 2. Contract and configuration | proposed | Not started | Depends on Phase 1 paths |
+| 1. Three-layer structure | complete | `verification/PHASE_1_THREE_LAYER_STRUCTURE.md` | Completed 2026-09-08 at `24e2c3e` |
+| 2. Contract and configuration | next | Not started | Stable paths established by Phase 1 |
 | 3. Standards and principles | proposed | Not started | Confirm numeric/tool defaults |
 | 4. Health and readiness | proposed | Not started | Uses config and standards |
 | 5. Init, adopt, and bootstrap skill | proposed | Not started | Uses doctor and readiness |

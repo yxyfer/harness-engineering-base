@@ -1,0 +1,23 @@
+#!/bin/sh
+
+HARNESS_COMMAND_NAME='harness/smoke'
+export HARNESS_COMMAND_NAME
+. "$(dirname "$0")/.common.sh"
+resolve_target "${1:-.}"
+
+if [ -n "${HARNESS_SMOKE_COMMAND:-}" ]; then
+  run_override HARNESS_SMOKE_COMMAND "$HARNESS_SMOKE_COMMAND"
+elif has_npm_script smoke; then
+  run_node_script smoke
+elif [ -f "$TARGET/scripts/smoke.py" ]; then
+  py=$(python_command) || fail 'Python is required to run scripts/smoke.py'
+  note 'running scripts/smoke.py'
+  (cd "$TARGET" && "$py" scripts/smoke.py)
+elif [ -n "${HARNESS_BASE_URL:-}" ]; then
+  has_command curl || fail 'curl is required for URL smoke checks'
+  note "requesting $HARNESS_BASE_URL"
+  curl --fail --silent --show-error --max-time 10 "$HARNESS_BASE_URL" >/dev/null
+  note 'URL responded successfully'
+else
+  fail 'no smoke check detected; set HARNESS_SMOKE_COMMAND or HARNESS_BASE_URL, or add a smoke script'
+fi

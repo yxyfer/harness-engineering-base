@@ -1,0 +1,43 @@
+#!/usr/bin/env python3
+from pathlib import Path
+import re
+import sys
+from urllib.parse import unquote
+
+target = Path(sys.argv[1] if len(sys.argv) > 1 else ".").resolve()
+ignored_dirs = {".git", "node_modules", ".venv", "dist", "build"}
+markdown_files = [
+    path
+    for path in target.rglob("*.md")
+    if not any(part in ignored_dirs for part in path.parts)
+]
+
+link_pattern = re.compile(r"(?<!!)\[[^\]]+\]\(([^)]+)\)")
+errors = []
+for path in markdown_files:
+    text = path.read_text(encoding="utf-8")
+    for raw_target in link_pattern.findall(text):
+        link = raw_target.strip().strip("<>").split()[0]
+        if link.startswith(("http://", "https://", "mailto:", "#")):
+            continue
+        local = unquote(link.split("#", 1)[0])
+        if not local:
+            continue
+        resolved = (path.parent / local).resolve()
+        if not resolved.exists():
+            errors.append(f"{path.relative_to(target)} -> {link}")
+
+if errors:
+    print("documentation: broken local links:", file=sys.stderr)
+    for error in errors:
+        print(f"  {error}", file=sys.stderr)
+    raise SystemExit(1)
+
+unfinished = []
+for path in [target / "AGENTS.md", *(target / "docs").glob("*.md")]:
+    if path.is_file() and "Status: needs-project-input" in path.read_text(encoding="utf-8"):
+        unfinished.append(str(path.relative_to(target)))
+if unfinished:
+    print(f"documentation: warning: project input needed in {', '.join(unfinished)}")
+
+print(f"documentation: pass ({len(markdown_files)} Markdown files)")

@@ -1,0 +1,24 @@
+#!/bin/sh
+
+HARNESS_COMMAND_NAME='harness/start'
+export HARNESS_COMMAND_NAME
+. "$(dirname "$0")/.common.sh"
+resolve_target "${1:-.}"
+
+if [ -n "${HARNESS_START_COMMAND:-}" ]; then
+  run_override HARNESS_START_COMMAND "$HARNESS_START_COMMAND"
+elif has_npm_script dev; then
+  run_node_script dev
+elif has_npm_script start; then
+  run_node_script start
+elif [ -f "$TARGET/app.py" ]; then
+  py=$(python_command) || fail 'Python is required to run app.py'
+  note 'starting app.py'
+  (cd "$TARGET" && "$py" app.py)
+elif [ -f "$TARGET/manage.py" ]; then
+  py=$(python_command) || fail 'Python is required to run manage.py'
+  note 'starting Django development server'
+  (cd "$TARGET" && "$py" manage.py runserver)
+else
+  fail 'no start command detected; set HARNESS_START_COMMAND or add a package dev/start script'
+fi

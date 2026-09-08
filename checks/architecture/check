@@ -1,0 +1,31 @@
+#!/usr/bin/env python3
+from pathlib import Path
+import sys
+
+target = Path(sys.argv[1] if len(sys.argv) > 1 else ".").resolve()
+if not (target / "AGENTS.md").is_file():
+    print("architecture: skip (AGENTS.md not present)")
+    raise SystemExit(0)
+
+required = [
+    "PRODUCT.md",
+    "ARCHITECTURE.md",
+    "DESIGN.md",
+    "DATA.md",
+    "QUALITY.md",
+    "SECURITY.md",
+    "DECISIONS.md",
+]
+missing = [name for name in required if not (target / "docs" / name).is_file()]
+if missing:
+    print(f"architecture: missing context files: {', '.join(missing)}", file=sys.stderr)
+    raise SystemExit(1)
+
+architecture = (target / "docs" / "ARCHITECTURE.md").read_text(encoding="utf-8")
+headings = ["## System shape", "## Boundaries", "## External systems"]
+missing_headings = [heading for heading in headings if heading not in architecture]
+if missing_headings:
+    print(f"architecture: missing sections: {', '.join(missing_headings)}", file=sys.stderr)
+    raise SystemExit(1)
+
+print("architecture: pass")

@@ -1,0 +1,11 @@
+{
+  "name": "harness-nextjs-example",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "node scripts/server.mjs",
+    "check": "node --check app/content.js && node --check scripts/server.mjs && node --check scripts/smoke.mjs",
+    "test": "node --test",
+    "smoke": "node scripts/smoke.mjs"
+  }
+}

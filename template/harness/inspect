@@ -1,0 +1,64 @@
+#!/bin/sh
+
+HARNESS_COMMAND_NAME='harness/inspect'
+export HARNESS_COMMAND_NAME
+. "$(dirname "$0")/.common.sh"
+resolve_target "${1:-.}"
+
+printf 'Harness inspection\n'
+printf '  target: %s\n' "$TARGET"
+
+if [ -f "$TARGET/package.json" ]; then
+  printf '  node project: yes (%s)\n' "$(node_runner)"
+  for script_name in dev start check lint typecheck test smoke; do
+    if has_npm_script "$script_name"; then
+      printf '    script: %s\n' "$script_name"
+    fi
+  done
+else
+  printf '  node project: no\n'
+fi
+
+if [ -f "$TARGET/pyproject.toml" ] || [ -f "$TARGET/requirements.txt" ]; then
+  printf '  python project: yes'
+  if py=$(python_command 2>/dev/null); then
+    printf ' (%s)\n' "$($py --version 2>&1)"
+  else
+    printf ' (runtime missing)\n'
+  fi
+else
+  printf '  python project: no\n'
+fi
+
+printf '  context:\n'
+for context_file in AGENTS.md PRODUCT.md ARCHITECTURE.md DESIGN.md DATA.md QUALITY.md SECURITY.md DECISIONS.md; do
+  if [ "$context_file" = AGENTS.md ]; then
+    context_path="$TARGET/$context_file"
+  else
+    context_path="$TARGET/docs/$context_file"
+  fi
+  if [ -f "$context_path" ]; then
+    if grep -q 'Status: needs-project-input' "$context_path"; then
+      printf '    needs input: %s\n' "$context_file"
+    else
+      printf '    present: %s\n' "$context_file"
+    fi
+  else
+    printf '    missing: %s\n' "$context_file"
+  fi
+done
+
+kit_root=$(find_kit_root)
+if [ -n "$kit_root" ]; then
+  printf '  policy checks: %s/checks\n' "$kit_root"
+else
+  printf '  policy checks: not found\n'
+fi
+
+if has_command git && git -C "$TARGET" rev-parse --is-inside-work-tree >/dev/null 2>&1; then
+  branch=$(git -C "$TARGET" branch --show-current 2>/dev/null || true)
+  changes=$(git -C "$TARGET" status --porcelain 2>/dev/null | wc -l | tr -d ' ')
+  printf '  git: branch=%s changes=%s\n' "${branch:-detached}" "$changes"
+else
+  printf '  git: not detected\n'
+fi

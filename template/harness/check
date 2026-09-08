@@ -1,0 +1,68 @@
+#!/bin/sh
+
+HARNESS_COMMAND_NAME='harness/check'
+export HARNESS_COMMAND_NAME
+. "$(dirname "$0")/.common.sh"
+resolve_target "${1:-.}"
+
+if [ -n "${HARNESS_CHECKS_DIR:-}" ]; then
+  checks_dir=$HARNESS_CHECKS_DIR
+else
+  kit_root=$(find_kit_root)
+  checks_dir=${kit_root:+$kit_root/checks}
+fi
+
+if [ -n "$checks_dir" ] && [ -d "$checks_dir" ]; then
+  note "running policy checks from $checks_dir"
+  found_check=0
+  for check_file in "$checks_dir"/*/check; do
+    [ -f "$check_file" ] || continue
+    found_check=1
+    "$check_file" "$TARGET"
+  done
+  [ "$found_check" -eq 1 ] || warn "no executable policy checks found in $checks_dir"
+else
+  warn 'policy checks not found; set HARNESS_KIT_ROOT or HARNESS_CHECKS_DIR'
+fi
+
+ran_project_check=0
+if [ -n "${HARNESS_CHECK_COMMAND:-}" ]; then
+  run_override HARNESS_CHECK_COMMAND "$HARNESS_CHECK_COMMAND"
+  ran_project_check=1
+elif has_npm_script check; then
+  run_node_script check
+  ran_project_check=1
+else
+  if has_npm_script lint; then
+    run_node_script lint
+    ran_project_check=1
+  fi
+  if has_npm_script typecheck; then
+    run_node_script typecheck
+    ran_project_check=1
+  fi
+fi
+
+if [ -f "$TARGET/pyproject.toml" ] || [ -f "$TARGET/requirements.txt" ]; then
+  py=$(python_command) || fail 'Python is required for the detected Python project'
+  if "$py" -m ruff --version >/dev/null 2>&1; then
+    note 'running ruff'
+    (cd "$TARGET" && "$py" -m ruff check .)
+  else
+    note 'ruff not detected; parsing Python sources for syntax errors'
+    (cd "$TARGET" && "$py" -c '
+import ast
+from pathlib import Path
+
+ignored = {".git", ".venv", "node_modules", "dist", "build", "__pycache__"}
+for path in Path(".").rglob("*.py"):
+    if any(part in ignored for part in path.parts):
+        continue
+    ast.parse(path.read_text(encoding="utf-8"), filename=str(path))
+')
+  fi
+  ran_project_check=1
+fi
+
+[ "$ran_project_check" -eq 1 ] || warn 'no project-native static check detected'
+note 'complete'

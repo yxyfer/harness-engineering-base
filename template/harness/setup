@@ -1,0 +1,52 @@
+#!/bin/sh
+
+HARNESS_COMMAND_NAME='harness/setup'
+export HARNESS_COMMAND_NAME
+. "$(dirname "$0")/.common.sh"
+resolve_target "${1:-.}"
+
+did_setup=0
+
+if [ -f "$TARGET/package.json" ]; then
+  runner=$(node_runner)
+  has_command "$runner" || fail "$runner is required by the detected Node.js project"
+  note "installing Node.js dependencies with $runner"
+  case "$runner" in
+    pnpm) (cd "$TARGET" && pnpm install --frozen-lockfile) ;;
+    yarn)
+      if [ -f "$TARGET/.yarnrc.yml" ]; then
+        (cd "$TARGET" && yarn install --immutable)
+      else
+        (cd "$TARGET" && yarn install --frozen-lockfile)
+      fi
+      ;;
+    npm)
+      if [ -f "$TARGET/package-lock.json" ]; then
+        (cd "$TARGET" && npm ci)
+      else
+        (cd "$TARGET" && npm install)
+      fi
+      ;;
+  esac
+  did_setup=1
+fi
+
+if [ -f "$TARGET/pyproject.toml" ] || [ -f "$TARGET/requirements.txt" ]; then
+  has_command python3 || fail "python3 is required by the detected Python project"
+  if [ ! -x "$TARGET/.venv/bin/python" ]; then
+    note 'creating .venv'
+    (cd "$TARGET" && python3 -m venv .venv)
+  fi
+  py="$TARGET/.venv/bin/python"
+  note 'installing Python dependencies'
+  "$py" -m pip install --upgrade pip
+  if [ -f "$TARGET/requirements.txt" ]; then
+    "$py" -m pip install -r "$TARGET/requirements.txt"
+  else
+    "$py" -m pip install -e "$TARGET"
+  fi
+  did_setup=1
+fi
+
+[ "$did_setup" -eq 1 ] || fail 'no supported package manifest found'
+note 'complete'

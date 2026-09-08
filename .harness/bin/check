@@ -14,20 +14,25 @@ fi
 
 if [ -n "$checks_dir" ] && [ -d "$checks_dir" ]; then
   note "running policy checks from $checks_dir"
-  found_check=0
-  for check_file in "$checks_dir"/*/check; do
-    [ -f "$check_file" ] || continue
-    found_check=1
-    "$check_file" "$TARGET"
+  for check_name in $(config_list checks.required); do
+    check_file="$checks_dir/$check_name/check"
+    [ -f "$check_file" ] && [ -x "$check_file" ] || \
+      installation_error "required policy check is missing or not executable: $check_name"
+    if "$check_file" "$TARGET"; then
+      :
+    else
+      check_status=$?
+      fail "policy check '$check_name' failed with exit $check_status"
+    fi
   done
-  [ "$found_check" -eq 1 ] || warn "no executable policy checks found in $checks_dir"
 else
-  warn 'policy checks not found; set HARNESS_KIT_ROOT or HARNESS_CHECKS_DIR'
+  installation_error 'policy checks not found; set HARNESS_KIT_ROOT or HARNESS_CHECKS_DIR'
 fi
 
 ran_project_check=0
-if [ -n "${HARNESS_CHECK_COMMAND:-}" ]; then
-  run_override HARNESS_CHECK_COMMAND "$HARNESS_CHECK_COMMAND"
+if override=$(command_override check); then
+  source_name=$(command_override_source check)
+  run_override "$source_name" "$override"
   ran_project_check=1
 elif has_npm_script check; then
   run_node_script check
@@ -47,10 +52,10 @@ if [ -f "$TARGET/pyproject.toml" ] || [ -f "$TARGET/requirements.txt" ]; then
   py=$(python_command) || fail 'Python is required for the detected Python project'
   if "$py" -m ruff --version >/dev/null 2>&1; then
     note 'running ruff'
-    (cd "$TARGET" && "$py" -m ruff check .)
+    run_project_command "$py" -m ruff check .
   else
     note 'ruff not detected; parsing Python sources for syntax errors'
-    (cd "$TARGET" && "$py" -c '
+    run_project_command "$py" -c '
 import ast
 from pathlib import Path
 
@@ -59,7 +64,7 @@ for path in Path(".").rglob("*.py"):
     if any(part in ignored for part in path.parts):
         continue
     ast.parse(path.read_text(encoding="utf-8"), filename=str(path))
-')
+'
   fi
   ran_project_check=1
 fi

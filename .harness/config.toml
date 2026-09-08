@@ -1,0 +1,45 @@
+schema_version = 1
+
+[project]
+profiles = ["auto"]
+
+[commands]
+setup = ""
+start = ""
+check = ""
+test = ""
+smoke = ""
+
+[checks]
+required = ["architecture", "documentation", "provenance", "demo-integrity"]
+
+[standards]
+line_length = 100
+file_lines_warning = 350
+function_lines_warning = 50
+
+[readiness]
+required_documents = [
+  "PRODUCT.md",
+  "ARCHITECTURE.md",
+  "DESIGN.md",
+  "DATA.md",
+  "QUALITY.md",
+  "SECURITY.md",
+  "DECISIONS.md",
+]
+fail_on_needs_input = false
+
+[security]
+mode = "local"
+
+[analysis]
+exclude = [
+  ".git",
+  ".venv",
+  "node_modules",
+  "dist",
+  "build",
+  "coverage",
+  "__pycache__",
+]

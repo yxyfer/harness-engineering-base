@@ -7,6 +7,83 @@ resolve_target "${1:-.}"
 
 printf 'Harness inspection\n'
 printf '  target: %s\n' "$TARGET"
+printf '  harness version: %s\n' "$(tr -d '\n' < "$KIT_ROOT/VERSION")"
+HARNESS_ROOT=$(CDPATH= cd "$KIT_ROOT/.." && pwd -P)
+if manifest_result=$(python3 "$MANIFEST_TOOL" verify "$HARNESS_ROOT" 2>&1); then
+  printf '  %s\n' "$manifest_result"
+else
+  manifest_status=$?
+  printf '  %s\n' "$manifest_result" >&2
+  exit "$manifest_status"
+fi
+printf '  configuration: %s (%s)\n' "$CONFIG_PATH" "$CONFIG_SOURCE"
+python3 "$CONFIG_TOOL" summary "$CONFIG_PATH" "$CONFIG_SOURCE" | sed 's/^/    /'
+
+printf '  command resolution:\n'
+for action in setup start check test smoke; do
+  if command_override "$action" >/dev/null; then
+    source_name=$(command_override_source "$action")
+    printf '    %s: configured (%s)\n' "$action" "$source_name"
+    continue
+  fi
+  case "$action" in
+    setup)
+      if [ -f "$TARGET/package.json" ] || [ -f "$TARGET/pyproject.toml" ] || \
+        [ -f "$TARGET/requirements.txt" ]; then
+        resolution='automatic project manifest detection'
+      else
+        resolution='unresolved'
+      fi
+      ;;
+    start)
+      if has_npm_script dev; then
+        resolution='automatic package script: dev'
+      elif has_npm_script start; then
+        resolution='automatic package script: start'
+      elif [ -f "$TARGET/app.py" ]; then
+        resolution='automatic Python entry point: app.py'
+      elif [ -f "$TARGET/manage.py" ]; then
+        resolution='automatic Python entry point: manage.py'
+      else
+        resolution='unresolved'
+      fi
+      ;;
+    check)
+      if has_npm_script check; then
+        resolution='automatic package script: check'
+      elif has_npm_script lint || has_npm_script typecheck; then
+        resolution='automatic package lint/typecheck scripts'
+      elif [ -f "$TARGET/pyproject.toml" ] || [ -f "$TARGET/requirements.txt" ]; then
+        resolution='automatic Python checks'
+      else
+        resolution='policy checks only'
+      fi
+      ;;
+    test)
+      if has_npm_script test; then
+        resolution='automatic package script: test'
+      elif [ -d "$TARGET/.harness/tests" ] && [ -f "$TARGET/harness" ]; then
+        resolution='automatic harness contract tests'
+      elif [ -d "$TARGET/tests" ]; then
+        resolution='automatic Python test discovery'
+      else
+        resolution='unresolved'
+      fi
+      ;;
+    smoke)
+      if has_npm_script smoke; then
+        resolution='automatic package script: smoke'
+      elif [ -f "$TARGET/scripts/smoke.py" ]; then
+        resolution='automatic Python smoke script'
+      elif [ -n "${HARNESS_BASE_URL:-}" ]; then
+        resolution='environment HARNESS_BASE_URL'
+      else
+        resolution='unresolved'
+      fi
+      ;;
+  esac
+  printf '    %s: %s\n' "$action" "$resolution"
+done
 
 if [ -f "$TARGET/package.json" ]; then
   printf '  node project: yes (%s)\n' "$(node_runner)"
@@ -48,12 +125,7 @@ for context_file in AGENTS.md PRODUCT.md ARCHITECTURE.md DESIGN.md DATA.md QUALI
   fi
 done
 
-kit_root=$(find_kit_root)
-if [ -n "$kit_root" ]; then
-  printf '  policy checks: %s/checks\n' "$kit_root"
-else
-  printf '  policy checks: not found\n'
-fi
+printf '  policy checks: %s/checks\n' "$KIT_ROOT"
 
 if has_command git && git -C "$TARGET" rev-parse --is-inside-work-tree >/dev/null 2>&1; then
   branch=$(git -C "$TARGET" branch --show-current 2>/dev/null || true)

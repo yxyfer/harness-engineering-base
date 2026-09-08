@@ -6,7 +6,7 @@ root=$(CDPATH= cd "$(dirname "$0")" && pwd -P)
 
 usage() {
   cat <<'EOF'
-Usage: ./harness <command> [target]
+Usage: ./harness <command> [--config PATH] [--command COMMAND] [target]
 
 Commands:
   setup    Install dependencies using the detected project conventions.
@@ -18,6 +18,10 @@ Commands:
   help     Show this help.
 
 The target defaults to the current directory.
+
+Options:
+  --config PATH      Use a specific harness TOML configuration.
+  --command COMMAND  Override the selected project command for this run.
 EOF
 }
 
@@ -31,10 +35,10 @@ shift
 
 case "$subcommand" in
   setup|start|inspect|check|test|smoke)
-    exec "$root/.harness/bin/$subcommand" "$@"
     ;;
   help|-h|--help)
     usage
+    exit 0
     ;;
   *)
     printf 'harness: unknown command: %s\n\n' "$subcommand" >&2
@@ -42,3 +46,62 @@ case "$subcommand" in
     exit 2
     ;;
 esac
+
+target=
+target_set=0
+while [ "$#" -gt 0 ]; do
+  case "$1" in
+    --config)
+      [ "$#" -ge 2 ] || { printf 'harness: --config requires a path\n' >&2; exit 2; }
+      HARNESS_CONFIG=$2
+      HARNESS_CONFIG_SOURCE=cli
+      export HARNESS_CONFIG HARNESS_CONFIG_SOURCE
+      shift 2
+      ;;
+    --command)
+      [ "$subcommand" != inspect ] || {
+        printf 'harness: --command is not valid for inspect\n' >&2
+        exit 2
+      }
+      [ "$#" -ge 2 ] || { printf 'harness: --command requires a value\n' >&2; exit 2; }
+      [ -n "$2" ] || { printf 'harness: --command cannot be empty\n' >&2; exit 2; }
+      HARNESS_CLI_COMMAND=$2
+      export HARNESS_CLI_COMMAND
+      shift 2
+      ;;
+    --)
+      shift
+      [ "$#" -le 1 ] || { printf 'harness: expected at most one target\n' >&2; exit 2; }
+      if [ "$#" -eq 1 ]; then
+        target=$1
+        target_set=1
+        shift
+      fi
+      ;;
+    -*)
+      printf 'harness: unknown option: %s\n' "$1" >&2
+      exit 2
+      ;;
+    *)
+      [ "$target_set" -eq 0 ] || {
+        printf 'harness: expected at most one target\n' >&2
+        exit 2
+      }
+      target=$1
+      target_set=1
+      shift
+      ;;
+  esac
+done
+
+internal="$root/.harness/bin/$subcommand"
+[ -f "$internal" ] && [ -x "$internal" ] || {
+  printf 'harness: installation error: command implementation is missing: %s\n' "$subcommand" >&2
+  exit 5
+}
+
+if [ "$target_set" -eq 1 ]; then
+  exec "$internal" "$target"
+else
+  exec "$internal"
+fi

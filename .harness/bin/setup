@@ -5,6 +5,12 @@ export HARNESS_COMMAND_NAME
 . "$(dirname "$0")/common.sh"
 resolve_target "${1:-.}"
 
+if override=$(command_override setup); then
+  source_name=$(command_override_source setup)
+  run_override "$source_name" "$override"
+  exit 0
+fi
+
 did_setup=0
 
 if [ -f "$TARGET/package.json" ]; then
@@ -12,19 +18,19 @@ if [ -f "$TARGET/package.json" ]; then
   has_command "$runner" || fail "$runner is required by the detected Node.js project"
   note "installing Node.js dependencies with $runner"
   case "$runner" in
-    pnpm) (cd "$TARGET" && pnpm install --frozen-lockfile) ;;
+    pnpm) run_project_command pnpm install --frozen-lockfile ;;
     yarn)
       if [ -f "$TARGET/.yarnrc.yml" ]; then
-        (cd "$TARGET" && yarn install --immutable)
+        run_project_command yarn install --immutable
       else
-        (cd "$TARGET" && yarn install --frozen-lockfile)
+        run_project_command yarn install --frozen-lockfile
       fi
       ;;
     npm)
       if [ -f "$TARGET/package-lock.json" ]; then
-        (cd "$TARGET" && npm ci)
+        run_project_command npm ci
       else
-        (cd "$TARGET" && npm install)
+        run_project_command npm install
       fi
       ;;
   esac
@@ -35,15 +41,15 @@ if [ -f "$TARGET/pyproject.toml" ] || [ -f "$TARGET/requirements.txt" ]; then
   has_command python3 || fail "python3 is required by the detected Python project"
   if [ ! -x "$TARGET/.venv/bin/python" ]; then
     note 'creating .venv'
-    (cd "$TARGET" && python3 -m venv .venv)
+    run_project_command python3 -m venv .venv
   fi
   py="$TARGET/.venv/bin/python"
   note 'installing Python dependencies'
-  "$py" -m pip install --upgrade pip
+  run_project_command "$py" -m pip install --upgrade pip
   if [ -f "$TARGET/requirements.txt" ]; then
-    "$py" -m pip install -r "$TARGET/requirements.txt"
+    run_project_command "$py" -m pip install -r "$TARGET/requirements.txt"
   else
-    "$py" -m pip install -e "$TARGET"
+    run_project_command "$py" -m pip install -e "$TARGET"
   fi
   did_setup=1
 fi

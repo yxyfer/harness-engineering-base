@@ -159,7 +159,7 @@ Phase 1.
 | Markdown tools | Markdownlint plus link check | Phase 3 |
 | Exception expiry | Required, maximum 90 days by default | Phase 6 |
 | Readiness levels | ready, needs-input, blocked | Phase 4 |
-| Harness release scheme | Semantic versioning | Phase 2 |
+| Harness release scheme | Semantic versioning; initial version `0.1.0` | Resolved in Phase 2 |
 
 ## Ordered implementation roadmap
 
@@ -671,8 +671,8 @@ For each phase:
 | Phase | Status | Verification report | Notes |
 | --- | --- | --- | --- |
 | 1. Three-layer structure | complete | `verification/PHASE_1_THREE_LAYER_STRUCTURE.md` | Completed 2026-09-08 at `24e2c3e` |
-| 2. Contract and configuration | next | Not started | Stable paths established by Phase 1 |
-| 3. Standards and principles | proposed | Not started | Confirm numeric/tool defaults |
+| 2. Contract and configuration | complete | `verification/PHASE_2_VERSIONED_CONFIGURATION.md` | Completed 2026-09-08; version `0.1.0`, schema `1` |
+| 3. Standards and principles | next | Not started | Confirm numeric/tool defaults |
 | 4. Health and readiness | proposed | Not started | Uses config and standards |
 | 5. Init, adopt, and bootstrap skill | proposed | Not started | Uses doctor and readiness |
 | 6. Governed exceptions | proposed | Not started | Integrates with all checks |

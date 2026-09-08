@@ -56,6 +56,24 @@ durable choice in the appropriate context file or decision record.
 Commands accept an optional target directory. A non-zero exit is a failed gate,
 not an invitation to hide or weaken the check.
 
+Configuration is defined in `.harness/config.toml`. Use project configuration
+instead of editing command implementations to customise setup, start, check,
+test, or smoke behaviour.
+
+## Ownership boundaries
+
+- Treat `AGENTS.md`, `docs/`, `plans/`, `tasks/`, `verification/`, and
+  `.harness/config.toml` as project-owned after creation.
+- Treat `harness`, other `.harness/` files, and shipped `.agents/skills/` as
+  managed harness files. Modify them only when the task explicitly changes the
+  harness itself.
+- Never overwrite project-owned files during installation or updates. Propose a
+  reviewable merge or side file instead.
+- A managed-file checksum mismatch is a conflict to investigate, not permission
+  to discard the local version.
+- Keep literal credentials, tokens, and machine-specific absolute paths out of
+  committed harness configuration.
+
 ## Definition of done
 
 Work is done only when the requested behaviour is implemented, acceptance

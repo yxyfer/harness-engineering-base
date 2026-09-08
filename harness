@@ -1,0 +1,44 @@
+#!/bin/sh
+
+set -eu
+
+root=$(CDPATH= cd "$(dirname "$0")" && pwd -P)
+
+usage() {
+  cat <<'EOF'
+Usage: ./harness <command> [target]
+
+Commands:
+  setup    Install dependencies using the detected project conventions.
+  start    Start the detected development entry point.
+  inspect  Show the detected stack, commands, context, checks, and Git state.
+  check    Run harness policy checks and project-native static checks.
+  test     Run project-native automated tests.
+  smoke    Run the smallest user-visible health check.
+  help     Show this help.
+
+The target defaults to the current directory.
+EOF
+}
+
+if [ "$#" -eq 0 ]; then
+  usage >&2
+  exit 2
+fi
+
+subcommand=$1
+shift
+
+case "$subcommand" in
+  setup|start|inspect|check|test|smoke)
+    exec "$root/.harness/bin/$subcommand" "$@"
+    ;;
+  help|-h|--help)
+    usage
+    ;;
+  *)
+    printf 'harness: unknown command: %s\n\n' "$subcommand" >&2
+    usage >&2
+    exit 2
+    ;;
+esac

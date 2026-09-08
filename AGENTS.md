@@ -37,19 +37,20 @@ durable choice in the appropriate context file or decision record.
 2. Reproduce or inspect the current behaviour.
 3. Define observable acceptance criteria and verification before implementation.
 4. Make the smallest coherent change.
-5. Run `harness/check`, `harness/test`, and the relevant smoke or visual check.
+5. Run `./harness check`, `./harness test`, and the relevant smoke or visual
+   check.
 6. Write a verification report with commands, results, evidence, and limitations.
 7. Move a completed plan to `plans/completed/` and update context or debt.
 
 ## Harness commands
 
 ```sh
-harness/setup
-harness/start
-harness/inspect
-harness/check
-harness/test
-harness/smoke
+./harness setup
+./harness start
+./harness inspect
+./harness check
+./harness test
+./harness smoke
 ```
 
 Commands accept an optional target directory. A non-zero exit is a failed gate,

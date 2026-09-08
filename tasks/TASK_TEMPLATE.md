@@ -28,9 +28,9 @@ State the observable user or system outcome, not the implementation activity.
 
 | Check | Command or method | Expected evidence |
 | --- | --- | --- |
-| Static | `harness/check` | Exit 0 and recorded output |
-| Automated | `harness/test` | Exit 0 and test result |
-| Golden path | `harness/smoke` | Observable successful outcome |
+| Static | `./harness check` | Exit 0 and recorded output |
+| Automated | `./harness test` | Exit 0 and test result |
+| Golden path | `./harness smoke` | Observable successful outcome |
 
 ## Notes and decisions
 

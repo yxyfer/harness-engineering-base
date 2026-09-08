@@ -54,9 +54,9 @@ Promote accepted, durable decisions to `docs/DECISIONS.md`.
 
 | Behaviour or risk | Verification method | Evidence required |
 | --- | --- | --- |
-| Core logic | `harness/test` | Passing automated tests |
-| Project conventions | `harness/check` | Passing static and policy checks |
-| Golden path | `harness/smoke` | Observable successful outcome |
+| Core logic | `./harness test` | Passing automated tests |
+| Project conventions | `./harness check` | Passing static and policy checks |
+| Golden path | `./harness smoke` | Observable successful outcome |
 
 Add project-specific integration, visual, accessibility, performance, security,
 or manual checks in proportion to risk.

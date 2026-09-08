@@ -16,7 +16,7 @@ Implement the smallest coherent vertical slice. Add or update tests at the level
 that best demonstrates the acceptance criteria. Keep data provenance and real,
 synthetic, modelled, or simulated integration status visible.
 
-Run `harness/check`, `harness/test`, and `harness/smoke`; add visual verification
+Run `./harness check`, `./harness test`, and `./harness smoke`; add visual verification
 when the interface changed. Record only checks actually run in a report created
 from `verification/REPORT_TEMPLATE.md`.
 

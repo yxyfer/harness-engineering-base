@@ -11,9 +11,9 @@ observable for this product.
 
 | Risk or behaviour | Verification | Command or evidence | Required gate |
 | --- | --- | --- | --- |
-| Core logic | Automated test | `harness/test` | Yes |
-| Project conventions | Static checks | `harness/check` | Yes |
-| Golden path | Smoke test | `harness/smoke` | Yes |
+| Core logic | Automated test | `./harness test` | Yes |
+| Project conventions | Static checks | `./harness check` | Yes |
+| Golden path | Smoke test | `./harness smoke` | Yes |
 | Critical interface states | Visual and interaction QA | Project-specific | When applicable |
 
 ## Test strategy

@@ -9,7 +9,7 @@ Read the task acceptance criteria and `docs/DESIGN.md`. Identify the smallest
 matrix of routes, states, and viewports that covers the changed experience,
 including relevant empty, loading, error, focus, and permission states.
 
-Start the project with `harness/start` and capture fresh rendered evidence. Check
+Start the project with `./harness start` and capture fresh rendered evidence. Check
 layout, hierarchy, clipping, overflow, responsive reflow, content accuracy,
 keyboard focus, semantics, contrast, and reduced motion where applicable. Inspect
 the actual interaction rather than judging source code alone.

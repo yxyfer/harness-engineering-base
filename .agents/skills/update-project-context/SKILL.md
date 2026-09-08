@@ -18,5 +18,5 @@ without deleting history. Keep task notes and transient status out of canonical
 context; link to plans or evidence instead of copying large logs.
 
 Remove `Status: needs-project-input` only when the document is sufficiently
-specific to guide implementation. Run `harness/check` and report any context still
-requiring an owner or human decision.
+specific to guide implementation. Run `./harness check` and report any context
+still requiring an owner or human decision.

@@ -14,9 +14,9 @@
 ## Commands run
 
 ```text
-harness/check
-harness/test
-harness/smoke
+./harness check
+./harness test
+./harness smoke
 ```
 
 Record exit codes and meaningful output. Do not list commands that were not run.

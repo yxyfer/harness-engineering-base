@@ -1,8 +1,8 @@
 #!/bin/sh
 
-HARNESS_COMMAND_NAME='harness/start'
+HARNESS_COMMAND_NAME='harness start'
 export HARNESS_COMMAND_NAME
-. "$(dirname "$0")/.common.sh"
+. "$(dirname "$0")/common.sh"
 resolve_target "${1:-.}"
 
 if [ -n "${HARNESS_START_COMMAND:-}" ]; then

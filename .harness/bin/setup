@@ -1,8 +1,8 @@
 #!/bin/sh
 
-HARNESS_COMMAND_NAME='harness/setup'
+HARNESS_COMMAND_NAME='harness setup'
 export HARNESS_COMMAND_NAME
-. "$(dirname "$0")/.common.sh"
+. "$(dirname "$0")/common.sh"
 resolve_target "${1:-.}"
 
 did_setup=0

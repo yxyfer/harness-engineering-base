@@ -24,7 +24,7 @@ selection_status=0
 python3 "${KIT_ROOT}/bin/profiles.py" summary "${TARGET}" "${CONFIG_PATH}" || selection_status=$?
 
 printf '  command resolution:\n'
-for action in setup start check test smoke; do
+for action in setup start format check test smoke; do
   # Status selector; a non-zero result is expected and handled.
   # shellcheck disable=SC2310
   if command_override "${action}" >/dev/null; then
@@ -33,6 +33,14 @@ for action in setup start check test smoke; do
     continue
   fi
   case "${action}" in
+  format)
+    # shellcheck disable=SC2310
+    if has_npm_script format; then
+      resolution='automatic package script: format'
+    else
+      resolution='project-local native defaults; missing tools fail'
+    fi
+    ;;
   setup)
     if [ -f "${TARGET}/package.json" ] || [ -f "${TARGET}/pyproject.toml" ] ||
       [ -f "${TARGET}/requirements.txt" ]; then
@@ -105,7 +113,7 @@ printf '    self-test: executing harness contract suite (independent)\n'
 if [ -f "${TARGET}/package.json" ]; then
   runner=$(node_runner)
   printf '  node project: yes (%s)\n' "${runner}"
-  for script_name in dev start check lint typecheck test smoke; do
+  for script_name in dev start format format:check check lint typecheck test smoke; do
     # Status selector; a non-zero result is expected and handled.
     # shellcheck disable=SC2310
     if has_npm_script "${script_name}"; then

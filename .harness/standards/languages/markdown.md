@@ -10,3 +10,7 @@
   otherwise prefer `kebab-case.md`.
 - Treat generated reports and imported source material as explicit exceptions;
   do not reflow them if doing so damages provenance or reproducibility.
+- Markdownlint is a required standards tool when this profile applies; missing
+  tools fail. It runs check-only. Use an existing project formatter script or
+  configure commands.format for Markdown-only projects; no lint autofix is
+  implied by the harness format command.

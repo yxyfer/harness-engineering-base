@@ -1,5 +1,12 @@
 # Quality Context
 
+Step 08 implements full/partial verify reports with typed per-control states,
+native counts and artifact/input hashes. Zero collection, skips, retries,
+missing/malformed evidence and unsupported controls block completeness. No
+silent retry occurs. Static results stay aggregate; no underlying tool collection
+is invented. [Evidence contract](../.harness/verification/README.md) documents
+scope, adapter responsibility, timeout cleanup, redaction and stale validation.
+
 ## Applicability and readiness (Step 06)
 
 `./harness doctor [TARGET]` reports selection reasons, required context and
@@ -26,9 +33,9 @@ Schema 1 preserves its exact reviewed document list and warns that security.mode
 was inert. Schema 2 security `off` explicitly means no scanner assurance;
 `local`/`ci` fail unsupported. Neither removes capability requirements.
 Explicit profile lists now cannot silently suppress detected applicable controls;
-review contradictions before proceeding. Ordinary legacy developer check still
-has optional-tool degradation; doctor is strict about prerequisites and CI runs
-native tools. Step 07 owns stronger native static-gate enforcement.
+review contradictions before proceeding. Step 07 removes optional static-tool
+success. Native defaults require project-local tools; reviewed equivalent
+commands retain precedence and coverage responsibility.
 
 Status: current
 
@@ -80,9 +87,8 @@ evidence from unverified remote execution; no branch protection is configured.
 
 ## Known limitations
 
-- CI installs required tools; the public harness still does not install optional
-  developer tools. Outside CI, missing tools remain explicit degraded coverage
-  until prerequisite diagnostics are implemented.
+- Setup is explicit; format/check do not install. Missing required defaults fail.
+  Reviewed commands are editable and must remain complete and non-mutating.
 - Generic function-size analysis is Python-aware only. Other profiles rely on
   their project linters rather than fragile harness parsing.
 
@@ -93,9 +99,11 @@ fixture smoke paths pass and a verification report records exact evidence and
 limitations.
 
 Harness changes also require `./harness self-test`. Native overrides/scripts
-retain their own collection contract; general required-case/skip/evidence
-enforcement remains proposed for Step 08. Optional static tools can still be
-unavailable despite a zero command exit. Steps 02–03 repair F1–F5; managed-file
+need reviewed native report adapters for complete verify claims. Verify rejects
+zero cases/skips/retries/invalid evidence but does not prove critical-case coverage.
+Static defaults fail missing tools;
+arbitrary reviewed commands retain their native coverage contract.
+Steps 02–03 repair F1–F5; managed-file
 ownership findings F6–F7 are repaired in Step 04.
 
 Step 04 uses full disposable installations, a real no-pip environment and

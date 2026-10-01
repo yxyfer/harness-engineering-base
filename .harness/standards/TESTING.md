@@ -1,5 +1,10 @@
 # Testing standard
 
+Complete evidence uses `./harness verify` and native runner reports, with
+`--self-test` for harness changes. Partial scope, zero cases, skips/retries and
+unavailable evidence cannot be called complete. Arbitrary scripts need a
+reviewed native adapter; successful shell exit never establishes collection.
+
 Choose evidence in proportion to the risk and the kind of change.
 
 - Start a bug fix with a failing reproduction that distinguishes the defect from

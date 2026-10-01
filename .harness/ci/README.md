@@ -40,6 +40,12 @@ python3 -m venv .venv
   -r .harness/ci/requirements.lock
 npm ci --ignore-scripts --prefix .harness/ci
 npm ci --ignore-scripts --prefix .harness/tests/fixtures/nextjs-project
+npm ci --ignore-scripts --prefix .harness/templates/typescript
+for target in .harness/templates/python .harness/tests/fixtures/python-project; do
+  python3 -m venv "$target/.venv"
+  "$target/.venv/bin/python" -m pip install --require-hashes --only-binary=:all: \
+    -r .harness/templates/python/requirements-dev.lock
+done
 sh .harness/ci/setup-shell.sh .harness/tmp/ci-bin
 export PATH="$PWD/.venv/bin:$PWD/.harness/ci/node_modules/.bin:$PATH"
 export PATH="$PWD/.harness/tmp/ci-bin:$PATH"
@@ -63,7 +69,10 @@ reviewed exact pins and lockfiles; CI only runs `npm ci`, never `npm update`.
 Shell downloads validate committed SHA-256 digests before executing tools.
 
 This workflow does not install the harness into another project, configure
-branch protection or provide future profile/doctor/verification interfaces.
-Local developer commands still allow explicit degraded optional-tool coverage;
-the CI static phase requires actual tools. Remote execution must be separately
+branch protection or implement the future Step 08 verify interface. Profile,
+doctor and format commands are shipped and tested separately from CI setup.
+Step 07 requires default static tools in developer checks too. New typed-default
+fixtures use separate compatible pins and are exercised by contract tests.
+Runtime directories are pruned from CI enumeration; maintained source remains
+included. Remote execution must be separately
 evidenced; a workflow file or local pass is not a GitHub run.

@@ -1,6 +1,26 @@
 # Architecture Context
 
+## Step 08 evidence coordination
+
+`verify.py` coordinates existing check/smoke and native test evidence adapters;
+it does not implement a second scheduler or linter. Shared resolver requirements
+remain intact. `evidence_reports.py` validates the fixed shipped JSON Schema
+subset and parses native unittest/JUnit counts, including Node's direct cases.
+`evidence_identity.py` snapshots conservative inputs/config/locks/untracked
+files and the executing release inputs; fixed reports/runtime paths are excluded.
+`evidence_runner.py` bounds streaming logs, redacts credentials and cleans owned
+POSIX groups. Snapshot comparisons reject stale/mid-run edits. Custom evidence
+argv is project-owned `.harness/evidence.json`, never overwritten by adoption.
+See the [contract](../.harness/verification/README.md) for explicit trust limits.
+
 ## Step 06 applicability boundary
+
+Step 07 adds static.py as a fixed native default dispatcher and format as a thin
+delegate. Optional commands.format preserves schema 1/2 reads. Explicit check
+commands retain precedence; defaults require local tools rather than syntax-only
+success. Python checks locate bundled Pyright without its network/bootstrap
+wrapper. Consumer formatting excludes installed machinery; authoring CI covers
+managed files explicitly. See [QH-07](../verification/QH-07.md).
 
 `profiles.py` resolves reviewed language/framework/capability requirements and
 source evidence independently of installed tools. Check, policies, inspect and
@@ -38,7 +58,7 @@ in its own configuration. See [ADR-004](DECISIONS.md).
 
 Managed `source_paths.py` owns literal directory exclusion matching, pruned
 tree traversal and supported executable shebang classification. Size, link,
-claim and degraded Python syntax scans share it. Scans skip all symlinks;
+claim scans share it. Scans skip all symlinks;
 canonical policy inputs reject symlink components independently of exclusions.
 Native tools retain their own configuration and discovery. Required policy
 checks precede one project static-check implementation; overrides/package
@@ -69,7 +89,7 @@ schema remains 1; old kits require a reviewed inventory/verifier update.
 
 | System | Purpose | Authentication | Failure behaviour | Real or simulated |
 | --- | --- | --- | --- | --- |
-| Local runtimes/tools | Execute configured checks | Local environment | Actionable failure or degraded warning | Real |
+| Local runtimes/tools | Execute configured checks | Local environment | Actionable failure for missing/failed required tools | Real |
 
 ## Runtime and deployment
 
@@ -90,8 +110,8 @@ shell binary digests. Job/command deadlines bound execution. See the
 
 ## Architectural risks
 
-- Optional tools can be absent outside locked CI setup; dependency diagnostics
-  remain planned.
+- Reviewed native commands own coverage and must be non-mutating; the harness
+  cannot establish their adequacy by parsing arbitrary shell bodies.
 - Tool configuration is shared ownership and requires conflict-aware merging in
   future adoption and upgrade flows.
 - Editable release metadata is not signed and symlink checks do not defend
@@ -100,8 +120,8 @@ shell binary digests. Job/command deadlines bound execution. See the
 ## Target architecture agreed on 2026-10-01
 
 The [product vision](PRODUCT.md) retains the three ownership layers and adds a
-small programmatic control-selection and evidence pipeline. It is planned, not
-implemented by the current command suite.
+small programmatic control-selection and evidence pipeline. Selection and native
+evidence coordination are implemented; application foundations remain planned.
 
 TypeScript and Python are the language profiles; Next.js is a framework profile
 on TypeScript. Reviewed project capabilities activate additional controls for

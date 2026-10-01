@@ -20,7 +20,17 @@ CAPABILITY_DOCUMENTS = {
     "external-integrations": {"DATA.md", "SECURITY.md"},
     "background-jobs": {"DATA.md"},
 }
-INTERNAL_DIRECTORIES = [".harness", ".agents", ".git", ".venv", "node_modules"]
+INTERNAL_DIRECTORIES = [
+    ".harness",
+    ".agents",
+    ".git",
+    ".venv",
+    "node_modules",
+    "__pycache__",
+    ".pytest_cache",
+    ".ruff_cache",
+    ".mypy_cache",
+]
 
 
 def project_evidence(target: Path, config: dict[str, Any]):

@@ -1,0 +1,32 @@
+[project]
+name = "harness-python-static-defaults"
+version = "0.0.0"
+requires-python = ">=3.11"
+
+[tool.ruff]
+line-length = 80
+target-version = "py311"
+extend-exclude = [".harness", ".agents"]
+
+[tool.ruff.lint]
+select = ["E4", "E7", "E9", "F", "B", "BLE", "TID251"]
+
+# Concrete adapter module names; review these against the actual architecture.
+# Ruff's rule supports both relative and absolute imports without custom parsing.
+[tool.ruff.lint.flake8-tidy-imports.banned-api]
+"example_app.io" = { msg = "Import adapters at entry points, not domain code." }
+"example_app.server" = { msg = "Import server adapters only at entry points." }
+
+[tool.ruff.lint.per-file-ignores]
+"src/example_app/entrypoint.py" = ["TID251"]
+
+[tool.pyright]
+typeCheckingMode = "strict"
+include = ["src", "tests"]
+pythonVersion = "3.11"
+venvPath = "."
+venv = ".venv"
+
+[tool.pytest.ini_options]
+pythonpath = ["src"]
+testpaths = ["tests"]

@@ -56,7 +56,12 @@ yarn-error.log*
 !.editorconfig
 !.shellcheckrc
 !.markdownlint-cli2.jsonc
+!.harness/templates/typescript/.node-version
+!.harness/templates/typescript/.prettierignore
+!.harness/templates/python/.python-version
 
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+**/.harness/reports/
+!.harness/tests/fixtures/nextjs-project/.prettierignore

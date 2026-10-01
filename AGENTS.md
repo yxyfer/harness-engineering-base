@@ -54,10 +54,12 @@ durable choice in the appropriate context file or decision record.
 ./harness start
 ./harness inspect
 ./harness doctor
+./harness format
 ./harness check
 ./harness test
 ./harness self-test
 ./harness smoke
+./harness verify
 ```
 
 Commands accept an optional target directory. A non-zero exit is a failed gate,
@@ -74,6 +76,7 @@ test, or smoke behaviour.
 
 - Treat `AGENTS.md`, `docs/`, `plans/`, `tasks/`, `verification/`, and
   `.harness/config.toml` as project-owned after creation.
+  `.harness/evidence.json` native evidence invocation is also project-owned.
 - Managed ownership is the explicit file list in `.harness/release-files.json`,
   including each shipped skill file. Shared folders are not wholly managed:
   project skills/additions and generated environments remain project/local.

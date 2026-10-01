@@ -159,8 +159,6 @@ rather than rewriting history.
   [QH-05](../verification/QH-05.md), [CI guide](../.harness/ci/README.md).
 - **Supersedes:** None; ownership and native configuration authority remain.
 
-## Decision template
-
 ### ADR-008: Resolve applicability without rewriting reviewed requirements
 
 - **Date:** 2026-10-01
@@ -176,6 +174,43 @@ rather than rewriting history.
   [QH-06](../verification/QH-06.md).
 - **Supersedes:** Earlier explicit-profile omission behaviour only; native tool
   authority and ownership remain unchanged.
+
+### ADR-009: Native formatting and required static defaults
+
+- **Date:** 2026-10-01
+- **Status:** accepted; implemented in Step 07
+- **Decision:** Preserve one reviewed native implementation and project package
+  managers. Add optional format config, require local default static tools and
+  ship separate compatible native starting configs/locks. Missing controls fail;
+  check defaults never request edits. Native rule IDs, not regex parsing, enforce
+  demonstrated boundary conventions. Source-size guidance remains advisory.
+- **Consequences:** Legacy configs read unchanged but missing static tools no
+  longer count as degraded success. Reviewed arbitrary commands own complete,
+  non-mutating coverage. Application formatting excludes managed kit; authoring
+  CI covers it explicitly. Pyright executes its installed bundled native entry
+  point without wrapper downloads. Adoption is manual and reviewable.
+- **Evidence:** [TASK-010](../tasks/TASK-010-NATIVE-STATIC-TOOLS.md),
+  [QH-07](../verification/QH-07.md).
+- **Supersedes:** Optional-tool success and syntax fallback from ADR-002/005/007;
+  preserves native authority, ownership and single implementation precedence.
+
+### ADR-010: Bind native verification outcomes to current inputs
+
+- **Date:** 2026-10-01
+- **Status:** accepted; implemented in Step 08
+- **Decision:** Coordinate shared required controls without a scheduler; preserve
+  native unittest/JUnit outcomes and fail missing evidence/zero/skips/retries.
+  Use fixed output paths, conservative source/config/lock identities, bounded
+  redacted artifacts and POSIX owned-group cleanup. Custom native evidence argv
+  is project-owned and needs review; no generic policy DSL or implicit retries.
+- **Consequences:** Successful shell exit alone cannot establish collection.
+  Full root verification stays incomplete without root smoke. Reports remain
+  editable provenance, not signed authenticity, test adequacy or a sandbox.
+- **Evidence:** [TASK-011](../tasks/TASK-011-VERIFICATION-EVIDENCE.md),
+  [QH-08](../verification/QH-08.md), [contract](../.harness/verification/README.md).
+- **Supersedes:** ADR-004's deferred evidence requirement only.
+
+## Decision template
 
 ### ADR-000: Short title
 

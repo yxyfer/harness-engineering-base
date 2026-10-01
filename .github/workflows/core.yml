@@ -43,6 +43,13 @@ jobs:
             2>&1 | tee "$HARNESS_CI_LOGS/node-tools-setup.log"
           npm ci --ignore-scripts --prefix .harness/tests/fixtures/nextjs-project \
             2>&1 | tee "$HARNESS_CI_LOGS/node-fixture-setup.log"
+          npm ci --ignore-scripts --prefix .harness/templates/typescript \
+            2>&1 | tee "$HARNESS_CI_LOGS/typescript-defaults-setup.log"
+          for target in .harness/templates/python .harness/tests/fixtures/python-project; do
+            python3 -m venv "$target/.venv"
+            "$target/.venv/bin/python" -m pip install --require-hashes --only-binary=:all: \
+              -r .harness/templates/python/requirements-dev.lock
+          done
           sh .harness/ci/setup-shell.sh "$RUNNER_TEMP/harness-bin" \
             2>&1 | tee "$HARNESS_CI_LOGS/shell-setup.log"
           echo "$PWD/.venv/bin" >> "$GITHUB_PATH"

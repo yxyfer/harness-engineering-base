@@ -92,8 +92,19 @@ class CheckContractTest(unittest.TestCase):
         return [json.loads(line) for line in path.read_text().splitlines()]
 
     def syntax_environment(self):
-        # Isolate the degraded fallback even when host tools are installed.
+        # Routing stubs only: native correctness is tested in isolated defaults.
         venv.EnvBuilder(with_pip=False).create(self.target / ".venv")
+        for name in ("ruff", "pyright"):
+            self.write(
+                f"{name}/__main__.py",
+                RECORDER.replace("Path(sys.argv[0]).name", repr(name)),
+            )
+
+        self.write("pyright/__init__.py", "# Synthetic native routing probe\n")
+        self.write(
+            "pyright/dist/index.js",
+            "const fs = require('node:fs');\nfs.appendFileSync('.calls.jsonl', JSON.stringify(['pyright', ...process.argv.slice(2)]) + '\\n');\n",
+        )
 
     def test_python_shebangs_avoid_shell_and_get_python_size_analysis(self):
         self.write(
@@ -148,7 +159,9 @@ class CheckContractTest(unittest.TestCase):
                 (self.target / name / "README.md").unlink()
 
     def test_extensionless_python_syntax_error_is_a_failure(self):
-        self.syntax_environment()
+        (self.target / ".venv").symlink_to(
+            ROOT / ".harness/templates/python/.venv", target_is_directory=True
+        )
         self.write("pyproject.toml", "[project]\nname = 'synthetic'\n")
         self.write(
             "broken worker",
@@ -158,7 +171,7 @@ class CheckContractTest(unittest.TestCase):
         result = self.run_check()
         self.assertEqual(result.returncode, 1, result.stdout + result.stderr)
         self.assertIn("broken worker", result.stderr)
-        self.assertIn("syntax", result.stderr.lower())
+        self.assertIn("Failed to parse", result.stdout + result.stderr)
 
     def test_symlink_sources_are_not_read_or_sent_to_tools(self):
         self.syntax_environment()
@@ -288,6 +301,7 @@ class CheckContractTest(unittest.TestCase):
             json.dumps(
                 {
                     "scripts": {
+                        "format:check": "echo format >> selected.txt",
                         "lint": "echo lint >> selected.txt",
                         "typecheck": "echo typecheck >> selected.txt",
                     }
@@ -297,7 +311,8 @@ class CheckContractTest(unittest.TestCase):
         result = self.run_check()
         self.assertEqual(result.returncode, 0, result.stderr)
         self.assertEqual(
-            (self.target / "selected.txt").read_text(), "lint\ntypecheck\n"
+            (self.target / "selected.txt").read_text(),
+            "format\nlint\ntypecheck\n",
         )
 
     def test_native_tools_own_their_scope(self):
@@ -314,8 +329,15 @@ class CheckContractTest(unittest.TestCase):
         )
         result = self.run_check()
         self.assertEqual(result.returncode, 0, result.stderr)
-        self.assertIn(["ruff", "format", "--check", "."], self.calls())
-        self.assertIn(["ruff", "check", "."], self.calls())
+        self.assertTrue(
+            any(
+                call[:4] == ["ruff", "format", "--check", "."]
+                for call in self.calls()
+            )
+        )
+        self.assertTrue(
+            any(call[:3] == ["ruff", "check", "."] for call in self.calls())
+        )
         self.assertIn(["markdownlint-cli2", "**/*.md"], self.calls())
 
 

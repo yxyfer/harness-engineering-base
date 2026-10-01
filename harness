@@ -14,9 +14,11 @@ Commands:
   inspect  Show the detected stack, commands, context, checks, and Git state.
   doctor   Explain applicable controls and prerequisite/readiness gaps.
   check    Run harness policy checks and project-native static checks.
+  format   Delegate mechanical formatting to project-native tools.
   test     Run project-native automated tests.
   self-test Run the executing harness's contract tests independently.
   smoke    Run the smallest user-visible health check.
+  verify   Coordinate applicable controls and write validated native evidence.
   help     Show this help.
 
 The target defaults to the current directory.
@@ -35,8 +37,13 @@ fi
 subcommand=$1
 shift
 
+# Verify owns bounded evidence options rather than an arbitrary override.
+if [ "${subcommand}" = verify ]; then
+  exec python3 "${root}/.harness/bin/verify.py" "$@"
+fi
+
 case "${subcommand}" in
-setup | start | inspect | doctor | check | test | self-test | smoke) ;;
+setup | start | inspect | doctor | check | format | test | self-test | smoke) ;;
 help | -h | --help)
   usage
   exit 0

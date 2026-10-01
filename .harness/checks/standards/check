@@ -43,11 +43,11 @@ def python_function_warnings(path: Path, limit: int) -> list[tuple[int, str]]:
     return warnings
 
 
-def run_optional(command: list[str], target: Path, label: str) -> bool:
+def run_required(command: list[str], target: Path, label: str) -> bool:
     executable = command[0]
     if shutil.which(executable) is None:
-        print(f"standards: warning: {label} unavailable; check skipped")
-        return True
+        print(f"standards: required {label} missing", file=sys.stderr)
+        return False
     result = subprocess.run(command, cwd=target, check=False)
     return result.returncode == 0
 
@@ -99,16 +99,17 @@ def main() -> int:
         str(path.relative_to(target))
         for path in files
         if profile_for(path) == "shell"
+        and path.relative_to(target).parts[0] not in {".harness", ".agents"}
     ]
     if "shell" in profiles and shell_files:
-        passed &= run_optional(
+        passed &= run_required(
             ["shellcheck", *shell_files], target, "ShellCheck"
         )
-        passed &= run_optional(
+        passed &= run_required(
             ["shfmt", "-d", "-i", "2", *shell_files], target, "shfmt"
         )
     if "markdown" in profiles:
-        passed &= run_optional(
+        passed &= run_required(
             ["markdownlint-cli2", "**/*.md"], target, "markdownlint-cli2"
         )
 

@@ -182,6 +182,7 @@ environment_command() {
   setup) printf '%s\n' "${HARNESS_SETUP_COMMAND:-}" ;;
   start) printf '%s\n' "${HARNESS_START_COMMAND:-}" ;;
   check) printf '%s\n' "${HARNESS_CHECK_COMMAND:-}" ;;
+  format) printf '%s\n' "${HARNESS_FORMAT_COMMAND:-}" ;;
   test) printf '%s\n' "${HARNESS_TEST_COMMAND:-}" ;;
   smoke) printf '%s\n' "${HARNESS_SMOKE_COMMAND:-}" ;;
   *) usage_error "unknown command override: $1" ;;

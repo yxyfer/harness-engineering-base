@@ -3,6 +3,8 @@
 from __future__ import annotations
 
 from pathlib import Path
+import json
+import os
 import sys
 import unittest
 
@@ -40,10 +42,25 @@ def run_unittest(start: Path) -> int:
     suite = unittest.defaultTestLoader.discover(str(start), pattern="test_*.py")
     count = suite.countTestCases()
     print(f"python-tests: collected {count} unittest case(s)", flush=True)
+    result = unittest.TextTestRunner().run(suite)
+    if report := os.environ.get("HARNESS_TEST_REPORT"):
+        Path(report).write_text(
+            json.dumps(
+                {
+                    "collected": count,
+                    "executed": result.testsRun,
+                    "failures": len(result.failures),
+                    "errors": len(result.errors),
+                    "skipped": len(result.skipped),
+                    "expected_failures": len(result.expectedFailures),
+                    "unexpected_successes": len(result.unexpectedSuccesses),
+                    "retries": 0,
+                }
+            )
+        )
     if count == 0:
         print("python-tests: zero required tests collected", file=sys.stderr)
         return 5
-    result = unittest.TextTestRunner().run(suite)
     return 0 if result.wasSuccessful() else 1
 
 

@@ -12,3 +12,6 @@
   paths containing spaces for filesystem commands.
 - Scope ShellCheck directives to the relevant line and record why the warning is
   safe to suppress.
+- The standards policy requires ShellCheck and shfmt for maintained shell files;
+  missing tools fail. Check uses shfmt diff mode, never writes. Configure a
+  project format command using shfmt write mode for shell-only formatting.

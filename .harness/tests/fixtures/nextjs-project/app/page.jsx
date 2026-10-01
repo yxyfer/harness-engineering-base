@@ -1,4 +1,4 @@
-import { pageContent } from "./content";
+import { pageContent } from "./content.js";
 
 export default function Page() {
   return (

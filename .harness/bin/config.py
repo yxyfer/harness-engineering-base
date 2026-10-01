@@ -132,6 +132,9 @@ def validate(path: Path) -> dict[str, Any]:
     )
 
     expected_sections = {name: set(keys) for name, keys in SECTIONS.items()}
+    # Additive optional command: legacy complete configs remain valid unchanged.
+    if type(config.get("commands")) is dict and "format" in config["commands"]:
+        expected_sections["commands"].add("format")
     if config["schema_version"] == 2:
         expected_sections["project"] |= {"frameworks", "capabilities", "roots"}
     sections = {
@@ -157,7 +160,9 @@ def validate(path: Path) -> dict[str, Any]:
     if config["schema_version"] == 2:
         validate_selection(path, sections["project"])
 
-    for name in COMMAND_NAMES:
+    for name in (*COMMAND_NAMES, "format"):
+        if name == "format" and name not in sections["commands"]:
+            sections["commands"][name] = ""
         value = sections["commands"][name]
         require(type(value) is str, path, f"commands.{name}", "a string", value)
 
@@ -311,7 +316,7 @@ def print_summary(config: dict[str, Any], source: str) -> None:
     print(f"readiness.fail_on_needs_input={str(readiness_flag).lower()}")
     print(f"security.mode={config['security']['mode']}")
     print(f"analysis.exclude={json.dumps(config['analysis']['exclude'])}")
-    for name in COMMAND_NAMES:
+    for name in (*COMMAND_NAMES, "format"):
         state = "configured" if config["commands"][name] else "automatic"
         print(f"commands.{name}=<{state}>")
 

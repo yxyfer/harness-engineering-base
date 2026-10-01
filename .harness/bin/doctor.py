@@ -52,7 +52,7 @@ def prerequisites(target: Path, config: dict[str, Any], selection):
         record(
             "python",
             valid_python,
-            "target .venv preferred; no environment substitution",
+            "target .venv preferred; automatic static defaults require project-local tools",
         )
         record(
             "ruff",
@@ -61,9 +61,13 @@ def prerequisites(target: Path, config: dict[str, Any], selection):
         )
         record(
             "pyright",
-            shutil.which("pyright")
-            or (valid_python and module_available(python, "pyright")),
-            "python-static type checker; CLI or selected interpreter module",
+            valid_python and module_available(python, "pyright"),
+            "python-static type checker in selected project interpreter",
+        )
+        record(
+            "node",
+            shutil.which("node"),
+            "Pyright native runtime; check will not bootstrap Node",
         )
         if config["commands"]["test"]:
             record(

@@ -2,6 +2,8 @@
 
 HARNESS_COMMAND_NAME='harness check'
 export HARNESS_COMMAND_NAME
+PYTHONDONTWRITEBYTECODE=1
+export PYTHONDONTWRITEBYTECODE
 . "$(dirname "$0")/common.sh"
 resolve_target "${1:-.}"
 python3 "${KIT_ROOT}/bin/profiles.py" summary "${TARGET}" "${CONFIG_PATH}"
@@ -41,6 +43,16 @@ elif has_npm_script check; then
   run_node_script check
   ran_project_check=1
 else
+  # A split native implementation must cover all three controls.
+  # shellcheck disable=SC2310
+  if has_npm_script lint || has_npm_script typecheck || has_npm_script format:check; then
+    # shellcheck disable=SC2310
+    if has_npm_script format:check && has_npm_script lint && has_npm_script typecheck; then
+      run_node_script format:check
+    else
+      fail 'split static scripts require format:check, lint and typecheck; declare an aggregate check for equivalent tools'
+    fi
+  fi
   # Status selector; a non-zero result is expected and handled.
   # shellcheck disable=SC2310
   if has_npm_script lint; then
@@ -55,30 +67,7 @@ else
   fi
 fi
 
-if [ "${ran_project_check}" -eq 0 ] && {
-  [ -f "${TARGET}/pyproject.toml" ] || [ -f "${TARGET}/requirements.txt" ]
-}; then
-  # Status selector; a non-zero result is expected and handled.
-  # shellcheck disable=SC2310
-  py=$(python_command) || fail 'Python is required for the detected Python project'
-  if "${py}" -m ruff --version >/dev/null 2>&1; then
-    note 'checking Python formatting with ruff'
-    run_project_command "${py}" -m ruff format --check .
-    note 'linting Python with ruff'
-    run_project_command "${py}" -m ruff check .
-  else
-    warn 'ruff not detected; formatting and lint checks are degraded'
-    note 'parsing Python sources for syntax errors'
-    run_project_command "${py}" "${KIT_ROOT}/bin/source_paths.py" "${TARGET}"
-  fi
-  if "${py}" -m pyright --version >/dev/null 2>&1; then
-    note 'type-checking Python with pyright'
-    run_project_command "${py}" -m pyright .
-  else
-    warn 'pyright not detected; Python type checking was skipped'
-  fi
-  ran_project_check=1
+if [ "${ran_project_check}" -eq 0 ]; then
+  run_project_command python3 "${KIT_ROOT}/bin/static.py" check "${TARGET}" "${CONFIG_PATH}"
 fi
-
-[ "${ran_project_check}" -eq 1 ] || warn 'no project-native static check detected'
 note 'complete'

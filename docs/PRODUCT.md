@@ -25,6 +25,11 @@ records today's behaviour and defects. The
 
 ## Users and jobs
 
+Step 07 implements native format/check delegation and required static-tool
+failure, with opt-in strict Python/TypeScript defaults. Native boundary rules
+protect the demonstrated layout; this is not complete runtime validation or a
+Next.js application foundation. See [QH-07](../verification/QH-07.md).
+
 Step 06 now implements read-only applicability and prerequisite diagnosis for
 Python, TypeScript and Next.js. Framework-specific, browser and security
 verification remain unsupported results, not shipped assurance. Multi-package
@@ -265,7 +270,8 @@ No productivity gain or universal coverage percentage is assumed.
 - macOS remains the first supported developer platform. CI/browser runners must
   pin their environment; cross-platform support needs its own evidence.
 - New command names, profiles, evidence schemas, and defaults in this vision
-  require implementation. The present config schema is unchanged.
+  require implementation unless described above. Schemas 1/2 remain readable;
+  Step 07 adds an optional format command without replacing project files.
 - Existing native configurations and customer design systems are preserved.
 - Prefer a small reliable foundation; add controls when their applicability and
   failure-detection value are demonstrated.

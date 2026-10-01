@@ -52,11 +52,21 @@ def run(name: str, command: list[str], cwd: Path = ROOT, *, negative=False):
 
 def sources(profile: str) -> list[str]:
     # Runtime directories are pruned before enumeration; fixtures are explicit.
-    paths = walk_files(ROOT / ".harness", ["tmp", "node_modules", "fixtures"])
+    paths = walk_files(
+        ROOT / ".harness",
+        [
+            "tmp",
+            "node_modules",
+            "fixtures",
+            ".venv",
+            "__pycache__",
+            ".ruff_cache",
+        ],
+    )
     return [str(p) for p in paths if profile_for(p) == profile]
 
 
-def static():
+def static(*, policy=True):
     for tool in ("shellcheck", "shfmt", "markdownlint-cli2", "pyright"):
         if shutil.which(tool) is None:
             raise RuntimeError(f"required CI tool missing: {tool}")
@@ -85,7 +95,28 @@ def static():
         [sys.executable, "-m", "ruff", "check", "--config", config, *python],
     )
     run("pyright", ["pyright", "--project", "pyrightconfig.json"])
-    run("policy", ["./harness", "check"])
+    if policy:
+        run("policy", ["./harness", "check"])
+
+
+def format_source():
+    config = str(ROOT / ".harness/ci/ruff.toml")
+    run(
+        "ruff-format-write",
+        [
+            sys.executable,
+            "-m",
+            "ruff",
+            "format",
+            "--config",
+            config,
+            *sources("python"),
+        ],
+    )
+    run(
+        "shfmt-write",
+        ["shfmt", "-w", "-i", "2", str(ROOT / "harness"), *sources("shell")],
+    )
 
 
 def contracts():
@@ -202,6 +233,8 @@ def negatives():
 if __name__ == "__main__":
     phases = {
         "static": static,
+        "native": lambda: static(policy=False),
+        "format": format_source,
         "contracts": contracts,
         "fixtures": fixtures,
         "negatives": negatives,

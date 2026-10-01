@@ -1,0 +1,5 @@
+.harness/
+.agents/
+node_modules/
+dist/
+coverage/

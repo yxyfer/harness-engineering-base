@@ -1,5 +1,10 @@
 # Project Harness
 
+Step 08 adds `./harness verify`: shared controls, native test counts, bounded
+redacted artifacts and input-bound JSON. Full and partial outcomes stay separate.
+See the [evidence contract](.harness/verification/README.md) for adapters,
+`--self-test`, timeouts, stale-report validation and trust limits.
+
 A small, inspectable engineering harness for agent-assisted software projects. It
 keeps project intent, implementation constraints, work plans, and verification in
 the repository so that humans and coding agents operate from the same context.
@@ -46,6 +51,7 @@ to override a project command for one invocation. `self-test` rejects
 | `smoke` | Run the smallest user-visible health check. |
 | `inspect` | Print detected stack, commands, context coverage, and Git state. |
 | `doctor` | Explain applicable controls and fail on readiness gaps; no checks run. |
+| `format` | Delegate mechanical formatting to project-native formatters. |
 
 Set `HARNESS_KIT_ROOT` when the command implementation is hosted outside the
 target repository. Set `HARNESS_CHECKS_DIR` to select a different checks
@@ -99,11 +105,11 @@ correctness to established tools instead of reimplementing their parsers:
 | Shell | shfmt | ShellCheck | command/exit behaviour |
 | Markdown | formatter/editor wrapping | markdownlint and local-link check | rendered/config evidence |
 
-Missing optional tools are reported as degraded coverage. Project-native
+Missing required tools fail; no syntax-only success replaces lint/types. Project-native
 commands and tool configuration remain authoritative. The fixture projects show
 complete Python and Node configurations aligned to the shared defaults.
 
-Harness-owned size, link, claim and degraded Python syntax scans share directory
+Harness-owned size, link and claim scans share directory
 discovery. In `analysis.exclude`, `generated` matches a directory at any depth;
 `src/generated` matches only that root-relative prefix. Rules are literal, not
 globs, and do not exclude similarly named siblings or files. Ignored directories
@@ -119,11 +125,21 @@ interpreters require deliberate project-native coverage.
 
 After required policy checks, `check` selects one project implementation:
 CLI override, environment override, configured command, package `check`, package
-`lint`/`typecheck` fallback, then automatic Python checks. The package fallback
-can run both declared scripts once. Any selected override/package path prevents
+`format:check`/`lint`/`typecheck` trio, then project-local native defaults.
+All three split scripts are required and run once. Any override/package path prevents
 an additional automatic Python stage. A failed policy or selected command stops
-the gate. With no native Python tools, syntax parsing follows harness discovery,
-including supported extensionless Python; that remains degraded coverage.
+the gate. Python defaults require .venv Ruff/Pyright; TypeScript defaults require
+node_modules Prettier/ESLint/TypeScript. No npx/global fallback or install occurs.
+Native defaults request only check/noEmit modes. Reviewed equivalent commands
+own coverage and must be non-mutating; the harness does not parse arbitrary
+shell bodies to prove their adequacy.
+
+`format` follows CLI, HARNESS_FORMAT_COMMAND, optional commands.format, package
+format script, then local Ruff/Prettier. Existing schemas accept the additive
+optional key without file replacement. Formatting performs no lint autofixes.
+Shell/Markdown-only projects declare their formatter command. Review
+[native starting defaults](.harness/templates/README.md) rather than overwriting
+an established toolchain or project-owned native configuration.
 
 Every section and key is validated. Unknown or missing keys, invalid types,
 unsupported values, absolute exclusions, and parent-directory exclusions fail

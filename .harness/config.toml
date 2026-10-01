@@ -6,7 +6,8 @@ profiles = ["auto"]
 [commands]
 setup = ""
 start = ""
-check = ""
+check = ".venv/bin/python .harness/ci/run.py native"
+format = ".venv/bin/python .harness/ci/run.py format"
 test = "python3 .harness/bin/python-tests.py unittest .harness/tests"
 smoke = ""
 

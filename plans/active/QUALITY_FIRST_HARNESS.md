@@ -1,6 +1,6 @@
 # Application quality harness implementation plan
 
-- **Status:** active; Steps 01-04 complete; Steps 05-19 not started
+- **Status:** active; Steps 01-08 complete locally; Steps 09-19 not started
 - **Owner:** repository owner
 - **Created and expanded:** 2026-10-01
 - **Direction:** [Product vision](../../docs/PRODUCT.md)
@@ -77,9 +77,9 @@ exist. Partially verified steps stay incomplete.
 
 ## Delivery sequence and checkpoints
 
-Steps 01-06 are **complete locally**; Steps 07-19 are **not started**. Step 05's
-remote execution is unverified. Proposed paths may
-use established equivalents if implementation records the mapping.
+Steps 01-08 are **complete locally**; Steps 09-19 are **not started**. Step 05's
+remote execution is unverified. Proposed paths may use established equivalents
+if implementation records the mapping.
 
 | Step | Deliverable                                                                                           | Depends on | Status                                                             |
 | ---- | ----------------------------------------------------------------------------------------------------- | ---------- | ------------------------------------------------------------------ |
@@ -89,8 +89,8 @@ use established equivalents if implementation records the mapping.
 | 04   | [Correct managed-file ownership](../../tasks/TASK-007-RELEASE-OWNERSHIP.md)                           | 03         | [Complete](../../verification/QH-04.md)                            |
 | 05   | [Core CI](../../tasks/TASK-008-CORE-CI.md)                                                            | 04         | [Complete locally; remote unverified](../../verification/QH-05.md) |
 | 06   | [Relevant profiles and prerequisite diagnostics](../../tasks/TASK-009-PROFILES-AND-DOCTOR.md)         | 05         | [Complete locally](../../verification/QH-06.md)                    |
-| 07   | Native formatting and static checks                                                                   | 06         | Not started                                                        |
-| 08   | Complete verification and trustworthy reports                                                         | 07         | Not started                                                        |
+| 07   | [Native formatting and static checks](../../tasks/TASK-010-NATIVE-STATIC-TOOLS.md)                    | 06         | [Complete locally](../../verification/QH-07.md)                    |
+| 08   | [Native verification evidence](../../tasks/TASK-011-VERIFICATION-EVIDENCE.md)                         | 07         | [Complete locally](../../verification/QH-08.md)                    |
 | 09   | Security checks and isolated verification                                                             | 08         | Not started                                                        |
 | 10   | Real Next.js foundation and shared UI                                                                 | 09         | Not started                                                        |
 | 11   | Secure server operations and real persistence                                                         | 10         | Not started                                                        |
@@ -994,18 +994,20 @@ regression contracts, synthetic application cases and measurement format are
 recorded. Runtime code was not repaired. The baseline remains partial, with
 F1-F7 open, missing tools and undefined root smoke explicitly retained.
 
-Step 02 is complete: [TASK-005](../../tasks/TASK-005-APPLICATION-TEST-ROUTING.md)
-and [QH-02](../../verification/QH-02.md) record F1/F2 reproductions, installed-copy
+Step 02 is complete:
+[TASK-005](../../tasks/TASK-005-APPLICATION-TEST-ROUTING.md) and
+[QH-02](../../verification/QH-02.md) record F1/F2 reproductions, installed-copy
 regressions, separate application/self-test commands, declared Python runners,
 zero-collection failures and compatibility. That run had 28 passing kit cases;
 fixture smoke checks pass after recorded sandbox retries. Static tool gaps and
 undefined root smoke remain visible; F3-F7 are not repaired.
 
-Step 03 is complete: [TASK-006](../../tasks/TASK-006-DISCOVERY-AND-CHECK-PRECEDENCE.md)
-and [QH-03](../../verification/QH-03.md) record F3–F5 reproductions, shared
+Step 03 is complete:
+[TASK-006](../../tasks/TASK-006-DISCOVERY-AND-CHECK-PRECEDENCE.md) and
+[QH-03](../../verification/QH-03.md) record F3–F5 reproductions, shared
 discovery, exclusion/shebang/symlink contracts and single static implementation
-resolution after policy checks. Both root suites pass 46 cases, including 18
-new regressions. Both fixture smokes pass after recorded permission retries;
+resolution after policy checks. Both root suites pass 46 cases, including 18 new
+regressions. Both fixture smokes pass after recorded permission retries;
 optional native tool gaps and undefined root smoke remain visible. Managed
 ownership findings F6–F7 remain for Step 04.
 
@@ -1023,5 +1025,9 @@ actual native tools, both 61-case core suites, fixture tests/smokes and rejected
 negative controls. Remote execution is unverified; protection settings are
 unchanged. Root smoke remains undefined.
 
-Step 06 is next eligible. No later step has started, and future application
-journey acceptance cases remain specifications, not execution evidence.
+Steps 06-08 are complete locally: QH-06, QH-07 and QH-08 document selection,
+native tools and input-bound evidence. Root verify remains incomplete because
+root smoke is undefined; actual fixture verify/smoke are the applicable
+acceptance evidence. Remote CI is unverified. Step 09 is next eligible; future
+application journey acceptance cases remain specifications, not execution
+evidence.

@@ -1,5 +1,12 @@
 # Security Context
 
+Step 08 bounds/redacts evidence and cleans owned POSIX process groups, but is
+not a sandbox, secret scanner or production/model network isolation control.
+Editable native commands/adapters remain trusted project code. Use synthetic
+scoped data; do not expose production credentials. Redaction is heuristic and
+cleanup cannot guarantee escaped sessions, SIGKILL or machine crash recovery.
+See [trust limits](../.harness/verification/README.md).
+
 Step 06 does not implement security scanning. Schema 1 security.mode is
 deprecated with an explicit no-assurance diagnostic. Schema 2 off reports no
 scanner assurance, while local/ci return unsupported and require SECURITY

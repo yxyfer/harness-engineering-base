@@ -1,0 +1,112 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "run_id",
+    "inputs",
+    "end_digest",
+    "stable",
+    "scope",
+    "selection",
+    "controls",
+    "tools",
+    "seconds",
+    "complete"
+  ],
+  "properties": {
+    "schema_version": { "type": "integer", "enum": [1] },
+    "run_id": { "type": "string" },
+    "inputs": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["digest", "files", "revision"],
+      "properties": {
+        "digest": { "type": "string" },
+        "files": { "type": "object" },
+        "revision": { "type": "string" }
+      }
+    },
+    "end_digest": { "type": "string" },
+    "stable": { "type": "boolean" },
+    "scope": { "type": "string", "enum": ["full", "partial"] },
+    "selection": { "type": "object" },
+    "controls": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "name",
+          "required",
+          "state",
+          "reason",
+          "command",
+          "exit",
+          "seconds",
+          "counts",
+          "artifacts",
+          "truncated"
+        ],
+        "properties": {
+          "name": { "type": "string" },
+          "required": { "type": "boolean" },
+          "state": {
+            "type": "string",
+            "enum": ["passed", "failed", "unavailable", "not-applicable"]
+          },
+          "reason": { "type": "string" },
+          "command": { "type": "array", "items": { "type": "string" } },
+          "exit": { "anyOf": [{ "type": "integer" }, { "type": "null" }] },
+          "seconds": { "type": "number", "minimum": 0 },
+          "counts": {
+            "anyOf": [
+              { "type": "null" },
+              {
+                "type": "object",
+                "additionalProperties": false,
+                "required": [
+                  "collected",
+                  "executed",
+                  "failures",
+                  "errors",
+                  "skipped",
+                  "retries",
+                  "expected_failures",
+                  "unexpected_successes"
+                ],
+                "properties": {
+                  "collected": { "type": "integer", "minimum": 0 },
+                  "executed": { "type": "integer", "minimum": 0 },
+                  "failures": { "type": "integer", "minimum": 0 },
+                  "errors": { "type": "integer", "minimum": 0 },
+                  "skipped": { "type": "integer", "minimum": 0 },
+                  "retries": { "type": "integer", "minimum": 0 },
+                  "expected_failures": { "type": "integer", "minimum": 0 },
+                  "unexpected_successes": { "type": "integer", "minimum": 0 }
+                }
+              }
+            ]
+          },
+          "truncated": { "type": "boolean" },
+          "artifacts": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": ["path", "sha256"],
+              "properties": {
+                "path": { "type": "string" },
+                "sha256": { "type": "string" }
+              }
+            }
+          }
+        }
+      }
+    },
+    "tools": { "type": "object" },
+    "seconds": { "type": "number", "minimum": 0 },
+    "complete": { "type": "boolean" }
+  }
+}

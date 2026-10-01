@@ -1,0 +1,50 @@
+{
+  "commands": [
+    {
+      "exit": 0,
+      "stdout": "harness check: running policy checks from <repository>/.harness/checks\narchitecture: pass\ndocumentation: warning: project input needed in docs/DATA.md, docs/DESIGN.md, docs/SECURITY.md\ndocumentation: pass (49 Markdown files)\nprovenance: pass\ndemo-integrity: pass (classification context present for 1 claim file(s))\nstandards: profiles=[\"markdown\",\"python\",\"shell\"]\nstandards: thresholds=line:80,file-warning:350,function-warning:50\nstandards: warning: .harness/bin/config.py:validate has 104 lines (threshold 50); review cohesion or record a scoped rationale in the task/tool config\nstandards: warning: ShellCheck unavailable; check skipped\nstandards: warning: shfmt unavailable; check skipped\nstandards: warning: markdownlint-cli2 unavailable; check skipped\nstandards: pass\nharness check: complete\n",
+      "stderr": "harness check: warning: no project-native static check detected\n",
+      "status": "passed",
+      "command": [
+        "./harness",
+        "check"
+      ],
+      "cwd": "<repository>",
+      "started_at": "2026-10-01T10:29:31.620713+00:00",
+      "feedback_seconds": 0.651179,
+      "feedback_method": "monotonic elapsed command-to-completion"
+    },
+    {
+      "exit": 0,
+      "stdout": "",
+      "stderr": "",
+      "status": "passed",
+      "command": [
+        "git",
+        "diff",
+        "--check"
+      ],
+      "cwd": "<repository>",
+      "started_at": "2026-10-01T10:29:32.276939+00:00",
+      "feedback_seconds": 0.033002,
+      "feedback_method": "monotonic elapsed command-to-completion"
+    }
+  ],
+  "review": {
+    "result": "passed",
+    "initial_files_checked": 88,
+    "changed_initial_files": [
+      "plans/active/QUALITY_FIRST_HARNESS.md"
+    ],
+    "collector_syntax": "parsed with ast.parse",
+    "new_text_trailing_whitespace": "none",
+    "files_sha256": {
+      "tasks/TASK-004-QUALITY-BASELINE.md": "c0e77984357e18d91a92307fbfd2fc5e4738ff9549b2dd642c6fe91c5616f8ec",
+      "verification/QH-01.md": "68f4597ecdc8e6d70e249a9f554292cd31b27842e66db4c10dae49d026be8af4",
+      "verification/MEASUREMENT_TEMPLATE.md": "6a82dcd75d3152a78aeb35102a28ed83877a21c5a8f5d274d221a6fcab1ac851",
+      "verification/qh-01-collect.py": "95cf759ee2884856352b31266fd014b90e8bb907e2ba3e52370de81c5516d12d"
+    },
+    "runtime_changed": false,
+    "historical_effort_or_productivity": "not measured or inferred"
+  }
+}

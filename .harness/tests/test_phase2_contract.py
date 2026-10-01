@@ -29,10 +29,16 @@ VALID_CONFIG = textwrap.dedent(
     smoke = ""
 
     [checks]
-    required = ["architecture", "documentation", "provenance", "demo-integrity"]
+    required = [
+      "architecture",
+      "documentation",
+      "provenance",
+      "demo-integrity",
+      "standards",
+    ]
 
     [standards]
-    line_length = 100
+    line_length = 80
     file_lines_warning = 350
     function_lines_warning = 50
 
@@ -58,7 +64,9 @@ class ConfigContractTest(unittest.TestCase):
             text=True,
         )
 
-    def write_config(self, directory: Path, content: str = VALID_CONFIG) -> Path:
+    def write_config(
+        self, directory: Path, content: str = VALID_CONFIG
+    ) -> Path:
         path = directory / "config.toml"
         path.write_text(content, encoding="utf-8")
         return path
@@ -71,7 +79,7 @@ class ConfigContractTest(unittest.TestCase):
 
         self.assertEqual(validation.returncode, 0, validation.stderr)
         self.assertEqual(lookup.returncode, 0, lookup.stderr)
-        self.assertEqual(lookup.stdout.strip(), "100")
+        self.assertEqual(lookup.stdout.strip(), "80")
 
     def test_unknown_key_reports_file_key_and_expected_keys(self) -> None:
         invalid = VALID_CONFIG.replace(
@@ -87,7 +95,7 @@ class ConfigContractTest(unittest.TestCase):
         self.assertIn("expected one of", result.stderr)
 
     def test_invalid_value_reports_expected_type_or_range(self) -> None:
-        invalid = VALID_CONFIG.replace("line_length = 100", "line_length = 0")
+        invalid = VALID_CONFIG.replace("line_length = 80", "line_length = 0")
         with tempfile.TemporaryDirectory() as temporary:
             path = self.write_config(Path(temporary), invalid)
             result = self.run_config("validate", str(path))
@@ -96,7 +104,9 @@ class ConfigContractTest(unittest.TestCase):
         self.assertIn("standards.line_length", result.stderr)
         self.assertIn("positive integer", result.stderr)
 
-    def test_invalid_enum_type_returns_config_error_without_traceback(self) -> None:
+    def test_invalid_enum_type_returns_config_error_without_traceback(
+        self,
+    ) -> None:
         invalid = VALID_CONFIG.replace('mode = "local"', 'mode = ["local"]')
         with tempfile.TemporaryDirectory() as temporary:
             path = self.write_config(Path(temporary), invalid)
@@ -126,7 +136,9 @@ class ManifestContractTest(unittest.TestCase):
             version_path = harness_dir / "VERSION"
             version_path.write_text("0.1.0\n", encoding="utf-8")
             managed_digest = hashlib.sha256(managed.read_bytes()).hexdigest()
-            version_digest = hashlib.sha256(version_path.read_bytes()).hexdigest()
+            version_digest = hashlib.sha256(
+                version_path.read_bytes()
+            ).hexdigest()
             manifest = {
                 "schema_version": 1,
                 "harness_version": "0.1.0",
@@ -149,7 +161,9 @@ class ManifestContractTest(unittest.TestCase):
         self.assertIn("harness", modified.stderr)
         self.assertIn("checksum mismatch", modified.stderr)
 
-    def test_installed_manifest_is_valid_and_contains_relative_paths(self) -> None:
+    def test_installed_manifest_is_valid_and_contains_relative_paths(
+        self,
+    ) -> None:
         result = self.run_manifest("verify", str(REPOSITORY_ROOT))
         self.assertEqual(result.returncode, 0, result.stderr)
 
@@ -159,6 +173,7 @@ class ManifestContractTest(unittest.TestCase):
         for path in manifest["managed_files"]:
             self.assertFalse(Path(path).is_absolute(), path)
             self.assertNotIn("..", Path(path).parts)
+            self.assertNotIn("node_modules", Path(path).parts)
         self.assertNotIn(".harness/config.toml", manifest["managed_files"])
 
 
@@ -181,7 +196,9 @@ class PublicContractTest(unittest.TestCase):
     def configured_test_command(self, command: str) -> str:
         return VALID_CONFIG.replace('test = ""', f'test = "{command}"')
 
-    def test_command_precedence_is_cli_then_environment_then_config(self) -> None:
+    def test_command_precedence_is_cli_then_environment_then_config(
+        self,
+    ) -> None:
         with tempfile.TemporaryDirectory() as temporary:
             target = Path(temporary)
             config = target / "config.toml"
@@ -190,7 +207,9 @@ class PublicContractTest(unittest.TestCase):
                 encoding="utf-8",
             )
 
-            configured = self.run_harness("test", "--config", str(config), str(target))
+            configured = self.run_harness(
+                "test", "--config", str(config), str(target)
+            )
             self.assertEqual(configured.returncode, 0, configured.stderr)
             self.assertEqual((target / "source.txt").read_text(), "config")
 
@@ -199,7 +218,9 @@ class PublicContractTest(unittest.TestCase):
                 "--config",
                 str(config),
                 str(target),
-                environment={"HARNESS_TEST_COMMAND": "printf environment > source.txt"},
+                environment={
+                    "HARNESS_TEST_COMMAND": "printf environment > source.txt"
+                },
             )
             self.assertEqual(environment.returncode, 0, environment.stderr)
             self.assertEqual((target / "source.txt").read_text(), "environment")
@@ -211,7 +232,9 @@ class PublicContractTest(unittest.TestCase):
                 "--command",
                 "printf cli > source.txt",
                 str(target),
-                environment={"HARNESS_TEST_COMMAND": "printf environment > source.txt"},
+                environment={
+                    "HARNESS_TEST_COMMAND": "printf environment > source.txt"
+                },
             )
             self.assertEqual(cli.returncode, 0, cli.stderr)
             self.assertEqual((target / "source.txt").read_text(), "cli")
@@ -233,7 +256,9 @@ class PublicContractTest(unittest.TestCase):
                 "test", "--command", "exit 17", str(target)
             )
             self.assertEqual(delegated.returncode, 1)
-            self.assertIn("project command failed with exit 17", delegated.stderr)
+            self.assertIn(
+                "project command failed with exit 17", delegated.stderr
+            )
 
             isolated = target / "isolated"
             isolated.mkdir()

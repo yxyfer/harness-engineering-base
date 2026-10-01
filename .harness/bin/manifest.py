@@ -17,7 +17,18 @@ MANIFEST_SCHEMA_VERSION = 1
 SEMVER = re.compile(r"^(0|[1-9]\d*)\.(0|[1-9]\d*)\.(0|[1-9]\d*)$")
 HASH = re.compile(r"^sha256:[0-9a-f]{64}$")
 MANAGED_ROOTS = ("harness", ".harness", ".agents/skills")
-IGNORED_PARTS = {"__pycache__", ".pytest_cache", "tmp"}
+IGNORED_PARTS = {
+    "__pycache__",
+    ".mypy_cache",
+    ".next",
+    ".pytest_cache",
+    ".ruff_cache",
+    "build",
+    "coverage",
+    "dist",
+    "node_modules",
+    "tmp",
+}
 IGNORED_SUFFIXES = {".pyc", ".pyo", ".DS_Store"}
 PROJECT_OWNED_PATHS = {
     Path(".harness/config.toml"),

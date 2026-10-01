@@ -64,6 +64,32 @@ in `.harness/config.toml`.
 | `security` | `off`, `local`, or `ci` security mode. |
 | `analysis.exclude` | Relative paths excluded from repository analysis. |
 
+## Engineering standards
+
+The shared baseline lives in `.harness/standards/`, split into four small
+documents for implementation, naming, testing, and architecture. Language
+profiles cover Python, TypeScript/JavaScript, shell, and Markdown. Agents must
+read the shared rules and only the profiles relevant to files they change.
+
+The default line width is 80 characters. Files above 350 maintained source lines
+and Python functions above 50 lines produce advisory cohesion warnings. These
+limits deliberately do not fail the gate: a larger unit may be the clearer
+design, provided the task or a scoped tool setting records why.
+
+`./harness check` detects configured or present profiles. It delegates style and
+correctness to established tools instead of reimplementing their parsers:
+
+| Profile | Formatter | Linter/type check | Test convention |
+| --- | --- | --- | --- |
+| Python | Ruff | Ruff and Pyright | pytest |
+| TypeScript/JavaScript | Prettier | ESLint and strict TypeScript | project runner |
+| Shell | shfmt | ShellCheck | command/exit behaviour |
+| Markdown | formatter/editor wrapping | markdownlint and local-link check | rendered/config evidence |
+
+Missing optional tools are reported as degraded coverage. Project-native
+commands and tool configuration remain authoritative. The fixture projects show
+complete Python and Node configurations aligned to the shared defaults.
+
 Every section and key is validated. Unknown or missing keys, invalid types,
 unsupported values, absolute exclusions, and parent-directory exclusions fail
 with the configuration path, failing key, and expected value.

@@ -21,6 +21,7 @@ class Handler(BaseHTTPRequestHandler):
 
 
 if __name__ == "__main__":
-    server = HTTPServer(("127.0.0.1", int(os.environ.get("PORT", "8000"))), Handler)
+    address = ("127.0.0.1", int(os.environ.get("PORT", "8000")))
+    server = HTTPServer(address, Handler)
     print(f"http://127.0.0.1:{server.server_port}", flush=True)
     server.serve_forever()

@@ -51,10 +51,13 @@ fi
 if [ -f "$TARGET/pyproject.toml" ] || [ -f "$TARGET/requirements.txt" ]; then
   py=$(python_command) || fail 'Python is required for the detected Python project'
   if "$py" -m ruff --version >/dev/null 2>&1; then
-    note 'running ruff'
+    note 'checking Python formatting with ruff'
+    run_project_command "$py" -m ruff format --check .
+    note 'linting Python with ruff'
     run_project_command "$py" -m ruff check .
   else
-    note 'ruff not detected; parsing Python sources for syntax errors'
+    warn 'ruff not detected; formatting and lint checks are degraded'
+    note 'parsing Python sources for syntax errors'
     run_project_command "$py" -c '
 import ast
 from pathlib import Path
@@ -65,6 +68,12 @@ for path in Path(".").rglob("*.py"):
         continue
     ast.parse(path.read_text(encoding="utf-8"), filename=str(path))
 '
+  fi
+  if "$py" -m pyright --version >/dev/null 2>&1; then
+    note 'type-checking Python with pyright'
+    run_project_command "$py" -m pyright .
+  else
+    warn 'pyright not detected; Python type checking was skipped'
   fi
   ran_project_check=1
 fi

@@ -1,11 +1,13 @@
 # Quality Context
 
-Status: needs-project-input
+Status: current
 
 ## Quality bar
 
-Define the behaviours that must be correct, resilient, understandable, and
-observable for this product.
+Harness commands must resolve deterministically, preserve project ownership,
+fail with actionable messages, and report only evidence they actually ran. The
+engineering baseline must remain concise, language-idiomatic, and executable
+through project-owned tools.
 
 ## Verification matrix
 
@@ -18,13 +20,50 @@ observable for this product.
 
 ## Test strategy
 
-Document unit, integration, contract, end-to-end, accessibility, performance, and
-manual checks in proportion to actual risk.
+Contract tests cover configuration, manifests, profile selection, exclusions,
+and exit behaviour. Both fixture projects exercise static checks, automated
+tests, and smoke paths. Changes to command behaviour require regression coverage;
+documentation-only changes require link and consistency checks.
 
 ## Known limitations
 
-- TBD
+- Optional developer tools are not installed by the harness yet. Missing tools
+  are reported as degraded coverage until Phase 4 adds setup and doctor flows.
+- Generic function-size analysis is Python-aware only. Other profiles rely on
+  their project linters rather than fragile harness parsing.
 
 ## Release criteria
 
-List the required evidence, approver, rollback readiness, and monitoring signals.
+A phase is complete only when `./harness check`, `./harness test`, and relevant
+fixture smoke paths pass and a verification report records exact evidence and
+limitations.
+
+## Target quality policy agreed on 2026-10-01
+
+The following is the intended policy from the [product vision](PRODUCT.md).
+Current enforcement remains limited to the implementation described above and
+the [audit findings](../verification/AUDIT_2026_10_01.md).
+
+- Automated test execution and grading are entirely programmatic. No secondary
+  AI calls, LLM reviewers, or model-based screenshot judgments are permitted in
+  the verification pipeline.
+- Application tests and harness self-tests are separate suites. Missing declared
+  runners, uncollected required cases, missing evidence, or unknown scope must
+  not produce a fully verified result.
+- Test meaningful outcomes and negative cases at the actual boundary. Use
+  disposable persistence for storage claims and direct server requests for
+  authorization claims. Identify mocked external integrations explicitly.
+- Use browser interaction assertions, automated accessibility rules, and pixel
+  comparisons against deliberately approved baselines for measurable UI quality.
+  Human product/design judgment is not represented as an automated pass.
+- Coverage, mutation results, duplication, and source size are supporting
+  evidence. No single percentage or composite score establishes quality.
+- Gates select relevant language/framework/capability controls and explain their
+  scope. Local partial runs are explicit; required CI suites remain complete.
+- Record failed retries and reviewable exceptions. Do not silently disable a
+  test, lower a threshold, update a baseline, or change the runner to pass.
+- Bind reports to source, configuration, lockfiles, tools, and evidence. A later
+  edit invalidates an earlier completion claim for affected behaviour.
+
+The initial implementation milestone fixes the audit's false-success paths and
+adds CI before expanding installation/update functionality.

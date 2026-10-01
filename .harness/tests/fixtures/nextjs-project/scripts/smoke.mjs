@@ -6,12 +6,19 @@ const child = spawn(process.execPath, ["scripts/server.mjs"], {
 
 try {
   const url = await new Promise((resolve, reject) => {
-    const timeout = setTimeout(() => reject(new Error("server did not become ready")), 3000);
-    child.once("exit", (code) => reject(new Error(`server exited before smoke check (${code})`)));
+    const timeout = setTimeout(
+      () => reject(new Error("server did not become ready")),
+      3000,
+    );
+    child.once("exit", (code) =>
+      reject(new Error(`server exited before smoke check (${code})`)),
+    );
     child.stdout.once("data", (chunk) => {
       clearTimeout(timeout);
       const match = chunk.toString().match(/http:\/\/127\.0\.0\.1:\d+/);
-      match ? resolve(match[0]) : reject(new Error("server did not report its URL"));
+      match
+        ? resolve(match[0])
+        : reject(new Error("server did not report its URL"));
     });
   });
   const response = await fetch(url);

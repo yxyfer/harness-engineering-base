@@ -4,8 +4,19 @@
   "type": "module",
   "scripts": {
     "dev": "node scripts/server.mjs",
-    "check": "node --check app/content.js && node --check scripts/server.mjs && node --check scripts/smoke.mjs",
+    "check": "npm run format:check && npm run lint && npm run typecheck",
+    "format:check": "prettier --check .",
+    "lint": "eslint .",
+    "typecheck": "tsc --noEmit",
     "test": "node --test",
     "smoke": "node scripts/smoke.mjs"
+  },
+  "devDependencies": {
+    "@eslint/js": "10.0.1",
+    "@types/node": "26.5.0",
+    "eslint": "10.10.0",
+    "globals": "17.12.0",
+    "prettier": "3.9.6",
+    "typescript": "7.0.2"
   }
 }

@@ -1,0 +1,173 @@
+{
+  "pytest_fallback": {
+    "harness": {
+      "command": [
+        "<repository>/harness",
+        "test",
+        "<temporary>/pytest without dependency"
+      ],
+      "cwd": "<temporary>/pytest without dependency",
+      "exit": 1,
+      "stdout": "harness test: pytest not detected; running unittest discovery\n",
+      "stderr": "\n----------------------------------------------------------------------\nRan 0 tests in 0.000s\n\nNO TESTS RAN\nharness test: project command failed with exit 5\n"
+    },
+    "direct_assertion": {
+      "command": [
+        "<temporary>/pytest without dependency/.venv/bin/python",
+        "-c",
+        "import runpy; runpy.run_path('<temporary>/pytest without dependency/tests/test_failure.py')['test_failure']()"
+      ],
+      "cwd": "<temporary>/pytest without dependency",
+      "exit": 1,
+      "stdout": "",
+      "stderr": "Traceback (most recent call last):\n  File \"<string>\", line 1, in <module>\n    import runpy; runpy.run_path('<temporary>/pytest without dependency/tests/test_failure.py')['test_failure']()\n                  ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^\n  File \"<temporary>/pytest without dependency/tests/test_failure.py\", line 2, in test_failure\n    assert False\n           ^^^^^\nAssertionError\n"
+    }
+  },
+  "mixed_suite_skips_pytest_failure": {
+    "command": [
+      "<repository>/harness",
+      "test",
+      "<temporary>/pytest without dependency"
+    ],
+    "cwd": "<temporary>/pytest without dependency",
+    "exit": 0,
+    "stdout": "harness test: pytest not detected; running unittest discovery\n",
+    "stderr": ".\n----------------------------------------------------------------------\nRan 1 test in 0.000s\n\nOK\n"
+  },
+  "internal_tests_shadow_project": {
+    "harness": {
+      "command": [
+        "<temporary>/adopted Python project/harness",
+        "test"
+      ],
+      "cwd": "<temporary>/adopted Python project",
+      "exit": 0,
+      "stdout": "harness test: running harness contract tests\n",
+      "stderr": "..............\n----------------------------------------------------------------------\nRan 14 tests in 1.984s\n\nOK\n"
+    },
+    "direct_project_tests": {
+      "command": [
+        "/opt/homebrew/opt/python@3.14/bin/python3.14",
+        "-m",
+        "unittest",
+        "discover",
+        "-s",
+        "tests"
+      ],
+      "cwd": "<temporary>/adopted Python project",
+      "exit": 1,
+      "stdout": "",
+      "stderr": "F\n======================================================================\nFAIL: test_failure (test_app.Application.test_failure)\n----------------------------------------------------------------------\nTraceback (most recent call last):\n  File \"<temporary>/adopted Python project/tests/test_app.py\", line 4, in test_failure\n    self.fail('application broken')\n    ~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^\nAssertionError: application broken\n\n----------------------------------------------------------------------\nRan 1 test in 0.000s\n\nFAILED (failures=1)\n"
+    }
+  },
+  "extensionless_profiles": {
+    ".harness/checks/architecture/check": {
+      "shebang": "#!/usr/bin/env python3",
+      "classified_as": "shell"
+    },
+    ".harness/checks/demo-integrity/check": {
+      "shebang": "#!/usr/bin/env python3",
+      "classified_as": "shell"
+    },
+    ".harness/checks/documentation/check": {
+      "shebang": "#!/usr/bin/env python3",
+      "classified_as": "shell"
+    },
+    ".harness/checks/provenance/check": {
+      "shebang": "#!/usr/bin/env python3",
+      "classified_as": "shell"
+    },
+    ".harness/checks/standards/check": {
+      "shebang": "#!/usr/bin/env python3",
+      "classified_as": "shell"
+    }
+  },
+  "nested_exclusion": {
+    "command": [
+      "<repository>/harness",
+      "check",
+      "--config",
+      "<temporary>/nested exclusion/config.toml",
+      "<temporary>/nested exclusion"
+    ],
+    "cwd": "<temporary>/nested exclusion",
+    "exit": 0,
+    "stdout": "harness check: running policy checks from <repository>/.harness/checks\narchitecture: skip (AGENTS.md not present)\ndocumentation: pass (0 Markdown files)\nprovenance: skip (AGENTS.md not present)\ndemo-integrity: pass (no strong live/production claims detected)\nstandards: profiles=[\"python\"]\nstandards: thresholds=line:80,file-warning:350,function-warning:50\nstandards: warning: src/generated/large.py has 400 lines (threshold 350); review cohesion or record a scoped rationale in the task/tool config\nstandards: pass\nharness check: complete\n",
+    "stderr": "harness check: warning: no project-native static check detected\n"
+  },
+  "documentation_ignores_exclusion": {
+    "command": [
+      "<repository>/harness",
+      "check",
+      "<temporary>/excluded broken markdown"
+    ],
+    "cwd": "<temporary>/excluded broken markdown",
+    "exit": 1,
+    "stdout": "harness check: running policy checks from <repository>/.harness/checks\narchitecture: skip (AGENTS.md not present)\n",
+    "stderr": "documentation: broken local links:\n  generated/README.md -> not-present.md\nharness check: policy check 'documentation' failed with exit 1\n"
+  },
+  "override_still_runs_auto_python": {
+    "command": [
+      "<repository>/harness",
+      "check",
+      "--command",
+      "true",
+      "<temporary>/explicit Python check"
+    ],
+    "cwd": "<temporary>/explicit Python check",
+    "exit": 1,
+    "stdout": "harness check: running policy checks from <repository>/.harness/checks\narchitecture: skip (AGENTS.md not present)\ndocumentation: pass (0 Markdown files)\nprovenance: skip (AGENTS.md not present)\ndemo-integrity: pass (no strong live/production claims detected)\nstandards: profiles=[\"python\"]\nstandards: thresholds=line:80,file-warning:350,function-warning:50\nstandards: pass\nharness check: running command from cli\nharness check: parsing Python sources for syntax errors\n",
+    "stderr": "harness check: warning: ruff not detected; formatting and lint checks are degraded\nTraceback (most recent call last):\n  File \"<string>\", line 9, in <module>\n    ast.parse(path.read_text(encoding=\"utf-8\"), filename=str(path))\n    ~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/opt/homebrew/Cellar/python@3.14/3.14.0/Frameworks/Python.framework/Versions/3.14/lib/python3.14/ast.py\", line 46, in parse\n    return compile(source, filename, mode, flags,\n                   _feature_version=feature_version, optimize=optimize)\n  File \"bad.py\", line 1\n    def broken(:\n               ^\nSyntaxError: invalid syntax\nharness check: project command failed with exit 1\n"
+  },
+  "future_configuration_inert": {
+    "command": [
+      "<repository>/harness",
+      "check",
+      "--config",
+      "<temporary>/readiness flag/config.toml",
+      "<temporary>/readiness flag"
+    ],
+    "cwd": "<temporary>/readiness flag",
+    "exit": 0,
+    "stdout": "harness check: running policy checks from <repository>/.harness/checks\narchitecture: pass\ndocumentation: warning: project input needed in docs/PRODUCT.md, docs/DATA.md, docs/DESIGN.md, docs/SECURITY.md\ndocumentation: pass (8 Markdown files)\nprovenance: pass\ndemo-integrity: pass (classification context present for 1 claim file(s))\nstandards: profiles=[\"markdown\"]\nstandards: thresholds=line:80,file-warning:350,function-warning:50\nstandards: warning: markdownlint-cli2 unavailable; check skipped\nstandards: pass\nharness check: complete\n",
+    "stderr": "harness check: warning: no project-native static check detected\n"
+  },
+  "fixture_venv_becomes_managed": {
+    "command": [
+      "/opt/homebrew/opt/python@3.14/bin/python3.14",
+      "<repository>/.harness/bin/manifest.py",
+      "verify",
+      "<temporary>/custom project skill"
+    ],
+    "cwd": "<temporary>/custom project skill",
+    "exit": 5,
+    "stdout": "",
+    "stderr": "manifest: <temporary>/custom project skill: unrecorded managed file: .harness/tests/fixtures/python-project/.venv/bin/Activate.ps1\n"
+  },
+  "project_skill_becomes_managed": {
+    "before": {
+      "command": [
+        "/opt/homebrew/opt/python@3.14/bin/python3.14",
+        "<repository>/.harness/bin/manifest.py",
+        "verify",
+        "<temporary>/custom project skill"
+      ],
+      "cwd": "<temporary>/custom project skill",
+      "exit": 0,
+      "stdout": "manifest: valid (schema 1, 54 managed files)\n",
+      "stderr": ""
+    },
+    "after": {
+      "command": [
+        "/opt/homebrew/opt/python@3.14/bin/python3.14",
+        "<repository>/.harness/bin/manifest.py",
+        "verify",
+        "<temporary>/custom project skill"
+      ],
+      "cwd": "<temporary>/custom project skill",
+      "exit": 5,
+      "stdout": "",
+      "stderr": "manifest: <temporary>/custom project skill: unrecorded managed file: .agents/skills/project-specific/SKILL.md\n"
+    }
+  }
+}

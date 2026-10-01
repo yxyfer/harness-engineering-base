@@ -11,10 +11,16 @@ test = ""
 smoke = ""
 
 [checks]
-required = ["architecture", "documentation", "provenance", "demo-integrity"]
+required = [
+  "architecture",
+  "documentation",
+  "provenance",
+  "demo-integrity",
+  "standards",
+]
 
 [standards]
-line_length = 100
+line_length = 80
 file_lines_warning = 350
 function_lines_warning = 50
 
@@ -42,4 +48,10 @@ exclude = [
   "build",
   "coverage",
   "__pycache__",
+  "vendor",
+  "vendors",
+  "generated",
+  "migrations",
+  "schemas",
+  "fixtures",
 ]

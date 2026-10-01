@@ -1,10 +1,16 @@
 # Plan: Project Harness v2 — installable, enforceable project baseline
 
-- **Status:** active
+- **Status:** phases 1–3 implemented; remaining sequence superseded
 - **Owner:** repository owner
 - **Created:** 2026-09-08
 - **Target completion:** not time-bound
 - **Related tasks:** create one task per phase from the repository task template
+
+On 2026-10-01, the user prioritised application safety, user experience, code
+quality, customer consistency, and entirely programmatic verification. Follow
+[the quality-first plan](QUALITY_FIRST_HARNESS.md) for new work. This document
+retains the original roadmap and completed-phase evidence; its unfinished
+capabilities are not delivered or marked complete.
 
 ## Objective
 
@@ -151,12 +157,12 @@ Phase 1.
 
 | Choice | Proposed default | Decide by |
 | --- | --- | --- |
-| Shared line width | 100 characters | Phase 3 |
-| Large file warning | 350 source lines | Phase 3 |
-| Large function warning | 50 source lines | Phase 3 |
-| Python tools | Ruff format/lint, Pyright, pytest | Phase 3 |
-| TypeScript tools | Project-compatible formatter, ESLint, strict TypeScript | Phase 3 |
-| Markdown tools | Markdownlint plus link check | Phase 3 |
+| Shared line width | 80 characters | Resolved in Phase 3 |
+| Large file warning | 350 source lines | Resolved in Phase 3 |
+| Large function warning | 50 source lines | Resolved in Phase 3 |
+| Python tools | Ruff format/lint, Pyright, pytest | Resolved in Phase 3 |
+| TypeScript tools | Prettier, ESLint, strict TypeScript | Resolved in Phase 3 |
+| Markdown tools | Markdownlint plus link check | Resolved in Phase 3 |
 | Exception expiry | Required, maximum 90 days by default | Phase 6 |
 | Readiness levels | ready, needs-input, blocked | Phase 4 |
 | Harness release scheme | Semantic versioning; initial version `0.1.0` | Resolved in Phase 2 |
@@ -280,6 +286,9 @@ have one documented and machine-readable contract.
 ---
 
 ### Phase 3 — Establish enforceable engineering and architecture standards
+
+**Status:** completed on 2026-09-08. Evidence is recorded in
+`verification/PHASE_3_ENGINEERING_STANDARDS.md`.
 
 **Outcome:** The repository defines a consistent baseline while retaining
 language idioms and allowing justified exceptions.
@@ -672,8 +681,8 @@ For each phase:
 | --- | --- | --- | --- |
 | 1. Three-layer structure | complete | `verification/PHASE_1_THREE_LAYER_STRUCTURE.md` | Completed 2026-09-08 at `24e2c3e` |
 | 2. Contract and configuration | complete | `verification/PHASE_2_VERSIONED_CONFIGURATION.md` | Completed 2026-09-08; version `0.1.0`, schema `1` |
-| 3. Standards and principles | next | Not started | Confirm numeric/tool defaults |
-| 4. Health and readiness | proposed | Not started | Uses config and standards |
+| 3. Standards and principles | complete | `verification/PHASE_3_ENGINEERING_STANDARDS.md` | Completed 2026-09-08; 80/350/50 defaults |
+| 4. Health and readiness | next | Not started | Uses config and standards |
 | 5. Init, adopt, and bootstrap skill | proposed | Not started | Uses doctor and readiness |
 | 6. Governed exceptions | proposed | Not started | Integrates with all checks |
 | 7. Security automation | proposed | Not started | Uses exception mechanism |

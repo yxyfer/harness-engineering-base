@@ -4,6 +4,11 @@ This file governs all work in this repository. Read it before changing code, and
 read the canonical context under `docs/` before making product or architectural
 decisions.
 
+Before editing source, also read `.harness/standards/BASE.md`,
+`NAMING.md`, `TESTING.md`, and `ARCHITECTURE.md`, plus every relevant profile
+under `.harness/standards/languages/`. Tool configuration is authoritative when
+it is more specific than prose.
+
 ## Sources of truth
 
 Use the narrowest authoritative source in this order:
@@ -73,6 +78,18 @@ test, or smoke behaviour.
   to discard the local version.
 - Keep literal credentials, tokens, and machine-specific absolute paths out of
   committed harness configuration.
+
+## Engineering baseline
+
+- Use an 80-character line width unless a project records a compatible
+  exception. URLs, generated content, tables, and indivisible tokens may remain
+  longer where wrapping harms usability.
+- Treat files above 350 maintained source lines and functions above 50 lines as
+  cohesion review prompts, not automatic failures.
+- Use formatter, linter, type-checker, and test settings from the relevant
+  language profile. Keep suppressions narrow and explain non-obvious reasons.
+- Apply TDD to defects and core behaviour where it improves feedback. Apply DRY
+  to shared knowledge after the common concept is clear; neither is a ritual.
 
 ## Definition of done
 

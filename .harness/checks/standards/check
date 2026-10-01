@@ -1,0 +1,180 @@
+#!/usr/bin/env python3
+"""Select relevant standards and report advisory source-size findings."""
+
+from __future__ import annotations
+
+import ast
+import json
+import os
+from pathlib import Path
+import shutil
+import subprocess
+import sys
+import tomllib
+
+
+SOURCE_SUFFIXES = {
+    "python": {".py"},
+    "typescript": {".js", ".jsx", ".mjs", ".cjs", ".ts", ".tsx"},
+    "shell": {".sh"},
+    "markdown": {".md", ".mdx"},
+}
+SIZE_PROFILES = {"python", "typescript", "shell"}
+
+
+def load_config(target: Path) -> dict:
+    configured = os.environ.get("CONFIG_PATH")
+    project_config = target / ".harness" / "config.toml"
+    if configured:
+        path = Path(configured)
+    elif project_config.is_file():
+        path = project_config
+    else:
+        path = Path(__file__).resolve().parents[2] / "config.toml"
+    with path.open("rb") as stream:
+        return tomllib.load(stream)
+
+
+def is_excluded(path: Path, excluded: set[str]) -> bool:
+    return bool(set(path.parts) & excluded)
+
+
+def maintained_files(target: Path, excluded: set[str]) -> list[Path]:
+    files = []
+    for path in target.rglob("*"):
+        if not path.is_file():
+            continue
+        relative = path.relative_to(target)
+        if is_excluded(relative, excluded):
+            continue
+        known_suffix = any(
+            path.suffix in suffixes for suffixes in SOURCE_SUFFIXES.values()
+        )
+        if known_suffix:
+            files.append(path)
+            continue
+        if path.stat().st_mode & 0o111:
+            try:
+                if path.open("rb").readline().startswith(b"#!"):
+                    files.append(path)
+            except OSError:
+                pass
+    return sorted(files)
+
+
+def profiles_for(files: list[Path], configured: list[str]) -> list[str]:
+    if configured != ["auto"]:
+        return configured
+    detected = set()
+    for path in files:
+        for profile, suffixes in SOURCE_SUFFIXES.items():
+            if path.suffix in suffixes:
+                detected.add(profile)
+        if path.suffix == "" and path.stat().st_mode & 0o111:
+            detected.add("shell")
+    return sorted(detected)
+
+
+def profile_for(path: Path) -> str | None:
+    for profile, suffixes in SOURCE_SUFFIXES.items():
+        if path.suffix in suffixes:
+            return profile
+    if path.suffix == "" and path.stat().st_mode & 0o111:
+        return "shell"
+    return None
+
+
+def line_count(path: Path) -> int:
+    try:
+        return len(path.read_text(encoding="utf-8").splitlines())
+    except (OSError, UnicodeDecodeError):
+        return 0
+
+
+def python_function_warnings(path: Path, limit: int) -> list[tuple[int, str]]:
+    try:
+        tree = ast.parse(path.read_text(encoding="utf-8"), filename=str(path))
+    except (OSError, UnicodeDecodeError, SyntaxError):
+        return []
+    warnings = []
+    for node in ast.walk(tree):
+        if isinstance(node, (ast.FunctionDef, ast.AsyncFunctionDef)):
+            lines = (node.end_lineno or node.lineno) - node.lineno + 1
+            if lines > limit:
+                warnings.append((lines, node.name))
+    return warnings
+
+
+def run_optional(command: list[str], target: Path, label: str) -> bool:
+    executable = command[0]
+    if shutil.which(executable) is None:
+        print(f"standards: warning: {label} unavailable; check skipped")
+        return True
+    result = subprocess.run(command, cwd=target, check=False)
+    return result.returncode == 0
+
+
+def main() -> int:
+    target = Path(sys.argv[1] if len(sys.argv) > 1 else ".").resolve()
+    config = load_config(target)
+    excluded = set(config["analysis"]["exclude"])
+    files = maintained_files(target, excluded)
+    profiles = profiles_for(files, config["project"]["profiles"])
+    limits = config["standards"]
+    print(f"standards: profiles={json.dumps(profiles, separators=(',', ':'))}")
+    print(
+        "standards: thresholds="
+        f"line:{limits['line_length']},"
+        f"file-warning:{limits['file_lines_warning']},"
+        f"function-warning:{limits['function_lines_warning']}"
+    )
+
+    for path in files:
+        profile = profile_for(path)
+        if profile not in profiles or profile not in SIZE_PROFILES:
+            continue
+        relative = path.relative_to(target)
+        lines = line_count(path)
+        if lines > limits["file_lines_warning"]:
+            print(
+                "standards: warning: "
+                f"{relative} has {lines} lines "
+                f"(threshold {limits['file_lines_warning']}); review cohesion "
+                "or record a scoped rationale in the task/tool config"
+            )
+        if profile == "python":
+            for function_lines, name in python_function_warnings(
+                path, limits["function_lines_warning"]
+            ):
+                print(
+                    "standards: warning: "
+                    f"{relative}:{name} has {function_lines} lines "
+                    f"(threshold {limits['function_lines_warning']}); "
+                    "review cohesion or record a scoped rationale in the "
+                    "task/tool config"
+                )
+
+    passed = True
+    shell_files = [
+        str(path.relative_to(target))
+        for path in files
+        if profile_for(path) == "shell"
+    ]
+    if "shell" in profiles and shell_files:
+        passed &= run_optional(
+            ["shellcheck", *shell_files], target, "ShellCheck"
+        )
+        passed &= run_optional(
+            ["shfmt", "-d", "-i", "2", *shell_files], target, "shfmt"
+        )
+    if "markdown" in profiles:
+        passed &= run_optional(
+            ["markdownlint-cli2", "**/*.md"], target, "markdownlint-cli2"
+        )
+
+    print("standards: pass" if passed else "standards: fail")
+    return 0 if passed else 1
+
+
+if __name__ == "__main__":
+    raise SystemExit(main())

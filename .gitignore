@@ -50,6 +50,9 @@ yarn-error.log*
 !.agents/
 !.agents/skills/
 !.agents/skills/**
+!.editorconfig
+!.shellcheckrc
+!.markdownlint-cli2.jsonc
 
 # typescript
 *.tsbuildinfo

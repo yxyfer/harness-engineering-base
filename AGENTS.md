@@ -53,6 +53,7 @@ durable choice in the appropriate context file or decision record.
 ./harness setup
 ./harness start
 ./harness inspect
+./harness doctor
 ./harness check
 ./harness test
 ./harness self-test

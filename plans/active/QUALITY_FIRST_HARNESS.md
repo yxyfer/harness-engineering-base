@@ -77,30 +77,31 @@ exist. Partially verified steps stay incomplete.
 
 ## Delivery sequence and checkpoints
 
-Steps 01-04 are **complete**; Steps 05-19 are **not started**. Proposed paths may
+Steps 01-06 are **complete locally**; Steps 07-19 are **not started**. Step 05's
+remote execution is unverified. Proposed paths may
 use established equivalents if implementation records the mapping.
 
-| Step | Deliverable                                                                                           | Depends on | Status                                  |
-| ---- | ----------------------------------------------------------------------------------------------------- | ---------- | --------------------------------------- |
-| 01   | [Baseline and acceptance cases](../../tasks/TASK-004-QUALITY-BASELINE.md)                             | None       | [Complete](../../verification/QH-01.md) |
-| 02   | [Correct application test routing](../../tasks/TASK-005-APPLICATION-TEST-ROUTING.md)                  | 01         | [Complete](../../verification/QH-02.md) |
-| 03   | [Consistent discovery and command precedence](../../tasks/TASK-006-DISCOVERY-AND-CHECK-PRECEDENCE.md) | 02         | [Complete](../../verification/QH-03.md) |
-| 04   | [Correct managed-file ownership](../../tasks/TASK-007-RELEASE-OWNERSHIP.md)                           | 03         | [Complete](../../verification/QH-04.md) |
-| 05   | CI for the repaired harness                                                                           | 04         | Not started                             |
-| 06   | Relevant profiles and prerequisite diagnostics                                                        | 05         | Not started                             |
-| 07   | Native formatting and static checks                                                                   | 06         | Not started                             |
-| 08   | Complete verification and trustworthy reports                                                         | 07         | Not started                             |
-| 09   | Security checks and isolated verification                                                             | 08         | Not started                             |
-| 10   | Real Next.js foundation and shared UI                                                                 | 09         | Not started                             |
-| 11   | Secure server operations and real persistence                                                         | 10         | Not started                             |
-| 12   | Complete application journey tests                                                                    | 11         | Not started                             |
-| 13   | Accessibility, visual and performance checks                                                          | 12         | Not started                             |
-| 14   | Useful Python reference application                                                                   | 09         | Not started                             |
-| 15   | Stronger tests for critical decisions                                                                 | 12, 14     | Not started                             |
-| 16   | Full CI enforcement and concise agent guidance                                                        | 13, 15     | Not started                             |
-| 17   | Real-project pilot and usefulness assessment                                                          | 16         | Not started                             |
-| 18   | Safe adoption and updates where justified                                                             | 17         | Not started                             |
-| 19   | Release rehearsal and operating handover                                                              | 18         | Not started                             |
+| Step | Deliverable                                                                                           | Depends on | Status                                                             |
+| ---- | ----------------------------------------------------------------------------------------------------- | ---------- | ------------------------------------------------------------------ |
+| 01   | [Baseline and acceptance cases](../../tasks/TASK-004-QUALITY-BASELINE.md)                             | None       | [Complete](../../verification/QH-01.md)                            |
+| 02   | [Correct application test routing](../../tasks/TASK-005-APPLICATION-TEST-ROUTING.md)                  | 01         | [Complete](../../verification/QH-02.md)                            |
+| 03   | [Consistent discovery and command precedence](../../tasks/TASK-006-DISCOVERY-AND-CHECK-PRECEDENCE.md) | 02         | [Complete](../../verification/QH-03.md)                            |
+| 04   | [Correct managed-file ownership](../../tasks/TASK-007-RELEASE-OWNERSHIP.md)                           | 03         | [Complete](../../verification/QH-04.md)                            |
+| 05   | [Core CI](../../tasks/TASK-008-CORE-CI.md)                                                            | 04         | [Complete locally; remote unverified](../../verification/QH-05.md) |
+| 06   | [Relevant profiles and prerequisite diagnostics](../../tasks/TASK-009-PROFILES-AND-DOCTOR.md)         | 05         | [Complete locally](../../verification/QH-06.md)                    |
+| 07   | Native formatting and static checks                                                                   | 06         | Not started                                                        |
+| 08   | Complete verification and trustworthy reports                                                         | 07         | Not started                                                        |
+| 09   | Security checks and isolated verification                                                             | 08         | Not started                                                        |
+| 10   | Real Next.js foundation and shared UI                                                                 | 09         | Not started                                                        |
+| 11   | Secure server operations and real persistence                                                         | 10         | Not started                                                        |
+| 12   | Complete application journey tests                                                                    | 11         | Not started                                                        |
+| 13   | Accessibility, visual and performance checks                                                          | 12         | Not started                                                        |
+| 14   | Useful Python reference application                                                                   | 09         | Not started                                                        |
+| 15   | Stronger tests for critical decisions                                                                 | 12, 14     | Not started                                                        |
+| 16   | Full CI enforcement and concise agent guidance                                                        | 13, 15     | Not started                                                        |
+| 17   | Real-project pilot and usefulness assessment                                                          | 16         | Not started                                                        |
+| 18   | Safe adoption and updates where justified                                                             | 17         | Not started                                                        |
+| 19   | Release rehearsal and operating handover                                                              | 18         | Not started                                                        |
 
 | Checkpoint | Original slice     | What is usable                          | Continue when                                             |
 | ---------- | ------------------ | --------------------------------------- | --------------------------------------------------------- |
@@ -1016,5 +1017,11 @@ cases; both fixture smokes pass after recorded permission retries. Consumer
 content and conflict evidence remain preserved. Optional native-tool gaps and
 undefined root smoke remain visible.
 
-Step 05 is next eligible. No later step has started, and future application
+Step 05 is complete locally: [TASK-008](../../tasks/TASK-008-CORE-CI.md) and
+[QH-05](../../verification/QH-05.md) record pinned macOS CI, locked clean setup,
+actual native tools, both 61-case core suites, fixture tests/smokes and rejected
+negative controls. Remote execution is unverified; protection settings are
+unchanged. Root smoke remains undefined.
+
+Step 06 is next eligible. No later step has started, and future application
 journey acceptance cases remain specifications, not execution evidence.

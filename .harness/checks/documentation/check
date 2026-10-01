@@ -6,11 +6,15 @@ from urllib.parse import unquote
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[2] / "bin"))
 from source_paths import load_config, walk_files
+from profiles import resolve
+from readiness import context_status
 
 target = Path(sys.argv[1] if len(sys.argv) > 1 else ".").resolve()
+config = load_config(target)
+selection = resolve(target, config)
 markdown_files = [
     path
-    for path in walk_files(target, load_config(target)["analysis"]["exclude"])
+    for path in walk_files(target, config["analysis"]["exclude"])
     if path.suffix == ".md"
 ]
 
@@ -40,15 +44,13 @@ if errors:
         print(f"  {error}", file=sys.stderr)
     raise SystemExit(1)
 
-unfinished = []
-for path in markdown_files:
-    if path != target / "AGENTS.md" and path.parent != target / "docs":
-        continue
-    if "Status: needs-project-input" in path.read_text(encoding="utf-8"):
-        unfinished.append(str(path.relative_to(target)))
-if unfinished:
-    print(
-        f"documentation: warning: project input needed in {', '.join(unfinished)}"
-    )
+if config["schema_version"] == 2 or (target / "AGENTS.md").exists():
+    context = context_status(target, config, selection)
+    for row in context:
+        if row["state"] != "present":
+            print(f"documentation: context {row['path']}: {row['state']}")
+    if any(row["blocking"] for row in context):
+        print("documentation: required context is not ready", file=sys.stderr)
+        raise SystemExit(1)
 
 print(f"documentation: pass ({len(markdown_files)} Markdown files)")

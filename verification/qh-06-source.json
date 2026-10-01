@@ -1,0 +1,9 @@
+{
+  ".harness/manifest.json": "6ff86de62bb5d358265b5b9919616926a0a15d7e5ef8de14d8c45d79fa1e34c9",
+  ".harness/config.toml": "a97a81da6a72b8f09df5fc49478050fe8c7fc090d5982bcc2cf3453b84178597",
+  ".harness/ci/run.py": "11e7f043fada7222998ece59e6152d933b164afa5ebc13a6dd40505e968c7299",
+  ".harness/ci/package-lock.json": "036be1f4f0cef0bd608b959865cb2e5234dcfb05293c00cd7f421d3acbaaa4bb",
+  ".harness/ci/requirements.lock": "8a17bdb0ef6c9b67c14efef85cbb25e652c5274253e10684e685e60541ad0abf",
+  "pyrightconfig.json": "de42960ba260802752e6313b944de8f5031468ee30aa17d2ed2e58fa4f96b36d",
+  ".markdownlint-cli2.jsonc": "c14c4f3cf2af4e52a0cddedb9e20fd8cd2fd9d2be3b0c42c1ecd94605de8e430"
+}

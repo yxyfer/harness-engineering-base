@@ -12,6 +12,7 @@ import sys
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[2] / "bin"))
 from source_paths import load_config, profile_for, walk_files
+from profiles import resolve, print_selection
 
 
 SIZE_PROFILES = {"python", "typescript", "shell"}
@@ -19,12 +20,6 @@ SIZE_PROFILES = {"python", "typescript", "shell"}
 
 def maintained_files(target: Path, excluded: list[str]) -> list[Path]:
     return [path for path in walk_files(target, excluded) if profile_for(path)]
-
-
-def profiles_for(files: list[Path], configured: list[str]) -> list[str]:
-    if configured != ["auto"]:
-        return configured
-    return sorted({profile_for(path) for path in files} - {None})
 
 
 def line_count(path: Path) -> int:
@@ -62,7 +57,9 @@ def main() -> int:
     config = load_config(target)
     excluded = config["analysis"]["exclude"]
     files = maintained_files(target, excluded)
-    profiles = profiles_for(files, config["project"]["profiles"])
+    selection = resolve(target, config)
+    print_selection(selection)
+    profiles = selection["profiles"]
     limits = config["standards"]
     print(f"standards: profiles={json.dumps(profiles, separators=(',', ':'))}")
     print(
@@ -97,7 +94,7 @@ def main() -> int:
                     "task/tool config"
                 )
 
-    passed = True
+    passed = not selection["issues"]
     shell_files = [
         str(path.relative_to(target))
         for path in files

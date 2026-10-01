@@ -19,6 +19,9 @@ else
 fi
 printf '  configuration: %s (%s)\n' "${CONFIG_PATH}" "${CONFIG_SOURCE}"
 python3 "${CONFIG_TOOL}" summary "${CONFIG_PATH}" "${CONFIG_SOURCE}" | sed 's/^/    /'
+# Inspection reports blockers without losing command/context diagnostics.
+selection_status=0
+python3 "${KIT_ROOT}/bin/profiles.py" summary "${TARGET}" "${CONFIG_PATH}" || selection_status=$?
 
 printf '  command resolution:\n'
 for action in setup start check test smoke; do
@@ -128,22 +131,7 @@ else
 fi
 
 printf '  context:\n'
-for context_file in AGENTS.md PRODUCT.md ARCHITECTURE.md DESIGN.md DATA.md QUALITY.md SECURITY.md DECISIONS.md; do
-  if [ "${context_file}" = AGENTS.md ]; then
-    context_path="${TARGET}/${context_file}"
-  else
-    context_path="${TARGET}/docs/${context_file}"
-  fi
-  if [ -f "${context_path}" ]; then
-    if grep -q 'Status: needs-project-input' "${context_path}"; then
-      printf '    needs input: %s\n' "${context_file}"
-    else
-      printf '    present: %s\n' "${context_file}"
-    fi
-  else
-    printf '    missing: %s\n' "${context_file}"
-  fi
-done
+python3 "${KIT_ROOT}/bin/readiness.py" "${TARGET}" "${CONFIG_PATH}"
 
 printf '  policy checks: %s/checks\n' "${KIT_ROOT}"
 
@@ -156,3 +144,4 @@ if has_command git && git -C "${TARGET}" rev-parse --is-inside-work-tree >/dev/n
 else
   printf '  git: not detected\n'
 fi
+exit "${selection_status}"

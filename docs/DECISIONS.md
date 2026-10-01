@@ -140,7 +140,42 @@ rather than rewriting history.
 - **Supersedes:** Broad managed-folder descriptions in ADR-001 and the previous
   roadmap. Project/native configuration ownership remains unchanged.
 
+### ADR-007: Execute native core gates in pinned macOS CI
+
+- **Date:** 2026-10-01
+- **Status:** accepted; implemented in Step 05
+- **Context:** Warning-only optional tools did not establish native correctness;
+  there was no existing CI provider configuration.
+- **Decision:** Use a thin GitHub Actions macOS workflow with exact runtimes,
+  SHA-pinned actions, hashed Python requirements, npm lockfiles and verified
+  shell binary digests. Conventional programs run static checks, both contract
+  commands, existing fixture tests/smokes and disposable negative controls.
+- **Consequences:** Required CI tools fail when missing. Developer commands
+  retain explicit degraded optional coverage. CI authoring files are not added
+  to consumer release ownership. Fixture-native Markdown configs are shipped;
+  dependency/runtime directories are excluded, not maintained sources. Local
+  passes do not prove remote execution or branch protection.
+- **Evidence:** [TASK-008](../tasks/TASK-008-CORE-CI.md),
+  [QH-05](../verification/QH-05.md), [CI guide](../.harness/ci/README.md).
+- **Supersedes:** None; ownership and native configuration authority remain.
+
 ## Decision template
+
+### ADR-008: Resolve applicability without rewriting reviewed requirements
+
+- **Date:** 2026-10-01
+- **Status:** accepted
+- **Decision:** Share a small fixed resolver across check, policies, inspect and
+  doctor. Preserve reviewed requirements, retain conflicting detected controls,
+  fail unsupported capabilities/package aggregation and diagnose missing tools.
+  Opt in to schema 2 through a reviewed side-file merge; retain schema 1 reads.
+- **Consequences:** Doctor is prerequisite diagnosis, not quality verification.
+  Next.js/browser/security assurance remains unsupported. Readiness flags now
+  affect required unfinished context. No project-owned configuration replacement.
+- **Evidence:** [TASK-009](../tasks/TASK-009-PROFILES-AND-DOCTOR.md),
+  [QH-06](../verification/QH-06.md).
+- **Supersedes:** Earlier explicit-profile omission behaviour only; native tool
+  authority and ownership remain unchanged.
 
 ### ADR-000: Short title
 

@@ -302,6 +302,7 @@ class CheckContractTest(unittest.TestCase):
 
     def test_native_tools_own_their_scope(self):
         self.syntax_environment()
+        self.write("README.md", "# Maintained context\n")
         self.write("pyproject.toml", "[project]\nname = 'synthetic'\n")
         self.write("generated/native.py", "value = 1\n")
         self.write("generated/README.md", "# Synthetic\n")

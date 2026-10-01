@@ -1,5 +1,35 @@
 # Quality Context
 
+## Applicability and readiness (Step 06)
+
+`./harness doctor [TARGET]` reports selection reasons, required context and
+prerequisite gaps. Exit 0 means ready to run controls, not verified. Missing
+tools never remove controls. Python/TypeScript static and test delegation use
+existing commands; Next.js-specific/browser controls remain visible unsupported
+gaps. Requested capabilities are unsupported until executable controls exist.
+No scanner, browser engine or multi-package aggregator is introduced.
+
+For schema 2, review profiles/frameworks (`auto` or explicit lists), capabilities
+and roots in the example side file. Keep existing command overrides and native
+tool settings when merging. Only `roots = ["."]` is executable; nested package
+manifests/workspaces block even without a declared aggregate. Paths reject
+traversal and symlinks. Detection excludes managed machinery/runtime trees.
+
+Schema 2 always requires AGENTS, PRODUCT, ARCHITECTURE, QUALITY and DECISIONS.
+Browser UI adds DESIGN; persistence/jobs add DATA; identity, tenancy, uploads
+and integrations add relevant DATA/SECURITY. Unknown capabilities require
+SECURITY and fail unsupported. Explicit extra context remains required.
+`readiness.fail_on_needs_input` now blocks unfinished required context when true;
+false permits unfinished (not missing/unsafe) context. Presence is not prose QA.
+
+Schema 1 preserves its exact reviewed document list and warns that security.mode
+was inert. Schema 2 security `off` explicitly means no scanner assurance;
+`local`/`ci` fail unsupported. Neither removes capability requirements.
+Explicit profile lists now cannot silently suppress detected applicable controls;
+review contradictions before proceeding. Ordinary legacy developer check still
+has optional-tool degradation; doctor is strict about prerequisites and CI runs
+native tools. Step 07 owns stronger native static-gate enforcement.
+
 Status: current
 
 ## Quality bar
@@ -50,8 +80,9 @@ evidence from unverified remote execution; no branch protection is configured.
 
 ## Known limitations
 
-- Optional developer tools are not installed by the harness yet. Missing tools
-  are reported as degraded coverage until Phase 4 adds setup and doctor flows.
+- CI installs required tools; the public harness still does not install optional
+  developer tools. Outside CI, missing tools remain explicit degraded coverage
+  until prerequisite diagnostics are implemented.
 - Generic function-size analysis is Python-aware only. Other profiles rely on
   their project linters rather than fragile harness parsing.
 

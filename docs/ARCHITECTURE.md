@@ -1,5 +1,20 @@
 # Architecture Context
 
+## Step 06 applicability boundary
+
+`profiles.py` resolves reviewed language/framework/capability requirements and
+source evidence independently of installed tools. Check, policies, inspect and
+doctor share this selection. Contradictions retain the union and block check
+before project-command delegation. `readiness.py` selects required context;
+`doctor.py` adds prerequisite presence diagnostics, never executes quality gates.
+Next.js is dependency/review evidence, not a folder-name heuristic. Multiple
+package manifests/workspaces or nontrivial declared roots return unsupported;
+run package roots separately until aggregation is implemented.
+
+Schema 1 remains readable without rewriting project-owned configuration.
+Schema 2 is a manual, reviewable merge from
+`.harness/config-v2.example.toml`, not an installer or automatic migration.
+
 Status: current
 
 ## System shape
@@ -75,7 +90,8 @@ shell binary digests. Job/command deadlines bound execution. See the
 
 ## Architectural risks
 
-- Optional tools can be absent before Phase 4 adds dependency diagnostics.
+- Optional tools can be absent outside locked CI setup; dependency diagnostics
+  remain planned.
 - Tool configuration is shared ownership and requires conflict-aware merging in
   future adoption and upgrade flows.
 - Editable release metadata is not signed and symlink checks do not defend

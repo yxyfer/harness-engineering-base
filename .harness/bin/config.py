@@ -12,7 +12,7 @@ from typing import Any, Callable
 
 
 CONFIG_EXIT = 4
-SUPPORTED_SCHEMA_VERSION = 1
+SUPPORTED_SCHEMA_VERSIONS = {1, 2}
 SECTIONS: dict[str, set[str]] = {
     "project": {"profiles"},
     "commands": {"setup", "start", "check", "test", "smoke"},
@@ -124,16 +124,19 @@ def validate(path: Path) -> dict[str, Any]:
 
     require(
         type(config["schema_version"]) is int
-        and config["schema_version"] == SUPPORTED_SCHEMA_VERSION,
+        and config["schema_version"] in SUPPORTED_SCHEMA_VERSIONS,
         path,
         "schema_version",
-        f"integer {SUPPORTED_SCHEMA_VERSION}",
+        "integer 1 or 2",
         config["schema_version"],
     )
 
+    expected_sections = {name: set(keys) for name, keys in SECTIONS.items()}
+    if config["schema_version"] == 2:
+        expected_sections["project"] |= {"frameworks", "capabilities", "roots"}
     sections = {
         name: require_exact_keys(path, name, config[name], keys)
-        for name, keys in SECTIONS.items()
+        for name, keys in expected_sections.items()
     }
 
     profiles = require_string_list(
@@ -150,6 +153,9 @@ def validate(path: Path) -> dict[str, Any]:
         "either ['auto'] or explicit profiles without 'auto'",
         profiles,
     )
+
+    if config["schema_version"] == 2:
+        validate_selection(path, sections["project"])
 
     for name in COMMAND_NAMES:
         value = sections["commands"][name]
@@ -177,9 +183,20 @@ def validate(path: Path) -> dict[str, Any]:
         path,
         "readiness.required_documents",
         sections["readiness"]["required_documents"],
-        item_check=lambda item: Path(item).name == item
-        and item.endswith(".md"),
+        allow_empty=config["schema_version"] == 2,
+        item_check=lambda item: (
+            config["schema_version"] == 2 and item == "auto"
+        )
+        or (Path(item).name == item and item.endswith(".md")),
         item_expectation="a Markdown filename without directory components",
+    )
+    documents = sections["readiness"]["required_documents"]
+    require(
+        "auto" not in documents or documents == ["auto"],
+        path,
+        "readiness.required_documents",
+        "['auto'] or explicit documents",
+        documents,
     )
     readiness_flag = sections["readiness"]["fail_on_needs_input"]
     require(
@@ -211,6 +228,53 @@ def validate(path: Path) -> dict[str, Any]:
     return config
 
 
+def validate_selection(path: Path, project: dict[str, Any]) -> None:
+    frameworks = require_string_list(
+        path,
+        "project.frameworks",
+        project["frameworks"],
+        allow_empty=True,
+        item_check=lambda name: name in {"auto", "nextjs"},
+        item_expectation="auto or nextjs",
+    )
+    require(
+        "auto" not in frameworks or frameworks == ["auto"],
+        path,
+        "project.frameworks",
+        "['auto'] or explicit frameworks",
+        frameworks,
+    )
+    require_string_list(
+        path,
+        "project.capabilities",
+        project["capabilities"],
+        allow_empty=True,
+        item_check=lambda name: re.fullmatch(r"[a-z][a-z0-9-]*", name)
+        is not None,
+        item_expectation="a lowercase capability identifier",
+    )
+    roots = require_string_list(
+        path,
+        "project.roots",
+        project["roots"],
+        item_check=lambda name: name == "."
+        or (
+            not PurePosixPath(name).is_absolute()
+            and PurePosixPath(name).as_posix() == name
+            and not any(part in {".", "..", ""} for part in name.split("/"))
+            and not any(c in name for c in "\\:\n\r\t")
+        ),
+        item_expectation="a canonical relative directory without '..'",
+    )
+    require(
+        len({name.casefold() for name in roots}) == len(roots),
+        path,
+        "project.roots",
+        "non-colliding roots",
+        roots,
+    )
+
+
 def get_value(config: dict[str, Any], key: str, path: Path) -> Any:
     value: Any = config
     for part in key.split("."):
@@ -235,6 +299,9 @@ def print_summary(config: dict[str, Any], source: str) -> None:
     print(f"source={source}")
     print(f"schema_version={config['schema_version']}")
     print(f"project.profiles={json.dumps(config['project']['profiles'])}")
+    if config["schema_version"] == 2:
+        for name in ("frameworks", "capabilities", "roots"):
+            print(f"project.{name}={json.dumps(config['project'][name])}")
     print(f"checks.required={json.dumps(config['checks']['required'])}")
     for key, value in config["standards"].items():
         print(f"standards.{key}={value}")

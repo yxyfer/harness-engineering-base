@@ -44,6 +44,9 @@ yarn-error.log*
 .harness/tmp/
 
 # repository-owned harness and agent integration
+!.github/
+!.github/workflows/
+!.github/workflows/core.yml
 !.harness/
 !.harness/bin/
 !.harness/bin/common.sh

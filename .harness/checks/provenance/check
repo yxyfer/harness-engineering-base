@@ -4,8 +4,16 @@ import sys
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[2] / "bin"))
 from source_paths import project_file
+from source_paths import load_config
+from profiles import resolve
 
 target = Path(sys.argv[1] if len(sys.argv) > 1 else ".").resolve()
+selection = resolve(target, load_config(target))
+if "DATA.md" not in selection["documents"]:
+    print(
+        "provenance: not applicable (DATA.md not required by reviewed/relevant context)"
+    )
+    raise SystemExit(0)
 try:
     agents_file = project_file(target, "AGENTS.md")
     data_file = project_file(target, "docs/DATA.md")

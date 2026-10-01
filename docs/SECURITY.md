@@ -1,5 +1,10 @@
 # Security Context
 
+Step 06 does not implement security scanning. Schema 1 security.mode is
+deprecated with an explicit no-assurance diagnostic. Schema 2 off reports no
+scanner assurance, while local/ci return unsupported and require SECURITY
+context. Capability-derived security requirements cannot be disabled by mode.
+
 Status: needs-project-input
 
 ## Trust boundaries

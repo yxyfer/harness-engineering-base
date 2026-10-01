@@ -45,6 +45,7 @@ to override a project command for one invocation. `self-test` rejects
 | `self-test` | Run the executing harness's contract suite independently. |
 | `smoke` | Run the smallest user-visible health check. |
 | `inspect` | Print detected stack, commands, context coverage, and Git state. |
+| `doctor` | Explain applicable controls and fail on readiness gaps; no checks run. |
 
 Set `HARNESS_KIT_ROOT` when the command implementation is hosted outside the
 target repository. Set `HARNESS_CHECKS_DIR` to select a different checks

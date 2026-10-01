@@ -25,6 +25,11 @@ records today's behaviour and defects. The
 
 ## Users and jobs
 
+Step 06 now implements read-only applicability and prerequisite diagnosis for
+Python, TypeScript and Next.js. Framework-specific, browser and security
+verification remain unsupported results, not shipped assurance. Multi-package
+aggregation is explicitly unsupported. See [QH-06](../verification/QH-06.md).
+
 | User or actor | Job to be done | Current pain | Success signal |
 | --- | --- | --- | --- |
 | Application developer and coding agent | Make a bounded change correctly | Repeated setup, inconsistent patterns, uncertain verification | Required behaviour passes without unrelated regressions |

@@ -50,7 +50,7 @@ python3 .harness/ci/run.py negatives
 ```
 
 `run.py` fails when required tools are missing. Commands have a 180-second
-limit; the job has a 20-minute limit. Every executed command records its exit,
+limit; the job has a 20-minute limit. Completed commands record their exit,
 duration, arguments, working directory and a unique full-output log in
 `.harness/tmp/ci-logs/`. Expected negative exits must include the intended
 diagnostic. Source fingerprints check that negative controls leave the checkout

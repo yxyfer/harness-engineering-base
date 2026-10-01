@@ -12,6 +12,7 @@ Commands:
   setup    Install dependencies using the detected project conventions.
   start    Start the detected development entry point.
   inspect  Show the detected stack, commands, context, checks, and Git state.
+  doctor   Explain applicable controls and prerequisite/readiness gaps.
   check    Run harness policy checks and project-native static checks.
   test     Run project-native automated tests.
   self-test Run the executing harness's contract tests independently.
@@ -35,7 +36,7 @@ subcommand=$1
 shift
 
 case "${subcommand}" in
-setup | start | inspect | check | test | self-test | smoke) ;;
+setup | start | inspect | doctor | check | test | self-test | smoke) ;;
 help | -h | --help)
   usage
   exit 0
@@ -63,7 +64,7 @@ while [ "$#" -gt 0 ]; do
     ;;
   --command)
     case "${subcommand}" in
-    inspect | self-test)
+    inspect | doctor | self-test)
       printf 'harness: --command is not valid for %s\n' "${subcommand}" >&2
       exit 2
       ;;

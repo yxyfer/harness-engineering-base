@@ -4,6 +4,7 @@ HARNESS_COMMAND_NAME='harness check'
 export HARNESS_COMMAND_NAME
 . "$(dirname "$0")/common.sh"
 resolve_target "${1:-.}"
+python3 "${KIT_ROOT}/bin/profiles.py" summary "${TARGET}" "${CONFIG_PATH}"
 
 if [ -n "${HARNESS_CHECKS_DIR:-}" ]; then
   checks_dir=${HARNESS_CHECKS_DIR}

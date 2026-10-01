@@ -36,7 +36,9 @@ class StandardsContractTest(unittest.TestCase):
         self.assertIn('profiles=["markdown","python"]', result.stdout)
         self.assertNotIn('"typescript"', result.stdout)
 
-    def test_explicit_profiles_override_detection(self) -> None:
+    def test_explicit_profiles_cannot_remove_detected_requirements(
+        self,
+    ) -> None:
         with tempfile.TemporaryDirectory() as temporary:
             target = Path(temporary)
             config = target / "config.toml"
@@ -47,8 +49,9 @@ class StandardsContractTest(unittest.TestCase):
             (target / "module.py").write_text("value = 1\n", encoding="utf-8")
             result = self.run_check(target, config)
 
-        self.assertEqual(result.returncode, 0, result.stderr)
-        self.assertIn('profiles=["markdown"]', result.stdout)
+        self.assertEqual(result.returncode, 1, result.stderr)
+        self.assertIn('profiles=["markdown","python"]', result.stdout)
+        self.assertIn("contradiction", result.stdout)
 
     def test_size_warnings_name_threshold_and_rationale_route(self) -> None:
         function_body = "\n".join("    value += 1" for _ in range(51))

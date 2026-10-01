@@ -32,6 +32,12 @@ missing local runners, declared unittest, zero collection and independent
 self-tests. Required pytest cases fail visibly if setup is missing; they do not
 download dependencies or skip. [QH-02](../verification/QH-02.md) records evidence.
 
+Step 03 regressions exercise installed disposable targets, supported shebangs,
+pruned nested exclusions, spaced paths, symlink boundaries, policy failures and
+single project command resolution. Tool-call recorders prove argv/scope routing;
+they do not establish native tool correctness. Real installed native tools and
+missing coverage are reported separately in [QH-03](../verification/QH-03.md).
+
 ## Known limitations
 
 - Optional developer tools are not installed by the harness yet. Missing tools
@@ -48,7 +54,8 @@ limitations.
 Harness changes also require `./harness self-test`. Native overrides/scripts
 retain their own collection contract; general required-case/skip/evidence
 enforcement remains proposed for Step 08. Optional static tools can still be
-unavailable despite a zero command exit; this step does not repair F3-F7.
+unavailable despite a zero command exit. Steps 02–03 repair F1–F5; managed-file
+ownership findings F6–F7 remain for Step 04.
 
 ## Target quality policy agreed on 2026-10-01
 

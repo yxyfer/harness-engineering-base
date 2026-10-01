@@ -1,0 +1,16 @@
+{
+  "exit": 0,
+  "stdout": "pytest 8.4.2\n",
+  "stderr": "",
+  "status": "passed",
+  "command": [
+    ".venv/bin/python",
+    "-m",
+    "pytest",
+    "--version"
+  ],
+  "cwd": "<repository>",
+  "started_at": "2026-10-01T11:56:07.466686+00:00",
+  "feedback_seconds": 0.161989,
+  "feedback_method": "monotonic elapsed command-to-completion"
+}

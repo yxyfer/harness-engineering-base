@@ -21,6 +21,15 @@ runner. A small stdlib discovery adapter rejects empty unittest collections.
 test overrides. This repository declares a direct, non-recursive suite command
 in its own configuration. See [ADR-004](DECISIONS.md).
 
+Managed `source_paths.py` owns literal directory exclusion matching, pruned
+tree traversal and supported executable shebang classification. Size, link,
+claim and degraded Python syntax scans share it. Scans skip all symlinks;
+canonical policy inputs reject symlink components independently of exclusions.
+Native tools retain their own configuration and discovery. Required policy
+checks precede one project static-check implementation; overrides/package
+scripts prevent an additional automatic Python stage. See
+[ADR-005](DECISIONS.md).
+
 ## Boundaries
 
 | Component | Owns | May depend on | Must not depend on |

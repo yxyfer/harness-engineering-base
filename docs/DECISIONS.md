@@ -96,6 +96,30 @@ rather than rewriting history.
 - **Supersedes:** ADR-001's use of the project config as the external fallback;
   its schema and ownership rules remain in force.
 
+### ADR-005: Share harness discovery and resolve static checks once
+
+- **Date:** 2026-10-01
+- **Status:** accepted; implemented in Step 03
+- **Context:** F3 sent executable Python to shell tools, F4 gave scans different
+  exclusions, and F5 added Python checking after explicit project delegation.
+- **Decision:** Share a small directory walker and suffix/shebang classifier.
+  Bare directory names match at any depth; relative prefixes match from the
+  root. Prune excluded trees and skip all file/directory symlinks. Canonical
+  policy inputs reject symlink components independently. Required policies run
+  before one resolved static implementation: CLI/environment/config override,
+  package check, package lint/typecheck pair, then automatic Python checking.
+  Native tools retain their own scope and configuration.
+- **Consequences:** Unknown extensionless interpreters need native coverage;
+  internal symlink sources are omitted by harness scans. Existing native
+  configurations are unchanged. Exclusions cannot remove mandatory canonical
+  policy requirements. Syntax fallback remains degraded coverage, not lint or
+  type verification. The walker is not a runtime sandbox or a concurrent
+  filesystem mutation defence. Managed ownership repair remains Step 04.
+- **Evidence:** [TASK-006](../tasks/TASK-006-DISCOVERY-AND-CHECK-PRECEDENCE.md),
+  [QH-03](../verification/QH-03.md), installed-copy discovery regressions.
+- **Supersedes:** ADR-002's generic analysis description with explicit directory
+  semantics; native configuration authority remains in force.
+
 ## Decision template
 
 ### ADR-000: Short title

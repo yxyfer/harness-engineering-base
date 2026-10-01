@@ -1,6 +1,6 @@
 # Application quality harness implementation plan
 
-- **Status:** active; Steps 01-02 complete; Steps 03-19 have not started
+- **Status:** active; Steps 01-03 complete; Steps 04-19 not started
 - **Owner:** repository owner
 - **Created and expanded:** 2026-10-01
 - **Direction:** [Product vision](../../docs/PRODUCT.md)
@@ -77,14 +77,14 @@ exist. Partially verified steps stay incomplete.
 
 ## Delivery sequence and checkpoints
 
-Steps 01-02 are **complete**; Steps 03-19 are **not started**. Proposed paths may use
-established equivalents if implementation records the mapping.
+Steps 01-03 are **complete**; Steps 04-19 are **not started**. Proposed paths may
+use established equivalents if implementation records the mapping.
 
 | Step | Deliverable                                    | Depends on | Status      |
 | ---- | ---------------------------------------------- | ---------- | ----------- |
 | 01   | [Baseline and acceptance cases](../../tasks/TASK-004-QUALITY-BASELINE.md) | None | [Complete](../../verification/QH-01.md) |
 | 02   | [Correct application test routing](../../tasks/TASK-005-APPLICATION-TEST-ROUTING.md) | 01 | [Complete](../../verification/QH-02.md) |
-| 03   | Consistent discovery and command precedence    | 02         | Not started |
+| 03   | [Consistent discovery and command precedence](../../tasks/TASK-006-DISCOVERY-AND-CHECK-PRECEDENCE.md) | 02 | [Complete](../../verification/QH-03.md) |
 | 04   | Correct managed-file ownership                 | 03         | Not started |
 | 05   | CI for the repaired harness                    | 04         | Not started |
 | 06   | Relevant profiles and prerequisite diagnostics | 05         | Not started |
@@ -996,9 +996,17 @@ F1-F7 open, missing tools and undefined root smoke explicitly retained.
 Step 02 is complete: [TASK-005](../../tasks/TASK-005-APPLICATION-TEST-ROUTING.md)
 and [QH-02](../../verification/QH-02.md) record F1/F2 reproductions, installed-copy
 regressions, separate application/self-test commands, declared Python runners,
-zero-collection failures and compatibility. The kit suite has 28 passing cases;
+zero-collection failures and compatibility. That run had 28 passing kit cases;
 fixture smoke checks pass after recorded sandbox retries. Static tool gaps and
 undefined root smoke remain visible; F3-F7 are not repaired.
 
-Step 03 is next eligible. No later step has started, and future application
+Step 03 is complete: [TASK-006](../../tasks/TASK-006-DISCOVERY-AND-CHECK-PRECEDENCE.md)
+and [QH-03](../../verification/QH-03.md) record F3–F5 reproductions, shared
+discovery, exclusion/shebang/symlink contracts and single static implementation
+resolution after policy checks. Both root suites pass 46 cases, including 18
+new regressions. Both fixture smokes pass after recorded permission retries;
+optional native tool gaps and undefined root smoke remain visible. Managed
+ownership findings F6–F7 remain for Step 04.
+
+Step 04 is next eligible. No later step has started, and future application
 journey acceptance cases remain specifications, not execution evidence.

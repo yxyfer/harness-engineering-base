@@ -66,7 +66,7 @@ inherit the executing repository's custom commands.
 | `standards` | Shared line, file, and function thresholds. |
 | `readiness` | Required context files and future readiness-gate behaviour. |
 | `security` | `off`, `local`, or `ci` security mode. |
-| `analysis.exclude` | Relative paths excluded from repository analysis. |
+| `analysis.exclude` | Literal directories excluded from harness-owned scans. |
 
 ## Engineering standards
 
@@ -93,6 +93,28 @@ correctness to established tools instead of reimplementing their parsers:
 Missing optional tools are reported as degraded coverage. Project-native
 commands and tool configuration remain authoritative. The fixture projects show
 complete Python and Node configurations aligned to the shared defaults.
+
+Harness-owned size, link, claim and degraded Python syntax scans share directory
+discovery. In `analysis.exclude`, `generated` matches a directory at any depth;
+`src/generated` matches only that root-relative prefix. Rules are literal, not
+globs, and do not exclude similarly named siblings or files. Ignored directories
+are pruned before traversal. All file/directory symlinks are skipped, including
+internal links. Required canonical context is checked separately and rejects
+symlinks. Native tools retain their own scope; see
+[the exclusion contract](.harness/standards/BASE.md).
+
+Extensionless executables with direct, `env` or `env -S` shebangs are classified
+as Python (`python`, `python3`, versioned Python 3) or shell (`sh`, `bash`, `dash`).
+Unknown interpreters and complex env prefixes do not default to shell. Other
+interpreters require deliberate project-native coverage.
+
+After required policy checks, `check` selects one project implementation:
+CLI override, environment override, configured command, package `check`, package
+`lint`/`typecheck` fallback, then automatic Python checks. The package fallback
+can run both declared scripts once. Any selected override/package path prevents
+an additional automatic Python stage. A failed policy or selected command stops
+the gate. With no native Python tools, syntax parsing follows harness discovery,
+including supported extensionless Python; that remains degraded coverage.
 
 Every section and key is validated. Unknown or missing keys, invalid types,
 unsupported values, absolute exclusions, and parent-directory exclusions fail

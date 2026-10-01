@@ -47,7 +47,7 @@ class SourcePathsTest(unittest.TestCase):
     def test_prunes_excluded_directories_before_opening_them(self):
         module = self.module()
         with tempfile.TemporaryDirectory() as temporary:
-            root = Path(temporary)
+            root = Path(temporary).resolve()
             for name in (
                 "src/generated", "other/generated", "src/generated-copy",
                 "src/nested/vendor", "vendor", "maintained",

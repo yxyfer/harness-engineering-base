@@ -8,9 +8,11 @@ import subprocess
 import tempfile
 import time
 import unittest
+import venv
 
 
 ROOT = Path(__file__).resolve().parents[2]
+CLAIM = "live " + "integration\n"
 RECORDER = """#!/usr/bin/env python3
 import json
 from pathlib import Path
@@ -75,6 +77,10 @@ class CheckContractTest(unittest.TestCase):
         path = self.target / ".calls.jsonl"
         return [json.loads(line) for line in path.read_text().splitlines()]
 
+    def syntax_environment(self):
+        # Isolate the degraded fallback even when host tools are installed.
+        venv.EnvBuilder(with_pip=False).create(self.target / ".venv")
+
     def test_python_shebangs_avoid_shell_and_get_python_size_analysis(self):
         self.write(
             "python worker", "#!/usr/bin/env -S python3 -u\n" +
@@ -91,13 +97,14 @@ class CheckContractTest(unittest.TestCase):
                 self.assertNotIn(".harness/checks/standards/check", call)
 
     def test_nested_exclusions_apply_to_all_tree_checks(self):
+        self.syntax_environment()
         self.write(".harness/config.toml", self.config.replace(
             '"generated",', '"src/generated",'
         ))
         self.write("pyproject.toml", "[project]\nname = 'synthetic'\n")
         self.write("src/generated/bad.py", "def broken(:\n" * 400)
         self.write("src/generated/README.md", "[broken](missing.md)\n")
-        self.write("src/generated/claim.txt", "live integration\n")
+        self.write("src/generated/claim.txt", CLAIM)
         self.write("src/generated/bad shell", "#!/bin/sh\n", True)
         result = self.run_check()
         self.assertEqual(result.returncode, 0, result.stdout + result.stderr)
@@ -107,7 +114,7 @@ class CheckContractTest(unittest.TestCase):
     def test_component_exclusion_applies_at_any_depth(self):
         for name in ("generated", "src/nested/generated"):
             self.write(f"{name}/README.md", "[broken](missing.md)\n")
-            self.write(f"{name}/claim.txt", "live integration\n")
+            self.write(f"{name}/claim.txt", CLAIM)
         result = self.run_check("--command", "true")
         self.assertEqual(result.returncode, 0, result.stdout + result.stderr)
 
@@ -124,6 +131,7 @@ class CheckContractTest(unittest.TestCase):
                 (self.target / name / "README.md").unlink()
 
     def test_extensionless_python_syntax_error_is_a_failure(self):
+        self.syntax_environment()
         self.write("pyproject.toml", "[project]\nname = 'synthetic'\n")
         self.write("broken worker", "#!/usr/bin/env python3\ndef broken(:\n",
                    executable=True)
@@ -133,13 +141,14 @@ class CheckContractTest(unittest.TestCase):
         self.assertIn("syntax", result.stderr.lower())
 
     def test_symlink_sources_are_not_read_or_sent_to_tools(self):
+        self.syntax_environment()
         outside = tempfile.TemporaryDirectory(prefix="outside check ")
         self.addCleanup(outside.cleanup)
         base = Path(outside.name)
         for name, content in {
             "bad.py": "def broken(:\n" * 400,
             "README.md": "[broken](missing.md)\n",
-            "claim.txt": "live integration\n",
+            "claim.txt": CLAIM,
             "bad.sh": "#!/bin/sh\n",
         }.items():
             (base / name).write_text(content)
@@ -196,6 +205,19 @@ class CheckContractTest(unittest.TestCase):
         self.assertIn("policy check 'documentation' failed", result.stderr)
         self.assertFalse((self.target / "selected.txt").exists())
 
+    def test_angle_bracket_markdown_links_support_spaces(self):
+        self.write("notes with spaces.md", "# Synthetic notes\n")
+        self.write("README.md", "[notes](<notes with spaces.md>)\n")
+        result = self.run_check("--command", "true")
+        self.assertEqual(result.returncode, 0, result.stderr)
+
+    def test_failing_standards_tool_blocks_override(self):
+        self.write("tool bin/shellcheck", "#!/bin/sh\nexit 9\n", True)
+        result = self.run_check("--command", "touch project-ran")
+        self.assertEqual(result.returncode, 1, result.stdout + result.stderr)
+        self.assertIn("policy check 'standards' failed", result.stderr)
+        self.assertFalse((self.target / "project-ran").exists())
+
     def test_override_failure_is_not_hidden(self):
         result = self.run_check("--command", "echo once >> selected.txt; exit 7")
         self.assertEqual(result.returncode, 1)
@@ -214,7 +236,20 @@ class CheckContractTest(unittest.TestCase):
         self.assertEqual(result.returncode, 0, result.stderr)
         self.assertEqual((self.target / "selected.txt").read_text(), "check\n")
 
+    def test_package_lint_and_typecheck_fallback_each_run_once(self):
+        self.write("pyproject.toml", "[project]\nname = 'synthetic'\n")
+        self.write("bad.py", "def broken(:\n")
+        self.write("package.json", json.dumps({"scripts": {
+            "lint": "echo lint >> selected.txt",
+            "typecheck": "echo typecheck >> selected.txt",
+        }}))
+        result = self.run_check()
+        self.assertEqual(result.returncode, 0, result.stderr)
+        self.assertEqual((self.target / "selected.txt").read_text(),
+                         "lint\ntypecheck\n")
+
     def test_native_tools_own_their_scope(self):
+        self.syntax_environment()
         self.write("pyproject.toml", "[project]\nname = 'synthetic'\n")
         self.write("generated/native.py", "value = 1\n")
         self.write("generated/README.md", "# Synthetic\n")

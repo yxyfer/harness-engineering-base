@@ -37,7 +37,17 @@ Phase 6.
 
 ## Exclusions
 
-Generic size analysis excludes generated and vendored code, installed
-dependencies, build output, migrations, schemas, and fixtures. Keep exclusions
-explicit in `.harness/config.toml`; a project may narrow them when those files
-are genuinely maintained as source.
+Harness-owned tree scans use `analysis.exclude` in `.harness/config.toml`.
+Defaults exclude generated/vendored code, dependencies, build output,
+migrations, schemas and fixtures; narrow them for maintained source.
+
+Rules are literal directories, not globs or file patterns. A bare name such as
+`generated` matches that directory at any depth. A slash-containing relative
+path such as `src/generated` matches only that prefix from the target root.
+Trailing slashes are optional. Similarly named siblings remain in scope.
+Excluded directories are pruned before descent. File and directory symlinks,
+including internal links, are skipped. Required canonical context documents
+are checked separately and cannot be supplied through symlinks.
+
+Native tools retain their own include/exclude configuration. Harness analysis
+exclusions do not rewrite Ruff, Pyright, package-script or Markdown-lint scope.

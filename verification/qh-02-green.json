@@ -1,0 +1,21 @@
+{
+  "exit": 0,
+  "stdout": "",
+  "stderr": "test_broken_local_environment_is_reported (test_runner_contract.RunnerContractTest.test_broken_local_environment_is_reported) ... ok\ntest_declared_unittest_needs_no_pytest_and_uses_local_env (test_runner_contract.RunnerContractTest.test_declared_unittest_needs_no_pytest_and_uses_local_env) ... ok\ntest_default_python_convention_does_not_fallback (test_runner_contract.RunnerContractTest.test_default_python_convention_does_not_fallback) ... ok\ntest_installed_application_failure_and_healthy_control (test_runner_contract.RunnerContractTest.test_installed_application_failure_and_healthy_control) ... ok\ntest_installed_harness_does_not_supply_app_tests (test_runner_contract.RunnerContractTest.test_installed_harness_does_not_supply_app_tests) ... ok\ntest_invalid_runner_declaration_fails_without_traceback (test_runner_contract.RunnerContractTest.test_invalid_runner_declaration_fails_without_traceback) ... ok\ntest_missing_local_runner_does_not_use_host_pytest (test_runner_contract.RunnerContractTest.test_missing_local_runner_does_not_use_host_pytest) ... ok\ntest_missing_pytest_cannot_drop_mixed_suite (test_runner_contract.RunnerContractTest.test_missing_pytest_cannot_drop_mixed_suite) ... ok\ntest_native_override_uses_local_python (test_runner_contract.RunnerContractTest.test_native_override_uses_local_python) ... ok\ntest_real_local_pytest_collects_both_styles (test_runner_contract.RunnerContractTest.test_real_local_pytest_collects_both_styles) ... ok\ntest_self_test_cannot_be_redirected_by_cli (test_runner_contract.RunnerContractTest.test_self_test_cannot_be_redirected_by_cli) ... ok\ntest_self_test_is_independent_and_rejects_empty_suite (test_runner_contract.RunnerContractTest.test_self_test_is_independent_and_rejects_empty_suite) ... ok\ntest_zero_pytest_cases_fail (test_runner_contract.RunnerContractTest.test_zero_pytest_cases_fail) ... ok\ntest_zero_unittest_cases_fail (test_runner_contract.RunnerContractTest.test_zero_unittest_cases_fail) ... ok\n\n----------------------------------------------------------------------\nRan 14 tests in 9.652s\n\nOK\n",
+  "status": "passed",
+  "command": [
+    ".venv/bin/python",
+    "-m",
+    "unittest",
+    "discover",
+    "-s",
+    ".harness/tests",
+    "-p",
+    "test_runner_contract.py",
+    "-v"
+  ],
+  "cwd": "<repository>",
+  "started_at": "2026-10-01T10:37:45.481457+00:00",
+  "feedback_seconds": 9.725472,
+  "feedback_method": "monotonic elapsed command-to-completion"
+}

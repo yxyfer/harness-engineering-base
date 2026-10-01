@@ -1,0 +1,27 @@
+{
+  "command": [
+    ".venv/bin/python",
+    ".harness/bin/manifest.py",
+    "generate",
+    ".",
+    "2026-09-08T13:13:07.399269Z"
+  ],
+  "exit": 0,
+  "added": [
+    ".harness/bin/python-tests.py",
+    ".harness/bin/self-test",
+    ".harness/default-config.toml",
+    ".harness/tests/requirements.txt",
+    ".harness/tests/test_runner_contract.py"
+  ],
+  "changed": [
+    ".harness/bin/common.sh",
+    ".harness/bin/inspect",
+    ".harness/bin/test",
+    ".harness/tests/fixtures/python-project/pyproject.toml",
+    "harness"
+  ],
+  "removed": [],
+  "before_count": 54,
+  "after_count": 59
+}

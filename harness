@@ -14,6 +14,7 @@ Commands:
   inspect  Show the detected stack, commands, context, checks, and Git state.
   check    Run harness policy checks and project-native static checks.
   test     Run project-native automated tests.
+  self-test Run the executing harness's contract tests independently.
   smoke    Run the smallest user-visible health check.
   help     Show this help.
 
@@ -34,7 +35,7 @@ subcommand=$1
 shift
 
 case "$subcommand" in
-  setup|start|inspect|check|test|smoke)
+  setup|start|inspect|check|test|self-test|smoke)
     ;;
   help|-h|--help)
     usage
@@ -59,10 +60,12 @@ while [ "$#" -gt 0 ]; do
       shift 2
       ;;
     --command)
-      [ "$subcommand" != inspect ] || {
-        printf 'harness: --command is not valid for inspect\n' >&2
-        exit 2
-      }
+      case "$subcommand" in
+        inspect|self-test)
+          printf 'harness: --command is not valid for %s\n' "$subcommand" >&2
+          exit 2
+          ;;
+      esac
       [ "$#" -ge 2 ] || { printf 'harness: --command requires a value\n' >&2; exit 2; }
       [ -n "$2" ] || { printf 'harness: --command cannot be empty\n' >&2; exit 2; }
       HARNESS_CLI_COMMAND=$2

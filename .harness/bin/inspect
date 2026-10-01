@@ -62,10 +62,11 @@ for action in setup start check test smoke; do
     test)
       if has_npm_script test; then
         resolution='automatic package script: test'
-      elif [ -d "$TARGET/.harness/tests" ] && [ -f "$TARGET/harness" ]; then
-        resolution='automatic harness contract tests'
-      elif [ -d "$TARGET/tests" ]; then
-        resolution='automatic Python test discovery'
+      elif [ -d "$TARGET/tests" ] || [ -f "$TARGET/pyproject.toml" ] || \
+        [ -f "$TARGET/requirements.txt" ] || [ -f "$TARGET/pytest.ini" ]; then
+        runner=$(python3 "$KIT_ROOT/bin/python-tests.py" resolve "$TARGET") || \
+          fail 'invalid Python test-runner declaration'
+        resolution="Python application runner: $runner"
       else
         resolution='unresolved'
       fi
@@ -84,6 +85,7 @@ for action in setup start check test smoke; do
   esac
   printf '    %s: %s\n' "$action" "$resolution"
 done
+printf '    self-test: executing harness contract suite (independent)\n'
 
 if [ -f "$TARGET/package.json" ]; then
   printf '  node project: yes (%s)\n' "$(node_runner)"

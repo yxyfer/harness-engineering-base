@@ -14,6 +14,7 @@ through project-owned tools.
 | Risk or behaviour | Verification | Command or evidence | Required gate |
 | --- | --- | --- | --- |
 | Core logic | Automated test | `./harness test` | Yes |
+| Harness contract | Independent automated suite | `./harness self-test` | For harness changes |
 | Project conventions | Static checks | `./harness check` | Yes |
 | Golden path | Smoke test | `./harness smoke` | Yes |
 | Critical interface states | Visual and interaction QA | Project-specific | When applicable |
@@ -24,6 +25,12 @@ Contract tests cover configuration, manifests, profile selection, exclusions,
 and exit behaviour. Both fixture projects exercise static checks, automated
 tests, and smoke paths. Changes to command behaviour require regression coverage;
 documentation-only changes require link and consistency checks.
+
+Step 02 regressions use disposable installed copies, real no-pip environments,
+and real pytest collection. They cover failing/healthy app tests, mixed suites,
+missing local runners, declared unittest, zero collection and independent
+self-tests. Required pytest cases fail visibly if setup is missing; they do not
+download dependencies or skip. [QH-02](../verification/QH-02.md) records evidence.
 
 ## Known limitations
 
@@ -37,6 +44,11 @@ documentation-only changes require link and consistency checks.
 A phase is complete only when `./harness check`, `./harness test`, and relevant
 fixture smoke paths pass and a verification report records exact evidence and
 limitations.
+
+Harness changes also require `./harness self-test`. Native overrides/scripts
+retain their own collection contract; general required-case/skip/evidence
+enforcement remains proposed for Step 08. Optional static tools can still be
+unavailable despite a zero command exit; this step does not repair F3-F7.
 
 ## Target quality policy agreed on 2026-10-01
 

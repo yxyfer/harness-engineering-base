@@ -26,7 +26,8 @@ machinery.
 
 All commands accept one optional target directory and default to the current
 directory. Use `--config PATH` to select another TOML file or `--command COMMAND`
-to override a project command for one invocation.
+to override a project command for one invocation. `self-test` rejects
+`--command`; application command overrides cannot redirect that suite.
 
 ```sh
 ./harness inspect .harness/tests/fixtures/nextjs-project
@@ -41,6 +42,7 @@ to override a project command for one invocation.
 | `start` | Run the project's declared development entry point. |
 | `check` | Run harness policy checks, then project lint/type checks. |
 | `test` | Run the project's declared automated tests. |
+| `self-test` | Run the executing harness's contract suite independently. |
 | `smoke` | Run the smallest user-visible health check. |
 | `inspect` | Print detected stack, commands, context coverage, and Git state. |
 
@@ -52,7 +54,9 @@ directory.
 
 The harness version is available offline in `.harness/VERSION` and is displayed
 by `./harness inspect`. The configuration schema begins at version `1` and lives
-in `.harness/config.toml`.
+in project-owned `.harness/config.toml`. Managed `.harness/default-config.toml`
+supplies defaults when the target has no project configuration; it does not
+inherit the executing repository's custom commands.
 
 | Section | Purpose |
 | --- | --- |
@@ -99,7 +103,7 @@ Configuration-file selection uses this order:
 1. `--config PATH`.
 2. `HARNESS_CONFIG`.
 3. The target project's `.harness/config.toml`.
-4. The executing harness's default `.harness/config.toml`.
+4. The executing harness's managed `.harness/default-config.toml`.
 
 Project command selection uses this order:
 
@@ -108,13 +112,66 @@ Project command selection uses this order:
    `HARNESS_CHECK_COMMAND`, `HARNESS_TEST_COMMAND`, or
    `HARNESS_SMOKE_COMMAND`.
 3. The corresponding `commands` value in TOML.
-4. A language-profile default when profiles begin supplying commands in Phase 3.
-5. Existing Node.js and Python auto-detection.
+4. The target package's `test` script for Node.js testing.
+5. Python runner declaration/convention for Python testing, or the existing
+   detected command for the other actions.
 
 `./harness inspect` shows the effective non-sensitive values and the source of
 each resolved command. Command bodies are reported as configured or automatic,
 not printed. Configuration must reference secrets through environment variables;
 never commit literal credentials or machine-specific paths.
+
+## Application tests and harness self-tests
+
+`test` never selects `.harness/tests` implicitly. For a Python project, declare
+the intended runner in `pyproject.toml`:
+
+```toml
+[tool.harness.tests]
+runner = "pytest"
+```
+
+Use `runner = "unittest"` for an explicit stdlib discovery project. Without a
+declaration, the Python convention is pytest, regardless of which modules are
+installed. Missing pytest fails with setup guidance; it never falls back to
+unittest. Unittest discovers `tests/test_*.py`; pytest keeps its native project
+configuration. Both supported Python paths fail if no cases are collected.
+
+Python testing selects the target's `.venv/bin/python` when available. An
+incomplete `.venv` blocks automatic Python testing. Native command overrides
+also receive that environment on PATH when valid, so `python`/`python3` resolve
+locally; explicit executable paths remain authoritative. Other environments
+and runners can use the existing command overrides. Arbitrary native scripts
+own their collection/exit contract; full evidence enforcement is future Step 08.
+
+`self-test [target]` selects the executing kit's tests and kit-root Python
+environment, irrespective of the target's runner, package script or test
+override. When kit and app share a root, they also share that root environment.
+There is no `commands.self-test` configuration key. The schema remains version 1.
+
+This repository deliberately configures `commands.test` as a direct guarded
+unittest invocation of `.harness/tests`, without calling the dispatcher again.
+When creating an application from this repository, replace that repository-only
+command with the application's native command or leave it empty for detection.
+Use the managed default configuration for a disposable clean installation;
+never overwrite an existing consumer's configuration automatically.
+
+The harness regression suite needs real pytest for mixed-suite and collection
+cases. Set up the kit environment explicitly before verification:
+
+```sh
+python3 -m venv .venv
+.venv/bin/python -m pip install -r .harness/tests/requirements.txt
+./harness test
+./harness self-test
+```
+
+Tests install nothing and require no external service. A missing regression
+dependency fails visibly instead of skipping the required cases. The Python
+command fixture declares unittest and needs no pytest to run its own one case.
+Existing unittest-only projects that relied on the old implicit fallback must
+declare their runner or keep an explicit native command. Update the complete
+managed inventory together; older kits lack the new defaults and runner helper.
 
 ## Exit contract
 

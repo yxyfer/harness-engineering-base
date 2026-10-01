@@ -71,14 +71,23 @@ run_node_script() {
 }
 
 python_command() {
-  if [ -x "$TARGET/.venv/bin/python" ]; then
-    printf '%s\n' "$TARGET/.venv/bin/python"
+  python_target=${1:-$TARGET}
+  if [ -x "$python_target/.venv/bin/python" ]; then
+    printf '%s\n' "$python_target/.venv/bin/python"
   elif has_command python3; then
     command -v python3
   elif has_command python; then
     command -v python
   else
     return 1
+  fi
+}
+
+use_project_python_environment() {
+  if [ -x "$TARGET/.venv/bin/python" ]; then
+    PATH="$TARGET/.venv/bin:$PATH"
+    VIRTUAL_ENV="$TARGET/.venv"
+    export PATH VIRTUAL_ENV
   fi
 }
 
@@ -142,8 +151,8 @@ resolve_harness_contract() {
   elif [ -f "$TARGET/.harness/config.toml" ]; then
     CONFIG_PATH="$TARGET/.harness/config.toml"
     CONFIG_SOURCE=project
-  elif [ -f "$KIT_ROOT/config.toml" ]; then
-    CONFIG_PATH="$KIT_ROOT/config.toml"
+  elif [ -f "$KIT_ROOT/default-config.toml" ]; then
+    CONFIG_PATH="$KIT_ROOT/default-config.toml"
     CONFIG_SOURCE=harness-default
   else
     installation_error 'config.toml is missing'

@@ -55,11 +55,15 @@ durable choice in the appropriate context file or decision record.
 ./harness inspect
 ./harness check
 ./harness test
+./harness self-test
 ./harness smoke
 ```
 
 Commands accept an optional target directory. A non-zero exit is a failed gate,
 not an invitation to hide or weaken the check.
+
+Use `self-test` for changes to the harness. It runs the executing kit's contract
+suite independently of the target application's test command.
 
 Configuration is defined in `.harness/config.toml`. Use project configuration
 instead of editing command implementations to customise setup, start, check,

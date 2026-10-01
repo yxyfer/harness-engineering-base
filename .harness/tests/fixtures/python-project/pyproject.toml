@@ -20,5 +20,5 @@ extend-select = ["E501"]
 [tool.pyright]
 typeCheckingMode = "strict"
 
-[tool.pytest.ini_options]
-testpaths = ["tests"]
+[tool.harness.tests]
+runner = "unittest"

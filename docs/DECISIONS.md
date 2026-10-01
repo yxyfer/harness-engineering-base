@@ -72,6 +72,30 @@ rather than rewriting history.
   ADR-001 and ADR-002 remain in force. Required-tool CI behaviour will replace
   degraded success only when implemented and verified.
 
+### ADR-004: Separate application runner selection from harness self-testing
+
+- **Date:** 2026-10-01
+- **Status:** accepted; implemented in Step 02
+- **Context:** F1 hid app failures behind shipped tests; F2 silently removed
+  pytest cases when that runner was absent. A repository-only test command also
+  leaked to external targets through the old shared-default config path.
+- **Decision:** `test` resolves CLI/environment/config commands, then package
+  scripts or Python runner metadata. `[tool.harness.tests]` declares pytest or
+  unittest; the Python convention is pytest without runner substitution. Prefer
+  the target's local environment and reject zero supported Python collection.
+  `self-test` selects the executing kit's suite independently. Managed defaults
+  are separate from project-owned configuration; the schema stays version 1.
+  This repository configures its own direct suite invocation without recursion.
+- **Consequences:** Implicit unittest fallback is removed. Consumers declare
+  unittest or retain an explicit native command, and replace the starter's
+  repository-only test command. Harness regression setup requires pinned pytest;
+  offline test execution never installs or silently skips it. Arbitrary native
+  scripts own their exits/collection until broader evidence enforcement arrives.
+- **Evidence:** [TASK-005](../tasks/TASK-005-APPLICATION-TEST-ROUTING.md),
+  [QH-02](../verification/QH-02.md), installed-copy runner regressions.
+- **Supersedes:** ADR-001's use of the project config as the external fallback;
+  its schema and ownership rules remain in force.
+
 ## Decision template
 
 ### ADR-000: Short title

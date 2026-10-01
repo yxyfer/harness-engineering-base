@@ -1,6 +1,6 @@
 # Application quality harness implementation plan
 
-- **Status:** active; Step 01 complete; Steps 02-19 have not started
+- **Status:** active; Steps 01-02 complete; Steps 03-19 have not started
 - **Owner:** repository owner
 - **Created and expanded:** 2026-10-01
 - **Direction:** [Product vision](../../docs/PRODUCT.md)
@@ -77,13 +77,13 @@ exist. Partially verified steps stay incomplete.
 
 ## Delivery sequence and checkpoints
 
-Step 01 is **complete**; Steps 02-19 are **not started**. Proposed paths may use
+Steps 01-02 are **complete**; Steps 03-19 are **not started**. Proposed paths may use
 established equivalents if implementation records the mapping.
 
 | Step | Deliverable                                    | Depends on | Status      |
 | ---- | ---------------------------------------------- | ---------- | ----------- |
 | 01   | [Baseline and acceptance cases](../../tasks/TASK-004-QUALITY-BASELINE.md) | None | [Complete](../../verification/QH-01.md) |
-| 02   | Correct application test routing               | 01         | Not started |
+| 02   | [Correct application test routing](../../tasks/TASK-005-APPLICATION-TEST-ROUTING.md) | 01 | [Complete](../../verification/QH-02.md) |
 | 03   | Consistent discovery and command precedence    | 02         | Not started |
 | 04   | Correct managed-file ownership                 | 03         | Not started |
 | 05   | CI for the repaired harness                    | 04         | Not started |
@@ -993,5 +993,12 @@ regression contracts, synthetic application cases and measurement format are
 recorded. Runtime code was not repaired. The baseline remains partial, with
 F1-F7 open, missing tools and undefined root smoke explicitly retained.
 
-Step 02 is next eligible. No later step has started, and future application
-acceptance cases are not execution evidence.
+Step 02 is complete: [TASK-005](../../tasks/TASK-005-APPLICATION-TEST-ROUTING.md)
+and [QH-02](../../verification/QH-02.md) record F1/F2 reproductions, installed-copy
+regressions, separate application/self-test commands, declared Python runners,
+zero-collection failures and compatibility. The kit suite has 28 passing cases;
+fixture smoke checks pass after recorded sandbox retries. Static tool gaps and
+undefined root smoke remain visible; F3-F7 are not repaired.
+
+Step 03 is next eligible. No later step has started, and future application
+journey acceptance cases remain specifications, not execution evidence.

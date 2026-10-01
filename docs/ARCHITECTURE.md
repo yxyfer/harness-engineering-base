@@ -9,6 +9,18 @@ The root `harness` dispatcher invokes managed command implementations under
 policy checks, and then delegate to project-native tools. Visible context remains
 project-owned; managed checks, standards, tests, and skills are checksum-tracked.
 
+Managed `default-config.toml` supplies fallback settings; the executing
+repository's project-owned `config.toml` does not supply commands to unrelated
+targets. Explicit CLI/environment/config commands retain precedence.
+
+Application `test` and harness `self-test` are separate entry points. Python
+application metadata declares pytest or unittest; absent metadata uses pytest
+without inspecting module availability. The selected app environment owns its
+runner. A small stdlib discovery adapter rejects empty unittest collections.
+`self-test` selects the executing kit's suite and environment and ignores app
+test overrides. This repository declares a direct, non-recursive suite command
+in its own configuration. See [ADR-004](DECISIONS.md).
+
 ## Boundaries
 
 | Component | Owns | May depend on | Must not depend on |

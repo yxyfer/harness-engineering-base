@@ -26,20 +26,31 @@ required = [
     "DECISIONS.md",
 ]
 try:
-    missing = [name for name in required
-               if not project_file(target, f"docs/{name}").is_file()]
+    missing = [
+        name
+        for name in required
+        if not project_file(target, f"docs/{name}").is_file()
+    ]
 except ValueError as error:
     print(f"architecture: {error}", file=sys.stderr)
     raise SystemExit(1)
 if missing:
-    print(f"architecture: missing context files: {', '.join(missing)}", file=sys.stderr)
+    print(
+        f"architecture: missing context files: {', '.join(missing)}",
+        file=sys.stderr,
+    )
     raise SystemExit(1)
 
 architecture = architecture_file.read_text(encoding="utf-8")
 headings = ["## System shape", "## Boundaries", "## External systems"]
-missing_headings = [heading for heading in headings if heading not in architecture]
+missing_headings = [
+    heading for heading in headings if heading not in architecture
+]
 if missing_headings:
-    print(f"architecture: missing sections: {', '.join(missing_headings)}", file=sys.stderr)
+    print(
+        f"architecture: missing sections: {', '.join(missing_headings)}",
+        file=sys.stderr,
+    )
     raise SystemExit(1)
 
 print("architecture: pass")

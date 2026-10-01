@@ -135,6 +135,17 @@ class ManifestContractTest(unittest.TestCase):
             managed.write_text("original\n", encoding="utf-8")
             version_path = harness_dir / "VERSION"
             version_path.write_text("0.1.0\n", encoding="utf-8")
+            inventory_path = harness_dir / "release-files.json"
+            inventory_path.write_text(
+                json.dumps(
+                    [
+                        "harness",
+                        ".harness/VERSION",
+                        ".harness/release-files.json",
+                    ]
+                ),
+                encoding="utf-8",
+            )
             managed_digest = hashlib.sha256(managed.read_bytes()).hexdigest()
             version_digest = hashlib.sha256(
                 version_path.read_bytes()
@@ -144,6 +155,8 @@ class ManifestContractTest(unittest.TestCase):
                 "harness_version": "0.1.0",
                 "installed_at": "2026-09-08T00:00:00Z",
                 "managed_files": {
+                    ".harness/release-files.json": "sha256:"
+                    + hashlib.sha256(inventory_path.read_bytes()).hexdigest(),
                     ".harness/VERSION": f"sha256:{version_digest}",
                     "harness": f"sha256:{managed_digest}",
                 },

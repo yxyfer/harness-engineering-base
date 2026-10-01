@@ -1,0 +1,3 @@
+# Keep the existing contract suite's exact dependency pins.
+-r ../tests/requirements.txt
+ruff==0.14.0

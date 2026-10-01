@@ -41,6 +41,7 @@ mode = "local"
 
 [analysis]
 exclude = [
+  ".harness/tmp",
   ".git",
   ".venv",
   "node_modules",

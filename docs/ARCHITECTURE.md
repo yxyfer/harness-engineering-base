@@ -32,6 +32,17 @@ scripts prevent an additional automatic Python stage. See
 
 ## Boundaries
 
+Release ownership comes from `.harness/release-files.json`, not directory
+enumeration. The checksum manifest has exactly those paths and includes the
+inventory itself. Additional project skills, shared-folder notes and runtime
+environments are outside release ownership. Both verification and release
+generation validate canonical paths and reject shipped-file/metadata symlinks,
+including parent links, before hashing inputs. See [ADR-006](DECISIONS.md).
+
+Generation emits JSON to stdout as an explicit release-authoring operation.
+Consumer checks never mutate metadata or repair a checksum conflict. The
+schema remains 1; old kits require a reviewed inventory/verifier update.
+
 | Component | Owns | May depend on | Must not depend on |
 | --- | --- | --- | --- |
 | Root dispatcher | Public command routing | `.harness/bin/` | Project implementation details |
@@ -52,11 +63,23 @@ validation and managed checks require Python 3.11 or newer. Project runtimes are
 used only when a target profile requires them. Commands expose selected profiles,
 tool coverage, and failures without printing command bodies or secrets.
 
+## Core CI
+
+Core CI is a thin GitHub Actions workflow plus four native command phases under
+`.harness/ci/`. CI inputs are repository-owned, not shipped consumer machinery.
+Release ownership remains explicit; fixture-native configuration is shipped,
+but CI dependencies and generated logs are not. A clean job installs exact
+runtime/tool pins with hashed Python requirements, npm lockfiles and verified
+shell binary digests. Job/command deadlines bound execution. See the
+[CI guide](../.harness/ci/README.md).
+
 ## Architectural risks
 
 - Optional tools can be absent before Phase 4 adds dependency diagnostics.
 - Tool configuration is shared ownership and requires conflict-aware merging in
   future adoption and upgrade flows.
+- Editable release metadata is not signed and symlink checks do not defend
+  against concurrent filesystem mutation. Verification assumes a stable tree.
 
 ## Target architecture agreed on 2026-10-01
 

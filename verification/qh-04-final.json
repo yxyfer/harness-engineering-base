@@ -1,0 +1,129 @@
+{
+  "started_at": "2026-10-01T13:08:41.029058+00:00",
+  "source": {
+    "head": "fab28ea2fe56746c677a79745c950f511f1cce7b",
+    "sha256": {
+      ".agents/skills/code-review/SKILL.md": "99f1b0cd9a42144259c9522352c0a924a84d58fb4bb6fbad7b3efe81f9703770",
+      ".agents/skills/implement-feature/SKILL.md": "0d2cae88e6db6e40a28f8166c9b8ab3cc9286428b0444a96b589be56a985f744",
+      ".agents/skills/reproduce-bug/SKILL.md": "b500d8afaebe3e9bead8f0686009f81714a41cbe909516250a95846babac2e37",
+      ".agents/skills/update-project-context/SKILL.md": "ba1028e9c7b194ddb3c9672ae9ed95f7ef51bd02e95a6d61699eb38f21af8ade",
+      ".agents/skills/visual-qa/SKILL.md": "26149d887c894b961559d122fae764b54cb1db53f09c422131e2103af4243377",
+      ".harness/VERSION": "e9dd8507f4bf0c6f42458e41aea833ad0bd3f6127272335eee9bf4d58541ed67",
+      ".harness/bin/check": "5e1e2441fb2fcfa330e2bb2661b543acdca7849023bc1cf6c804ed6247af9b74",
+      ".harness/bin/common.sh": "228358185b5b6b9372a7776bdfd7364328e5c698150d29b86e717bd0bd7cc54d",
+      ".harness/bin/config.py": "ab027ae89b02d0cc822c17676fac72492fe2438817559d099dca7a50449c0b3a",
+      ".harness/bin/inspect": "1a3a71f21f3c403dbd6ed9f3916d8826fa511254cbb0ae4aba04f576e2068e74",
+      ".harness/bin/manifest.py": "41fbe10d1f1cfde9454925e627468ac69173f6b820e642134acabe2f047240e4",
+      ".harness/bin/python-tests.py": "ce598121eecfc7ecddc9af7476508362494da554227e0513c09dfc38d103bbeb",
+      ".harness/bin/self-test": "e48f9a1499910e2ce7855a34b9d3dda55a1d950e53fac08d7fa0d9f80b8a9727",
+      ".harness/bin/setup": "2367c38837f14c5d202f641472033e07ae30d8f5257af9569b34234a54dba1fe",
+      ".harness/bin/smoke": "6d2998359d4faeb1af618f7c3c928a097d1f276c3df2daf02331574b88960dc2",
+      ".harness/bin/source_paths.py": "aad2f1541f06eed735c4772573bc11de71e6081773a14250e795dcc9dc6fa8c5",
+      ".harness/bin/start": "697eee7e2ae34b563c0dda221b1938575332585c4eb7615b055110c47200397f",
+      ".harness/bin/test": "8f89454298a4611883a92390ec7bbb69b90c159ccaaa32ad74b7493bec3f80f7",
+      ".harness/checks/architecture/README.md": "12533c9f3ec25bd11edd901c6b069f603dc4d70ed004c9b397b39ed62487f9ca",
+      ".harness/checks/architecture/check": "7e4a7f8753f9184f37625e4ac34b444d07a1f2e9cc4e901987ec9ce1e3f67bd7",
+      ".harness/checks/demo-integrity/README.md": "2888b15b9bdb7aaf0d63d681228f4d1886ec4f59d10dbad868a8b04228254be7",
+      ".harness/checks/demo-integrity/check": "a88e40b8525775baa7e0d6dba8eabc36510ea2d10b282e652ea134dc715ebef2",
+      ".harness/checks/documentation/README.md": "ec4403d5b91ae64ea9859674b7962b70a21151dcc8c3d13dcd31b48a000a7c78",
+      ".harness/checks/documentation/check": "841261e2ca64ce5bb49f7e73b7dbdd8b93890a454f2777fd87c8605958245525",
+      ".harness/checks/provenance/README.md": "bee664727053300396a4f21816fb1868a650dc29cf94c27cc7332f909d6bff45",
+      ".harness/checks/provenance/check": "03e01548601b1e5b6eae63e1e1f624c28a26d9b23af1e182a03bdc6f0cd327ce",
+      ".harness/checks/standards/README.md": "58a648a4e568c01cc0dadaf5e9237f2cb73fdbcef7e7d6368f7e2431d066fba1",
+      ".harness/checks/standards/check": "db29a46cba17d873fa314753e428dadfc2b5e97da9315ab036cd70047c3a7db7",
+      ".harness/default-config.toml": "ed65eabdf503b4d71881ced3b93a6e2f32f1d85e9aedef71afdf50b0a6a2cbbb",
+      ".harness/release-files.json": "eba17f2e05ae2ef6849739030b67c4153114aaca8d5cdd608baddce363eff8b4",
+      ".harness/standards/ARCHITECTURE.md": "7a07a44b7b7e80251b9c0efc6c9cfa308e0b77e424f365106ae5546029d39274",
+      ".harness/standards/BASE.md": "e184e8e76bb363c5619a159e0281da0d4c3e4ce5faf2ecd8fda90b1119d7ac07",
+      ".harness/standards/NAMING.md": "83f42f994ab32af2f30ff3285080c793ebc56af8b99fd87e0f5eb5237b61a1c3",
+      ".harness/standards/TESTING.md": "3a98cbb29c5d7aa70eff65e086e324894686ee0e684f2efff32b24a93b083ded",
+      ".harness/standards/languages/markdown.md": "a55d05f9b7d8f86b5b749af710fa6a7dba66d27958603b59d0c4b0185a0b36a6",
+      ".harness/standards/languages/python.md": "83ba520152e7cbd25daac4bf511d76f62825a41ef6a7686396c7080ea791c818",
+      ".harness/standards/languages/shell.md": "c3b006252666c649aed56a1e4b08ccfc5a62e13ddf0552fe81344eb367436c84",
+      ".harness/standards/languages/typescript.md": "f2ed601a2b555415dc7630c7a1b1039224863ecd6c5565f6f2a50c8bb664f26c",
+      ".harness/tests/fixtures/nextjs-project/README.md": "7258a9b1c651fe198f133043fd5ede46246efc604f92bb5c105ecc6bac8ffe1b",
+      ".harness/tests/fixtures/nextjs-project/app/content.js": "a78151a93e05f1f2c94373aa5bbbbd858cf8a397265de1826fc6fec9d7fd9680",
+      ".harness/tests/fixtures/nextjs-project/app/page.jsx": "f8f43c5ffa113124f1b0c174bb9c116ee3302e577a2e19182734b16104aa6758",
+      ".harness/tests/fixtures/nextjs-project/eslint.config.mjs": "8bddba585b157a777673a5570d7b79091863fa0d770f1b9971201d0b549e40f2",
+      ".harness/tests/fixtures/nextjs-project/package-lock.json": "4454e795ddc1b3059a26f857a24b77ae3a2fad431f9825102fc899eb37d0f47c",
+      ".harness/tests/fixtures/nextjs-project/package.json": "bf19070161ddbc544f72229b3d965510147e410ce21a9718a0f00d1429411a9a",
+      ".harness/tests/fixtures/nextjs-project/prettier.config.mjs": "96482130bff65ee97d0a0f2f986c03d611eee88109ee54e16bf4efd0201e9268",
+      ".harness/tests/fixtures/nextjs-project/scripts/server.mjs": "3576a46997aed5573af668196cf739a856c7698ce901011ae9d6fb628f97fa74",
+      ".harness/tests/fixtures/nextjs-project/scripts/smoke.mjs": "b44f0585f78546caf17ef68f0eaf65ca1ec4b3293da5f32339a0bd95c54482b1",
+      ".harness/tests/fixtures/nextjs-project/tests/content.test.mjs": "674b3973108627337869a7e1a4bac9fc9a58ca6a48b9d8894c9cd970a769b8e2",
+      ".harness/tests/fixtures/nextjs-project/tsconfig.json": "ea301cf98c9e9e737414acb6d8e227e2f89eefe49da0a1bb79baa6a9d552bc33",
+      ".harness/tests/fixtures/python-project/README.md": "a9e3cfbb1fbca2257bdb417abfb8f967d32e0d6e0b4cd36c566685035292e8c0",
+      ".harness/tests/fixtures/python-project/app.py": "403b103a05e5dbffb4631caa99cb5269c0583679bf275e2ce0d71cda5472eca8",
+      ".harness/tests/fixtures/python-project/pyproject.toml": "ac2e402017f2b88b03ce553294e0b11ef2dc0ea0a71f6159a922dd0557a87bb4",
+      ".harness/tests/fixtures/python-project/scripts/smoke.py": "6de9b345e26c569318acdb0a3326da60760875d98dea874b7a156b908ae375b6",
+      ".harness/tests/fixtures/python-project/src/example_app/__init__.py": "a47529baca98051bc1cb093302b555ba2778aa0a22aafa10003a3898eed71d7b",
+      ".harness/tests/fixtures/python-project/src/example_app/message.py": "5b7eb2b5d2a31255f9c1ecdc4f1244123609afb17c736b872525c738e4fc27f3",
+      ".harness/tests/fixtures/python-project/tests/test_message.py": "de3c8c19575d9fa3938df77c8f38b3477a66722ed07388c23876a8d6bc5592f8",
+      ".harness/tests/requirements.txt": "7b12cee54dfa1d96f9648d5c40ef66821d1d86e59550f9e52d4bf00d0a901b12",
+      ".harness/tests/test_check_contract.py": "fcdf88189e85974bf9dc43a57551d20f2ed3c660556a6917a46c5189a17de255",
+      ".harness/tests/test_phase2_contract.py": "749e40d82bfafabb411540f7d74187248263b3dddc1572598f5ff29e1a7edcc1",
+      ".harness/tests/test_phase3_standards.py": "ec9f15cd6ec533ef8a942bfbe3e4889b06a7a64db88735b7b47bbac36e544369",
+      ".harness/tests/test_release_ownership.py": "159266845036e09233c1569803bd13b49ec057c53ce95c145f48f21187d480b1",
+      ".harness/tests/test_runner_contract.py": "759b3739354f3bed297d46766d5a1e25b680f03f196c709030d18e09d9872432",
+      ".harness/tests/test_source_paths.py": "d26415f372a69c0dc4d40dc677fb0cdcc779088b8e354ffea7cd39ae3a2063f9",
+      "harness": "11a12408d2cb75197372e3382d00a972e759d96b71848dbf54c6a53747ebc48f",
+      ".harness/manifest.json": "2a9530e267ffc7f81728efbfef641528b9b6f0f470e82595a7144621b24c650e",
+      ".harness/config.toml": "de86c0bfb7d23db80ba5e60f915cd0947f9d8d22cc6e3d81ebf4eaca32fd5bf0",
+      "AGENTS.md": "cf5c52f0c6ee51e7014e76eddb966c9785826d61f449b8b052cdcb760054b72b",
+      "README.md": "f5f849a41e7b321f6eed23d55a6bc6816abd007fa1ea6fab5795179de80e750a",
+      "docs/ARCHITECTURE.md": "e22f34a325fdf9e7bed7340e1813a22165a226a5e5b49c104fbb50552ed90593",
+      "docs/QUALITY.md": "9ac90ed9446882d6f2708c87c4e438922d47c4b940842dbfa01b7796993855a7",
+      "docs/DECISIONS.md": "7548bc7f2e0349d688acacfd236e464110f497fcd92bf111a325fe37732a6fd5"
+    }
+  },
+  "source_unchanged": true,
+  "commands": [
+    {
+      "command": [
+        "./harness",
+        "check"
+      ],
+      "cwd": ".",
+      "exit": 0,
+      "stdout": "harness check: running policy checks from <repository>/.harness/checks\narchitecture: pass\ndocumentation: warning: project input needed in docs/DATA.md, docs/DESIGN.md, docs/SECURITY.md\ndocumentation: pass (53 Markdown files)\nprovenance: pass\ndemo-integrity: pass (classification context present for 1 claim file(s))\nstandards: profiles=[\"markdown\",\"python\",\"shell\"]\nstandards: thresholds=line:80,file-warning:350,function-warning:50\nstandards: warning: .harness/bin/config.py:validate has 104 lines (threshold 50); review cohesion or record a scoped rationale in the task/tool config\nstandards: warning: .harness/checks/standards/check:main has 60 lines (threshold 50); review cohesion or record a scoped rationale in the task/tool config\nstandards: warning: ShellCheck unavailable; check skipped\nstandards: warning: shfmt unavailable; check skipped\nstandards: warning: markdownlint-cli2 unavailable; check skipped\nstandards: pass\nharness check: complete\n",
+      "stderr": "harness check: warning: no project-native static check detected\n",
+      "feedback_seconds": 0.432117
+    },
+    {
+      "command": [
+        "./harness",
+        "inspect"
+      ],
+      "cwd": ".",
+      "exit": 0,
+      "stdout": "Harness inspection\n  target: <repository>\n  harness version: 0.1.0\n  manifest: valid (schema 1, 64 managed files)\n  configuration: <repository>/.harness/config.toml (project)\n    source=project\n    schema_version=1\n    project.profiles=[\"auto\"]\n    checks.required=[\"architecture\", \"documentation\", \"provenance\", \"demo-integrity\", \"standards\"]\n    standards.line_length=80\n    standards.file_lines_warning=350\n    standards.function_lines_warning=50\n    readiness.required_documents=[\"PRODUCT.md\", \"ARCHITECTURE.md\", \"DESIGN.md\", \"DATA.md\", \"QUALITY.md\", \"SECURITY.md\", \"DECISIONS.md\"]\n    readiness.fail_on_needs_input=false\n    security.mode=local\n    analysis.exclude=[\".git\", \".venv\", \"node_modules\", \"dist\", \"build\", \"coverage\", \"__pycache__\", \"vendor\", \"vendors\", \"generated\", \"migrations\", \"schemas\", \"fixtures\"]\n    commands.setup=<automatic>\n    commands.start=<automatic>\n    commands.check=<automatic>\n    commands.test=<configured>\n    commands.smoke=<automatic>\n  command resolution:\n    setup: unresolved\n    start: unresolved\n    check: policy checks only\n    test: configured (project config)\n    smoke: unresolved\n    self-test: executing harness contract suite (independent)\n  node project: no\n  python project: no\n  context:\n    present: AGENTS.md\n    present: PRODUCT.md\n    present: ARCHITECTURE.md\n    needs input: DESIGN.md\n    needs input: DATA.md\n    present: QUALITY.md\n    needs input: SECURITY.md\n    present: DECISIONS.md\n  policy checks: <repository>/.harness/checks\n  git: branch=main changes=25\n",
+      "stderr": "",
+      "feedback_seconds": 0.495239
+    },
+    {
+      "command": [
+        "python3",
+        ".harness/bin/manifest.py",
+        "verify",
+        "."
+      ],
+      "cwd": ".",
+      "exit": 0,
+      "stdout": "manifest: valid (schema 1, 64 managed files)\n",
+      "stderr": "",
+      "feedback_seconds": 0.047808
+    },
+    {
+      "command": [
+        "git",
+        "diff",
+        "--check"
+      ],
+      "cwd": ".",
+      "exit": 0,
+      "stdout": "",
+      "stderr": "",
+      "feedback_seconds": 0.020317
+    }
+  ]
+}

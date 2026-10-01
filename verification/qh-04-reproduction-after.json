@@ -1,0 +1,40 @@
+{
+  "fixture_venv_becomes_managed": {
+    "command": [
+      "/opt/homebrew/opt/python@3.14/bin/python3.14",
+      "<repository>/.harness/bin/manifest.py",
+      "verify",
+      "<temporary>/custom project skill"
+    ],
+    "cwd": "<temporary>/custom project skill",
+    "exit": 0,
+    "stdout": "manifest: valid (schema 1, 64 managed files)\n",
+    "stderr": ""
+  },
+  "project_skill_becomes_managed": {
+    "before": {
+      "command": [
+        "/opt/homebrew/opt/python@3.14/bin/python3.14",
+        "<repository>/.harness/bin/manifest.py",
+        "verify",
+        "<temporary>/custom project skill"
+      ],
+      "cwd": "<temporary>/custom project skill",
+      "exit": 0,
+      "stdout": "manifest: valid (schema 1, 64 managed files)\n",
+      "stderr": ""
+    },
+    "after": {
+      "command": [
+        "/opt/homebrew/opt/python@3.14/bin/python3.14",
+        "<repository>/.harness/bin/manifest.py",
+        "verify",
+        "<temporary>/custom project skill"
+      ],
+      "cwd": "<temporary>/custom project skill",
+      "exit": 0,
+      "stdout": "manifest: valid (schema 1, 64 managed files)\n",
+      "stderr": ""
+    }
+  }
+}

@@ -8,7 +8,10 @@ from source_paths import load_config, project_file, walk_files
 
 target = Path(sys.argv[1] if len(sys.argv) > 1 else ".").resolve()
 text_extensions = {".md", ".txt", ".js", ".jsx", ".ts", ".tsx", ".py", ".html"}
-claim = re.compile(r"\b(live integration|production data|connected to production|real[- ]time data)\b", re.I)
+claim = re.compile(
+    r"\b(live integration|production data|connected to production|real[- ]time data)\b",
+    re.I,
+)
 matches = []
 
 for path in walk_files(target, load_config(target)["analysis"]["exclude"]):
@@ -31,12 +34,20 @@ except ValueError as error:
     print(f"demo-integrity: {error}", file=sys.stderr)
     raise SystemExit(1)
 if not data_file.is_file():
-    print("demo-integrity: live/production claim found but docs/DATA.md is missing", file=sys.stderr)
+    print(
+        "demo-integrity: live/production claim found but docs/DATA.md is missing",
+        file=sys.stderr,
+    )
     raise SystemExit(1)
 
 data_text = data_file.read_text(encoding="utf-8").lower()
 if "real" not in data_text or "simulated" not in data_text:
-    print("demo-integrity: DATA.md must distinguish real and simulated behaviour", file=sys.stderr)
+    print(
+        "demo-integrity: DATA.md must distinguish real and simulated behaviour",
+        file=sys.stderr,
+    )
     raise SystemExit(1)
 
-print(f"demo-integrity: pass (classification context present for {len(matches)} claim file(s))")
+print(
+    f"demo-integrity: pass (classification context present for {len(matches)} claim file(s))"
+)

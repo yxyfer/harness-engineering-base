@@ -6,102 +6,120 @@ export HARNESS_COMMAND_NAME
 resolve_target "${1:-.}"
 
 printf 'Harness inspection\n'
-printf '  target: %s\n' "$TARGET"
-printf '  harness version: %s\n' "$(tr -d '\n' < "$KIT_ROOT/VERSION")"
-HARNESS_ROOT=$(CDPATH= cd "$KIT_ROOT/.." && pwd -P)
-if manifest_result=$(python3 "$MANIFEST_TOOL" verify "$HARNESS_ROOT" 2>&1); then
-  printf '  %s\n' "$manifest_result"
+printf '  target: %s\n' "${TARGET}"
+version=$(tr -d '\n' <"${KIT_ROOT}/VERSION")
+printf '  harness version: %s\n' "${version}"
+HARNESS_ROOT=$(CDPATH='' cd "${KIT_ROOT}/.." && pwd -P)
+if manifest_result=$(python3 "${MANIFEST_TOOL}" verify "${HARNESS_ROOT}" 2>&1); then
+  printf '  %s\n' "${manifest_result}"
 else
   manifest_status=$?
-  printf '  %s\n' "$manifest_result" >&2
-  exit "$manifest_status"
+  printf '  %s\n' "${manifest_result}" >&2
+  exit "${manifest_status}"
 fi
-printf '  configuration: %s (%s)\n' "$CONFIG_PATH" "$CONFIG_SOURCE"
-python3 "$CONFIG_TOOL" summary "$CONFIG_PATH" "$CONFIG_SOURCE" | sed 's/^/    /'
+printf '  configuration: %s (%s)\n' "${CONFIG_PATH}" "${CONFIG_SOURCE}"
+python3 "${CONFIG_TOOL}" summary "${CONFIG_PATH}" "${CONFIG_SOURCE}" | sed 's/^/    /'
 
 printf '  command resolution:\n'
 for action in setup start check test smoke; do
-  if command_override "$action" >/dev/null; then
-    source_name=$(command_override_source "$action")
-    printf '    %s: configured (%s)\n' "$action" "$source_name"
+  # Status selector; a non-zero result is expected and handled.
+  # shellcheck disable=SC2310
+  if command_override "${action}" >/dev/null; then
+    source_name=$(command_override_source "${action}")
+    printf '    %s: configured (%s)\n' "${action}" "${source_name}"
     continue
   fi
-  case "$action" in
-    setup)
-      if [ -f "$TARGET/package.json" ] || [ -f "$TARGET/pyproject.toml" ] || \
-        [ -f "$TARGET/requirements.txt" ]; then
-        resolution='automatic project manifest detection'
-      else
-        resolution='unresolved'
-      fi
-      ;;
-    start)
-      if has_npm_script dev; then
-        resolution='automatic package script: dev'
-      elif has_npm_script start; then
-        resolution='automatic package script: start'
-      elif [ -f "$TARGET/app.py" ]; then
-        resolution='automatic Python entry point: app.py'
-      elif [ -f "$TARGET/manage.py" ]; then
-        resolution='automatic Python entry point: manage.py'
-      else
-        resolution='unresolved'
-      fi
-      ;;
-    check)
-      if has_npm_script check; then
-        resolution='automatic package script: check'
-      elif has_npm_script lint || has_npm_script typecheck; then
-        resolution='automatic package lint/typecheck scripts'
-      elif [ -f "$TARGET/pyproject.toml" ] || [ -f "$TARGET/requirements.txt" ]; then
-        resolution='automatic Python checks'
-      else
-        resolution='policy checks only'
-      fi
-      ;;
-    test)
-      if has_npm_script test; then
-        resolution='automatic package script: test'
-      elif [ -d "$TARGET/tests" ] || [ -f "$TARGET/pyproject.toml" ] || \
-        [ -f "$TARGET/requirements.txt" ] || [ -f "$TARGET/pytest.ini" ]; then
-        runner=$(python3 "$KIT_ROOT/bin/python-tests.py" resolve "$TARGET") || \
-          fail 'invalid Python test-runner declaration'
-        resolution="Python application runner: $runner"
-      else
-        resolution='unresolved'
-      fi
-      ;;
-    smoke)
-      if has_npm_script smoke; then
-        resolution='automatic package script: smoke'
-      elif [ -f "$TARGET/scripts/smoke.py" ]; then
-        resolution='automatic Python smoke script'
-      elif [ -n "${HARNESS_BASE_URL:-}" ]; then
-        resolution='environment HARNESS_BASE_URL'
-      else
-        resolution='unresolved'
-      fi
-      ;;
+  case "${action}" in
+  setup)
+    if [ -f "${TARGET}/package.json" ] || [ -f "${TARGET}/pyproject.toml" ] ||
+      [ -f "${TARGET}/requirements.txt" ]; then
+      resolution='automatic project manifest detection'
+    else
+      resolution='unresolved'
+    fi
+    ;;
+  start)
+    # Status selector; a non-zero result is expected and handled.
+    # shellcheck disable=SC2310
+    if has_npm_script dev; then
+      resolution='automatic package script: dev'
+    elif has_npm_script start; then
+      resolution='automatic package script: start'
+    elif [ -f "${TARGET}/app.py" ]; then
+      resolution='automatic Python entry point: app.py'
+    elif [ -f "${TARGET}/manage.py" ]; then
+      resolution='automatic Python entry point: manage.py'
+    else
+      resolution='unresolved'
+    fi
+    ;;
+  check)
+    # Status selector; a non-zero result is expected and handled.
+    # shellcheck disable=SC2310
+    if has_npm_script check; then
+      resolution='automatic package script: check'
+    elif has_npm_script lint || has_npm_script typecheck; then
+      resolution='automatic package lint/typecheck scripts'
+    elif [ -f "${TARGET}/pyproject.toml" ] || [ -f "${TARGET}/requirements.txt" ]; then
+      resolution='automatic Python checks'
+    else
+      resolution='policy checks only'
+    fi
+    ;;
+  test)
+    # Status selector; a non-zero result is expected and handled.
+    # shellcheck disable=SC2310
+    if has_npm_script test; then
+      resolution='automatic package script: test'
+    elif [ -d "${TARGET}/tests" ] || [ -f "${TARGET}/pyproject.toml" ] ||
+      [ -f "${TARGET}/requirements.txt" ] || [ -f "${TARGET}/pytest.ini" ]; then
+      runner=$(python3 "${KIT_ROOT}/bin/python-tests.py" resolve "${TARGET}") ||
+        fail 'invalid Python test-runner declaration'
+      resolution="Python application runner: ${runner}"
+    else
+      resolution='unresolved'
+    fi
+    ;;
+  smoke)
+    # Status selector; a non-zero result is expected and handled.
+    # shellcheck disable=SC2310
+    if has_npm_script smoke; then
+      resolution='automatic package script: smoke'
+    elif [ -f "${TARGET}/scripts/smoke.py" ]; then
+      resolution='automatic Python smoke script'
+    elif [ -n "${HARNESS_BASE_URL:-}" ]; then
+      resolution='environment HARNESS_BASE_URL'
+    else
+      resolution='unresolved'
+    fi
+    ;;
+  *) fail "unknown inspection action: ${action}" ;;
   esac
-  printf '    %s: %s\n' "$action" "$resolution"
+  printf '    %s: %s\n' "${action}" "${resolution}"
 done
 printf '    self-test: executing harness contract suite (independent)\n'
 
-if [ -f "$TARGET/package.json" ]; then
-  printf '  node project: yes (%s)\n' "$(node_runner)"
+if [ -f "${TARGET}/package.json" ]; then
+  runner=$(node_runner)
+  printf '  node project: yes (%s)\n' "${runner}"
   for script_name in dev start check lint typecheck test smoke; do
-    if has_npm_script "$script_name"; then
-      printf '    script: %s\n' "$script_name"
+    # Status selector; a non-zero result is expected and handled.
+    # shellcheck disable=SC2310
+    if has_npm_script "${script_name}"; then
+      printf '    script: %s\n' "${script_name}"
     fi
   done
 else
   printf '  node project: no\n'
 fi
 
-if [ -f "$TARGET/pyproject.toml" ] || [ -f "$TARGET/requirements.txt" ]; then
+if [ -f "${TARGET}/pyproject.toml" ] || [ -f "${TARGET}/requirements.txt" ]; then
   printf '  python project: yes'
+  # Status selector; a non-zero result is expected and handled.
+  # shellcheck disable=SC2310
   if py=$(python_command 2>/dev/null); then
-    printf ' (%s)\n' "$($py --version 2>&1)"
+    python_version=$("${py}" --version 2>&1)
+    printf ' (%s)\n' "${python_version}"
   else
     printf ' (runtime missing)\n'
   fi
@@ -111,28 +129,30 @@ fi
 
 printf '  context:\n'
 for context_file in AGENTS.md PRODUCT.md ARCHITECTURE.md DESIGN.md DATA.md QUALITY.md SECURITY.md DECISIONS.md; do
-  if [ "$context_file" = AGENTS.md ]; then
-    context_path="$TARGET/$context_file"
+  if [ "${context_file}" = AGENTS.md ]; then
+    context_path="${TARGET}/${context_file}"
   else
-    context_path="$TARGET/docs/$context_file"
+    context_path="${TARGET}/docs/${context_file}"
   fi
-  if [ -f "$context_path" ]; then
-    if grep -q 'Status: needs-project-input' "$context_path"; then
-      printf '    needs input: %s\n' "$context_file"
+  if [ -f "${context_path}" ]; then
+    if grep -q 'Status: needs-project-input' "${context_path}"; then
+      printf '    needs input: %s\n' "${context_file}"
     else
-      printf '    present: %s\n' "$context_file"
+      printf '    present: %s\n' "${context_file}"
     fi
   else
-    printf '    missing: %s\n' "$context_file"
+    printf '    missing: %s\n' "${context_file}"
   fi
 done
 
-printf '  policy checks: %s/checks\n' "$KIT_ROOT"
+printf '  policy checks: %s/checks\n' "${KIT_ROOT}"
 
-if has_command git && git -C "$TARGET" rev-parse --is-inside-work-tree >/dev/null 2>&1; then
-  branch=$(git -C "$TARGET" branch --show-current 2>/dev/null || true)
-  changes=$(git -C "$TARGET" status --porcelain 2>/dev/null | wc -l | tr -d ' ')
-  printf '  git: branch=%s changes=%s\n' "${branch:-detached}" "$changes"
+# Status selector; a non-zero result is expected and handled.
+# shellcheck disable=SC2310
+if has_command git && git -C "${TARGET}" rev-parse --is-inside-work-tree >/dev/null 2>&1; then
+  branch=$(git -C "${TARGET}" branch --show-current 2>/dev/null || true)
+  changes=$(git -C "${TARGET}" status --porcelain 2>/dev/null | wc -l | tr -d ' ')
+  printf '  git: branch=%s changes=%s\n' "${branch:-detached}" "${changes}"
 else
   printf '  git: not detected\n'
 fi

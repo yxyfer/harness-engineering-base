@@ -32,7 +32,9 @@ COMMAND_NAMES = ("setup", "start", "check", "test", "smoke")
 
 
 class ConfigError(Exception):
-    def __init__(self, path: Path, key: str, expected: str, actual: str) -> None:
+    def __init__(
+        self, path: Path, key: str, expected: str, actual: str
+    ) -> None:
         self.path = path
         self.key = key
         self.expected = expected
@@ -46,7 +48,9 @@ def actual(value: Any) -> str:
     return f"{type(value).__name__} {value!r}"
 
 
-def require(condition: bool, path: Path, key: str, expected: str, value: Any) -> None:
+def require(
+    condition: bool, path: Path, key: str, expected: str, value: Any
+) -> None:
     if not condition:
         raise ConfigError(path, key, expected, actual(value))
 
@@ -68,7 +72,9 @@ def require_exact_keys(
     missing = expected_keys - set(value)
     if missing:
         key = sorted(missing)[0]
-        raise ConfigError(path, f"{prefix}.{key}", "a configured value", "missing key")
+        raise ConfigError(
+            path, f"{prefix}.{key}", "a configured value", "missing key"
+        )
     return value
 
 
@@ -99,7 +105,9 @@ def validate(path: Path) -> dict[str, Any]:
         with path.open("rb") as stream:
             config = tomllib.load(stream)
     except tomllib.TOMLDecodeError as error:
-        raise ConfigError(path, "TOML", "valid TOML syntax", str(error)) from error
+        raise ConfigError(
+            path, "TOML", "valid TOML syntax", str(error)
+        ) from error
 
     expected_top_level = {"schema_version", *SECTIONS}
     unknown_sections = set(config) - expected_top_level
@@ -110,7 +118,9 @@ def validate(path: Path) -> dict[str, Any]:
     missing_sections = expected_top_level - set(config)
     if missing_sections:
         key = sorted(missing_sections)[0]
-        raise ConfigError(path, key, "a configured value or table", "missing key")
+        raise ConfigError(
+            path, key, "a configured value or table", "missing key"
+        )
 
     require(
         type(config["schema_version"]) is int
@@ -149,7 +159,8 @@ def validate(path: Path) -> dict[str, Any]:
         path,
         "checks.required",
         sections["checks"]["required"],
-        item_check=lambda item: re.fullmatch(r"[a-z0-9][a-z0-9-]*", item) is not None,
+        item_check=lambda item: re.fullmatch(r"[a-z0-9][a-z0-9-]*", item)
+        is not None,
         item_expectation="a lowercase check identifier",
     )
 
@@ -166,7 +177,8 @@ def validate(path: Path) -> dict[str, Any]:
         path,
         "readiness.required_documents",
         sections["readiness"]["required_documents"],
-        item_check=lambda item: Path(item).name == item and item.endswith(".md"),
+        item_check=lambda item: Path(item).name == item
+        and item.endswith(".md"),
         item_expectation="a Markdown filename without directory components",
     )
     readiness_flag = sections["readiness"]["fail_on_needs_input"]
@@ -192,7 +204,8 @@ def validate(path: Path) -> dict[str, Any]:
         "analysis.exclude",
         sections["analysis"]["exclude"],
         allow_empty=True,
-        item_check=lambda item: not PurePosixPath(item).is_absolute() and ".." not in PurePosixPath(item).parts,
+        item_check=lambda item: not PurePosixPath(item).is_absolute()
+        and ".." not in PurePosixPath(item).parts,
         item_expectation="a relative path without '..'",
     )
     return config
@@ -202,7 +215,9 @@ def get_value(config: dict[str, Any], key: str, path: Path) -> Any:
     value: Any = config
     for part in key.split("."):
         if type(value) is not dict or part not in value:
-            raise ConfigError(path, key, "a known configuration key", "unknown key")
+            raise ConfigError(
+                path, key, "a known configuration key", "unknown key"
+            )
         value = value[part]
     return value
 

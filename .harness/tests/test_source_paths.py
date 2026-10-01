@@ -15,6 +15,7 @@ class SourcePathsTest(unittest.TestCase):
         path = ROOT / ".harness/bin/source_paths.py"
         self.assertTrue(path.is_file(), "shared source discovery is required")
         spec = importlib.util.spec_from_file_location("source_paths", path)
+        assert spec is not None and spec.loader is not None
         module = importlib.util.module_from_spec(spec)
         spec.loader.exec_module(module)
         return module
@@ -49,8 +50,12 @@ class SourcePathsTest(unittest.TestCase):
         with tempfile.TemporaryDirectory() as temporary:
             root = Path(temporary).resolve()
             for name in (
-                "src/generated", "other/generated", "src/generated-copy",
-                "src/nested/vendor", "vendor", "maintained",
+                "src/generated",
+                "other/generated",
+                "src/generated-copy",
+                "src/nested/vendor",
+                "vendor",
+                "maintained",
             ):
                 directory = root / name
                 directory.mkdir(parents=True)
@@ -59,19 +64,28 @@ class SourcePathsTest(unittest.TestCase):
 
             def guarded_scandir(path):
                 relative = Path(path).relative_to(root).as_posix()
-                self.assertNotIn(relative, {
-                    "src/generated", "src/nested/vendor", "vendor",
-                }, "excluded trees must not be opened")
+                self.assertNotIn(
+                    relative,
+                    {
+                        "src/generated",
+                        "src/nested/vendor",
+                        "vendor",
+                    },
+                    "excluded trees must not be opened",
+                )
                 return original(path)
 
             with patch.object(module.os, "scandir", guarded_scandir):
-                files = list(module.walk_files(
-                    root, ["src/generated", "vendor"]
-                ))
+                files = list(
+                    module.walk_files(root, ["src/generated", "vendor"])
+                )
             self.assertEqual(
                 {path.relative_to(root).as_posix() for path in files},
-                {"other/generated/file.py", "src/generated-copy/file.py",
-                 "maintained/file.py"},
+                {
+                    "other/generated/file.py",
+                    "src/generated-copy/file.py",
+                    "maintained/file.py",
+                },
             )
 
     def test_skips_file_directory_internal_and_cyclic_symlinks(self):

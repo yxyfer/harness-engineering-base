@@ -2,7 +2,7 @@
 
 set -eu
 
-root=$(CDPATH= cd "$(dirname "$0")" && pwd -P)
+root=$(CDPATH='' cd "$(dirname "$0")" && pwd -P)
 
 usage() {
   cat <<'EOF'
@@ -34,77 +34,89 @@ fi
 subcommand=$1
 shift
 
-case "$subcommand" in
-  setup|start|inspect|check|test|self-test|smoke)
-    ;;
-  help|-h|--help)
-    usage
-    exit 0
-    ;;
-  *)
-    printf 'harness: unknown command: %s\n\n' "$subcommand" >&2
-    usage >&2
-    exit 2
-    ;;
+case "${subcommand}" in
+setup | start | inspect | check | test | self-test | smoke) ;;
+help | -h | --help)
+  usage
+  exit 0
+  ;;
+*)
+  printf 'harness: unknown command: %s\n\n' "${subcommand}" >&2
+  usage >&2
+  exit 2
+  ;;
 esac
 
 target=
 target_set=0
 while [ "$#" -gt 0 ]; do
   case "$1" in
-    --config)
-      [ "$#" -ge 2 ] || { printf 'harness: --config requires a path\n' >&2; exit 2; }
-      HARNESS_CONFIG=$2
-      HARNESS_CONFIG_SOURCE=cli
-      export HARNESS_CONFIG HARNESS_CONFIG_SOURCE
-      shift 2
-      ;;
-    --command)
-      case "$subcommand" in
-        inspect|self-test)
-          printf 'harness: --command is not valid for %s\n' "$subcommand" >&2
-          exit 2
-          ;;
-      esac
-      [ "$#" -ge 2 ] || { printf 'harness: --command requires a value\n' >&2; exit 2; }
-      [ -n "$2" ] || { printf 'harness: --command cannot be empty\n' >&2; exit 2; }
-      HARNESS_CLI_COMMAND=$2
-      export HARNESS_CLI_COMMAND
-      shift 2
-      ;;
-    --)
-      shift
-      [ "$#" -le 1 ] || { printf 'harness: expected at most one target\n' >&2; exit 2; }
-      if [ "$#" -eq 1 ]; then
-        target=$1
-        target_set=1
-        shift
-      fi
-      ;;
-    -*)
-      printf 'harness: unknown option: %s\n' "$1" >&2
+  --config)
+    [ "$#" -ge 2 ] || {
+      printf 'harness: --config requires a path\n' >&2
+      exit 2
+    }
+    HARNESS_CONFIG=$2
+    HARNESS_CONFIG_SOURCE=cli
+    export HARNESS_CONFIG HARNESS_CONFIG_SOURCE
+    shift 2
+    ;;
+  --command)
+    case "${subcommand}" in
+    inspect | self-test)
+      printf 'harness: --command is not valid for %s\n' "${subcommand}" >&2
       exit 2
       ;;
-    *)
-      [ "$target_set" -eq 0 ] || {
-        printf 'harness: expected at most one target\n' >&2
-        exit 2
-      }
+    *) : ;;
+    esac
+    [ "$#" -ge 2 ] || {
+      printf 'harness: --command requires a value\n' >&2
+      exit 2
+    }
+    [ -n "$2" ] || {
+      printf 'harness: --command cannot be empty\n' >&2
+      exit 2
+    }
+    HARNESS_CLI_COMMAND=$2
+    export HARNESS_CLI_COMMAND
+    shift 2
+    ;;
+  --)
+    shift
+    [ "$#" -le 1 ] || {
+      printf 'harness: expected at most one target\n' >&2
+      exit 2
+    }
+    if [ "$#" -eq 1 ]; then
       target=$1
       target_set=1
       shift
-      ;;
+    fi
+    ;;
+  -*)
+    printf 'harness: unknown option: %s\n' "$1" >&2
+    exit 2
+    ;;
+  *)
+    [ "${target_set}" -eq 0 ] || {
+      printf 'harness: expected at most one target\n' >&2
+      exit 2
+    }
+    target=$1
+    target_set=1
+    shift
+    ;;
   esac
 done
 
-internal="$root/.harness/bin/$subcommand"
-[ -f "$internal" ] && [ -x "$internal" ] || {
-  printf 'harness: installation error: command implementation is missing: %s\n' "$subcommand" >&2
+internal="${root}/.harness/bin/${subcommand}"
+[ -f "${internal}" ] && [ -x "${internal}" ] || {
+  printf 'harness: installation error: command implementation is missing: %s\n' "${subcommand}" >&2
   exit 5
 }
 
-if [ "$target_set" -eq 1 ]; then
-  exec "$internal" "$target"
+if [ "${target_set}" -eq 1 ]; then
+  exec "${internal}" "${target}"
 else
-  exec "$internal"
+  exec "${internal}"
 fi

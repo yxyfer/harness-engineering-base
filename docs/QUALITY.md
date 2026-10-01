@@ -38,6 +38,16 @@ single project command resolution. Tool-call recorders prove argv/scope routing;
 they do not establish native tool correctness. Real installed native tools and
 missing coverage are reported separately in [QH-03](../verification/QH-03.md).
 
+## Core CI
+
+Step 05 adds a pinned macOS GitHub Actions workflow and
+[locked native CI setup](../.harness/ci/README.md). Its static phase requires
+ShellCheck, shfmt, Markdownlint, Ruff and Pyright; the existing Node fixture runs
+Prettier, ESLint and TypeScript. Both contract commands, fixture tests/smokes
+and disposable negative controls run without model-based grading. Unique logs
+retain failed attempts. [QH-05](../verification/QH-05.md) distinguishes local
+evidence from unverified remote execution; no branch protection is configured.
+
 ## Known limitations
 
 - Optional developer tools are not installed by the harness yet. Missing tools
@@ -55,7 +65,14 @@ Harness changes also require `./harness self-test`. Native overrides/scripts
 retain their own collection contract; general required-case/skip/evidence
 enforcement remains proposed for Step 08. Optional static tools can still be
 unavailable despite a zero command exit. Steps 02–03 repair F1–F5; managed-file
-ownership findings F6–F7 remain for Step 04.
+ownership findings F6–F7 are repaired in Step 04.
+
+Step 04 uses full disposable installations, a real no-pip environment and
+synthetic project additions to prove health remains intact. Shipped edits/loss,
+unsafe paths, JSON duplicates, inventory drift and symlink destinations fail.
+Deterministic release generation includes exactly reviewed inputs and leaves
+consumer files/metadata untouched. [QH-04](../verification/QH-04.md) records
+before/after evidence and native coverage limits.
 
 ## Target quality policy agreed on 2026-10-01
 

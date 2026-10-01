@@ -20,8 +20,11 @@ for path in markdown_files:
     text = path.read_text(encoding="utf-8")
     for raw_target in link_pattern.findall(text):
         raw_target = raw_target.strip()
-        link = (raw_target[1:].split(">", 1)[0] if raw_target.startswith("<")
-                else raw_target.split()[0])
+        link = (
+            raw_target[1:].split(">", 1)[0]
+            if raw_target.startswith("<")
+            else raw_target.split()[0]
+        )
         if link.startswith(("http://", "https://", "mailto:", "#")):
             continue
         local = unquote(link.split("#", 1)[0])
@@ -44,6 +47,8 @@ for path in markdown_files:
     if "Status: needs-project-input" in path.read_text(encoding="utf-8"):
         unfinished.append(str(path.relative_to(target)))
 if unfinished:
-    print(f"documentation: warning: project input needed in {', '.join(unfinished)}")
+    print(
+        f"documentation: warning: project input needed in {', '.join(unfinished)}"
+    )
 
 print(f"documentation: pass ({len(markdown_files)} Markdown files)")

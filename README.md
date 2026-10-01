@@ -50,6 +50,14 @@ Set `HARNESS_KIT_ROOT` when the command implementation is hosted outside the
 target repository. Set `HARNESS_CHECKS_DIR` to select a different checks
 directory.
 
+## Core CI
+
+The [core CI guide](.harness/ci/README.md) describes the default pinned macOS
+GitHub Actions workflow and reproducible locked setup. It executes actual native
+checks, both harness suites, fixture tests/smokes and disposable negative cases.
+Local execution evidence and remote execution status are separate in
+[QH-05](verification/QH-05.md). No remote protection settings are configured.
+
 ## Version and configuration
 
 The harness version is available offline in `.harness/VERSION` and is displayed
@@ -213,8 +221,8 @@ normalised to exit `1` at the public harness boundary.
 
 | Paths | Owner after creation | Update rule |
 | --- | --- | --- |
-| `.harness/**`, except project-owned files below | Harness | Check checksums before replacing. |
-| `.agents/skills/<shipped-skill>/**` | Harness | Check for local changes before replacing. |
+| Exact files listed in `.harness/release-files.json` | Harness | Check checksums before replacing. |
+| Additional files in shared folders, including project skills | Project/local | Never absorb into release ownership automatically. |
 | `harness` | Harness | Check its checksum before replacing. |
 | `.harness/config.toml` and future `exceptions.yml` | Project | Never overwrite automatically. |
 | `AGENTS.md`, `docs/`, `plans/`, `tasks/`, `verification/` | Project | Never overwrite automatically. |
@@ -223,6 +231,33 @@ normalised to exit `1` at the public harness boundary.
 `.harness/manifest.json` records the installed harness version, manifest schema,
 installation timestamp, and SHA-256 checksums for managed files. It deliberately
 excludes project-owned configuration and context.
+
+`.harness/release-files.json` is the reviewed release input list; its own
+checksum is included in the manifest. Verification requires the manifest's
+paths to match that list exactly and verifies every shipped checksum. Added
+skills, notes, `.venv`, dependencies and caches do not change installation
+health, even inside shared folders. Shipped fixture source remains managed.
+
+Release maintainers can emit a candidate manifest with
+`python3 .harness/bin/manifest.py generate-release ROOT [UTC_TIMESTAMP]`.
+This reads only listed files, writes JSON to stdout and never discovers new
+ownership by scanning directories. Review inventory additions/removals and
+hash changes before replacing release metadata. Generation is an explicit
+release-authoring operation and must never bless consumer edits. The old
+`generate` action now returns usage exit 2.
+
+Manifest/inventory entries must be canonical relative POSIX paths in managed
+namespaces. Traversal, absolute/drive paths, aliases, duplicate JSON keys,
+runtime/cache inputs and project-owned configuration are rejected. Shipped
+files and metadata must be regular files with no symlink in their destination
+or parents. Unlisted project/runtime symlinks are allowed and are not traversed.
+
+Manifest schema 1 and version `0.1.0` are retained for this unreleased base.
+The new verifier requires the release inventory; an older kit without it fails
+exit 5. Updating an old kit requires reviewed metadata and verifier changes
+with existing conflicts preserved; no automatic installer/migration exists.
+The inventory and checksums are editable integrity metadata, not signatures or
+a defence against concurrent filesystem replacement or a malicious maintainer.
 
 ## Starting a new project
 

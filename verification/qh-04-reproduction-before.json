@@ -1,0 +1,43 @@
+{
+  "fixture_venv_becomes_managed": {
+    "command": [
+      "/opt/homebrew/opt/python@3.14/bin/python3.14",
+      "<repository>/.harness/bin/manifest.py",
+      "verify",
+      "<temporary>/custom project skill"
+    ],
+    "cwd": "<temporary>/custom project skill",
+    "exit": 5,
+    "stdout": "",
+    "stderr": "manifest: <temporary>/custom project skill: unrecorded managed file: .harness/tests/fixtures/python-project/.venv/bin/Activate.ps1\n",
+    "feedback_seconds": 0.03898
+  },
+  "project_skill_becomes_managed": {
+    "before": {
+      "command": [
+        "/opt/homebrew/opt/python@3.14/bin/python3.14",
+        "<repository>/.harness/bin/manifest.py",
+        "verify",
+        "<temporary>/custom project skill"
+      ],
+      "cwd": "<temporary>/custom project skill",
+      "exit": 0,
+      "stdout": "manifest: valid (schema 1, 62 managed files)\n",
+      "stderr": "",
+      "feedback_seconds": 0.044119
+    },
+    "after": {
+      "command": [
+        "/opt/homebrew/opt/python@3.14/bin/python3.14",
+        "<repository>/.harness/bin/manifest.py",
+        "verify",
+        "<temporary>/custom project skill"
+      ],
+      "cwd": "<temporary>/custom project skill",
+      "exit": 5,
+      "stdout": "",
+      "stderr": "manifest: <temporary>/custom project skill: unrecorded managed file: .agents/skills/project-specific/SKILL.md\n",
+      "feedback_seconds": 0.041768
+    }
+  }
+}

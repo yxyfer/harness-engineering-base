@@ -8,37 +8,42 @@ resolve_target "${1:-.}"
 # selecting a potentially older application interpreter.
 resolver_python=$(command -v python3)
 
+# Status selector; a non-zero result is expected and handled.
+# shellcheck disable=SC2310
 if override=$(command_override test); then
   source_name=$(command_override_source test)
   use_project_python_environment
-  run_override "$source_name" "$override"
+  run_override "${source_name}" "${override}"
 elif has_npm_script test; then
   run_node_script test
-elif [ -d "$TARGET/tests" ] || [ -f "$TARGET/pyproject.toml" ] || \
-  [ -f "$TARGET/requirements.txt" ] || [ -f "$TARGET/pytest.ini" ]; then
-  if [ -d "$TARGET/.venv" ] && [ ! -x "$TARGET/.venv/bin/python" ]; then
+elif [ -d "${TARGET}/tests" ] || [ -f "${TARGET}/pyproject.toml" ] ||
+  [ -f "${TARGET}/requirements.txt" ] || [ -f "${TARGET}/pytest.ini" ]; then
+  if [ -d "${TARGET}/.venv" ] && [ ! -x "${TARGET}/.venv/bin/python" ]; then
     fail 'project .venv is incomplete; recreate it before running tests'
   fi
+  # Status selector; a non-zero result is expected and handled.
+  # shellcheck disable=SC2310
   py=$(python_command) || fail 'Python is required to run the detected tests'
-  runner_tool="$KIT_ROOT/bin/python-tests.py"
-  if runner=$("$resolver_python" "$runner_tool" resolve "$TARGET"); then
+  runner_tool="${KIT_ROOT}/bin/python-tests.py"
+  if runner=$("${resolver_python}" "${runner_tool}" resolve "${TARGET}"); then
     :
   else
     fail 'invalid Python test-runner declaration'
   fi
   use_project_python_environment
-  case "$runner" in
-    pytest)
-      "$py" -m pytest --version >/dev/null 2>&1 || \
-        fail "pytest is required in $py; install the project's test dependencies" \
-          'in that environment'
-      note 'running application tests with pytest'
-      run_project_command "$py" -m pytest
-      ;;
-    unittest)
-      note 'running application tests with declared unittest'
-      run_project_command "$py" "$runner_tool" unittest tests
-      ;;
+  case "${runner}" in
+  pytest)
+    "${py}" -m pytest --version >/dev/null 2>&1 ||
+      fail "pytest is required in ${py}; install the project's test dependencies" \
+        'in that environment'
+    note 'running application tests with pytest'
+    run_project_command "${py}" -m pytest
+    ;;
+  unittest)
+    note 'running application tests with declared unittest'
+    run_project_command "${py}" "${runner_tool}" unittest tests
+    ;;
+  *) fail "unsupported Python test runner: ${runner}" ;;
   esac
 else
   fail 'no tests detected; set HARNESS_TEST_COMMAND, add a package test script, or add tests/'

@@ -6,23 +6,23 @@ export HARNESS_COMMAND_NAME
 resolve_target "${1:-.}"
 
 if [ -n "${HARNESS_CHECKS_DIR:-}" ]; then
-  checks_dir=$HARNESS_CHECKS_DIR
+  checks_dir=${HARNESS_CHECKS_DIR}
 else
   kit_root=$(find_kit_root)
-  checks_dir=${kit_root:+$kit_root/checks}
+  checks_dir=${kit_root:+${kit_root}/checks}
 fi
 
-if [ -n "$checks_dir" ] && [ -d "$checks_dir" ]; then
-  note "running policy checks from $checks_dir"
+if [ -n "${checks_dir}" ] && [ -d "${checks_dir}" ]; then
+  note "running policy checks from ${checks_dir}"
   for check_name in $(config_list checks.required); do
-    check_file="$checks_dir/$check_name/check"
-    [ -f "$check_file" ] && [ -x "$check_file" ] || \
-      installation_error "required policy check is missing or not executable: $check_name"
-    if "$check_file" "$TARGET"; then
+    check_file="${checks_dir}/${check_name}/check"
+    [ -f "${check_file}" ] && [ -x "${check_file}" ] ||
+      installation_error "required policy check is missing or not executable: ${check_name}"
+    if "${check_file}" "${TARGET}"; then
       :
     else
       check_status=$?
-      fail "policy check '$check_name' failed with exit $check_status"
+      fail "policy check '${check_name}' failed with exit ${check_status}"
     fi
   done
 else
@@ -30,46 +30,54 @@ else
 fi
 
 ran_project_check=0
+# Status selector; a non-zero result is expected and handled.
+# shellcheck disable=SC2310
 if override=$(command_override check); then
   source_name=$(command_override_source check)
-  run_override "$source_name" "$override"
+  run_override "${source_name}" "${override}"
   ran_project_check=1
 elif has_npm_script check; then
   run_node_script check
   ran_project_check=1
 else
+  # Status selector; a non-zero result is expected and handled.
+  # shellcheck disable=SC2310
   if has_npm_script lint; then
     run_node_script lint
     ran_project_check=1
   fi
+  # Status selector; a non-zero result is expected and handled.
+  # shellcheck disable=SC2310
   if has_npm_script typecheck; then
     run_node_script typecheck
     ran_project_check=1
   fi
 fi
 
-if [ "$ran_project_check" -eq 0 ] && {
-  [ -f "$TARGET/pyproject.toml" ] || [ -f "$TARGET/requirements.txt" ]
+if [ "${ran_project_check}" -eq 0 ] && {
+  [ -f "${TARGET}/pyproject.toml" ] || [ -f "${TARGET}/requirements.txt" ]
 }; then
+  # Status selector; a non-zero result is expected and handled.
+  # shellcheck disable=SC2310
   py=$(python_command) || fail 'Python is required for the detected Python project'
-  if "$py" -m ruff --version >/dev/null 2>&1; then
+  if "${py}" -m ruff --version >/dev/null 2>&1; then
     note 'checking Python formatting with ruff'
-    run_project_command "$py" -m ruff format --check .
+    run_project_command "${py}" -m ruff format --check .
     note 'linting Python with ruff'
-    run_project_command "$py" -m ruff check .
+    run_project_command "${py}" -m ruff check .
   else
     warn 'ruff not detected; formatting and lint checks are degraded'
     note 'parsing Python sources for syntax errors'
-    run_project_command "$py" "$KIT_ROOT/bin/source_paths.py" "$TARGET"
+    run_project_command "${py}" "${KIT_ROOT}/bin/source_paths.py" "${TARGET}"
   fi
-  if "$py" -m pyright --version >/dev/null 2>&1; then
+  if "${py}" -m pyright --version >/dev/null 2>&1; then
     note 'type-checking Python with pyright'
-    run_project_command "$py" -m pyright .
+    run_project_command "${py}" -m pyright .
   else
     warn 'pyright not detected; Python type checking was skipped'
   fi
   ran_project_check=1
 fi
 
-[ "$ran_project_check" -eq 1 ] || warn 'no project-native static check detected'
+[ "${ran_project_check}" -eq 1 ] || warn 'no project-native static check detected'
 note 'complete'

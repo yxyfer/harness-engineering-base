@@ -49,18 +49,21 @@ class RunnerContractTest(unittest.TestCase):
             destination.parent.mkdir(parents=True, exist_ok=True)
             shutil.copy2(ROOT / name, destination)
         config = (ROOT / ".harness/config.toml").read_text()
-        config = re.sub(r'(?m)^test = .*$', 'test = ""', config)
+        config = re.sub(r"(?m)^test = .*$", 'test = ""', config)
         self.write(".harness/config.toml", config)
 
     def run_harness(
-        self, action: str = "test", *arguments: str,
+        self,
+        action: str = "test",
+        *arguments: str,
         environment: dict[str, str] | None = None,
     ) -> subprocess.CompletedProcess[str]:
         executable = self.target / "harness"
         if not executable.exists():
             executable = ROOT / "harness"
         clean = {
-            key: value for key, value in os.environ.items()
+            key: value
+            for key, value in os.environ.items()
             if not key.startswith("HARNESS_") and key != "CONFIG_PATH"
         }
         clean["PYTHONDONTWRITEBYTECODE"] = "1"
@@ -68,19 +71,28 @@ class RunnerContractTest(unittest.TestCase):
         command = [str(executable), action, *arguments, str(self.target)]
         started = time.monotonic()
         result = subprocess.run(
-            command, cwd=self.target, env={**clean, **(environment or {})},
-            text=True, capture_output=True, check=False, timeout=45,
+            command,
+            cwd=self.target,
+            env={**clean, **(environment or {})},
+            text=True,
+            capture_output=True,
+            check=False,
+            timeout=45,
         )
         if trace:
             record = {
-                "case": self.id(), "command": command,
+                "case": self.id(),
+                "command": command,
                 "exit": result.returncode,
                 "feedback_seconds": round(time.monotonic() - started, 6),
-                "stdout": result.stdout, "stderr": result.stderr,
+                "stdout": result.stdout,
+                "stderr": result.stderr,
             }
-            serialized = json.dumps(record).replace(
-                str(self.target), "<temporary>"
-            ).replace(str(ROOT), "<repository>")
+            serialized = (
+                json.dumps(record)
+                .replace(str(self.target), "<temporary>")
+                .replace(str(ROOT), "<repository>")
+            )
             with Path(trace).open("a", encoding="utf-8") as stream:
                 stream.write(serialized + "\n")
         return result

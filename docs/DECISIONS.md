@@ -120,6 +120,26 @@ rather than rewriting history.
 - **Supersedes:** ADR-002's generic analysis description with explicit directory
   semantics; native configuration authority remains in force.
 
+### ADR-006: Declare release ownership by exact shipped paths
+
+- **Date:** 2026-10-01
+- **Status:** accepted; implemented in Step 04
+- **Context:** F6/F7 treated additions under shared folders as shipped content,
+  breaking health checks after project skills or real virtual environments.
+- **Decision:** Check an explicit `.harness/release-files.json` list against
+  the manifest's exact path set and shipped checksums. Include the inventory's
+  checksum. Validate canonical paths/JSON keys and reject links in shipped
+  destinations and metadata before opening or hashing files. Generate release
+  metadata from only those reviewed inputs to stdout with `generate-release`.
+- **Consequences:** Shared folders allow project additions and environments.
+  Modified/missing shipped files remain conflicts. Schema 1/version `0.1.0`
+  stay unchanged; older kits need an explicit reviewed verifier/inventory
+  update. Legacy `generate` exits 2. Metadata is not signed or race-proof.
+- **Evidence:** [TASK-007](../tasks/TASK-007-RELEASE-OWNERSHIP.md),
+  [QH-04](../verification/QH-04.md), installed-copy ownership regressions.
+- **Supersedes:** Broad managed-folder descriptions in ADR-001 and the previous
+  roadmap. Project/native configuration ownership remains unchanged.
+
 ## Decision template
 
 ### ADR-000: Short title

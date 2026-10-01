@@ -41,7 +41,7 @@ def excluded_directory(relative: Path, excluded: list[str]) -> bool:
         if "/" not in rule.rstrip("/") and parts:
             if parts[0] in relative.parts:
                 return True
-        elif relative.parts[:len(parts)] == parts:
+        elif relative.parts[: len(parts)] == parts:
             return True
     return False
 
@@ -73,7 +73,9 @@ def project_file(target: Path, relative: str) -> Path:
     for part in PurePosixPath(relative).parts:
         path = path / part
         if path.is_symlink():
-            raise ValueError(f"canonical context cannot be a symlink: {relative}")
+            raise ValueError(
+                f"canonical context cannot be a symlink: {relative}"
+            )
     return path
 
 
@@ -118,8 +120,10 @@ def check_python_syntax(target: Path) -> int:
         try:
             ast.parse(path.read_text(encoding="utf-8"), filename=str(path))
         except (SyntaxError, UnicodeDecodeError) as error:
-            print(f"python syntax: {path.relative_to(target)}: {error}",
-                  file=sys.stderr)
+            print(
+                f"python syntax: {path.relative_to(target)}: {error}",
+                file=sys.stderr,
+            )
             return 1
         count += 1
     print(f"python syntax: pass ({count} maintained Python files)")

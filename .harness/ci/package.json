@@ -1,0 +1,8 @@
+{
+  "name": "harness-ci-tools",
+  "private": true,
+  "devDependencies": {
+    "markdownlint-cli2": "0.23.3",
+    "pyright": "1.1.407"
+  }
+}

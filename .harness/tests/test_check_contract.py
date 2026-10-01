@@ -46,29 +46,43 @@ class CheckContractTest(unittest.TestCase):
 
     def run_check(self, *arguments, environment=None):
         clean = {
-            key: value for key, value in os.environ.items()
+            key: value
+            for key, value in os.environ.items()
             if not key.startswith("HARNESS_") and key != "CONFIG_PATH"
         }
         trace = clean.pop("QH_TEST_TRACE", None)
         clean["PATH"] = str(self.target / "tool bin") + ":" + clean["PATH"]
         clean["PYTHONDONTWRITEBYTECODE"] = "1"
-        command = [str(self.target / "harness"), "check", *arguments,
-                   str(self.target)]
+        command = [
+            str(self.target / "harness"),
+            "check",
+            *arguments,
+            str(self.target),
+        ]
         started = time.monotonic()
         result = subprocess.run(
-            command, cwd=self.target, env={**clean, **(environment or {})},
-            text=True, capture_output=True, check=False, timeout=45,
+            command,
+            cwd=self.target,
+            env={**clean, **(environment or {})},
+            text=True,
+            capture_output=True,
+            check=False,
+            timeout=45,
         )
         if trace:
             record = {
-                "case": self.id(), "command": command,
+                "case": self.id(),
+                "command": command,
                 "exit": result.returncode,
                 "feedback_seconds": round(time.monotonic() - started, 6),
-                "stdout": result.stdout, "stderr": result.stderr,
+                "stdout": result.stdout,
+                "stderr": result.stderr,
             }
-            serialized = json.dumps(record).replace(
-                str(self.target), "<temporary>"
-            ).replace(str(ROOT), "<repository>")
+            serialized = (
+                json.dumps(record)
+                .replace(str(self.target), "<temporary>")
+                .replace(str(ROOT), "<repository>")
+            )
             with Path(trace).open("a") as stream:
                 stream.write(serialized + "\n")
         return result
@@ -83,8 +97,9 @@ class CheckContractTest(unittest.TestCase):
 
     def test_python_shebangs_avoid_shell_and_get_python_size_analysis(self):
         self.write(
-            "python worker", "#!/usr/bin/env -S python3 -u\n" +
-            "value = 1\n" * 400, executable=True,
+            "python worker",
+            "#!/usr/bin/env -S python3 -u\n" + "value = 1\n" * 400,
+            executable=True,
         )
         self.write("shell worker", "#!/bin/sh\nexit 0\n", executable=True)
         result = self.run_check("--command", "true")
@@ -98,9 +113,10 @@ class CheckContractTest(unittest.TestCase):
 
     def test_nested_exclusions_apply_to_all_tree_checks(self):
         self.syntax_environment()
-        self.write(".harness/config.toml", self.config.replace(
-            '"generated",', '"src/generated",'
-        ))
+        self.write(
+            ".harness/config.toml",
+            self.config.replace('"generated",', '"src/generated",'),
+        )
         self.write("pyproject.toml", "[project]\nname = 'synthetic'\n")
         self.write("src/generated/bad.py", "def broken(:\n" * 400)
         self.write("src/generated/README.md", "[broken](missing.md)\n")
@@ -119,9 +135,10 @@ class CheckContractTest(unittest.TestCase):
         self.assertEqual(result.returncode, 0, result.stdout + result.stderr)
 
     def test_similarly_named_and_non_root_directories_remain_checked(self):
-        self.write(".harness/config.toml", self.config.replace(
-            '"generated",', '"src/generated",'
-        ))
+        self.write(
+            ".harness/config.toml",
+            self.config.replace('"generated",', '"src/generated",'),
+        )
         for name in ("src/generated-copy", "other/src/generated"):
             with self.subTest(name=name):
                 self.write(f"{name}/README.md", "[broken](missing.md)\n")
@@ -133,8 +150,11 @@ class CheckContractTest(unittest.TestCase):
     def test_extensionless_python_syntax_error_is_a_failure(self):
         self.syntax_environment()
         self.write("pyproject.toml", "[project]\nname = 'synthetic'\n")
-        self.write("broken worker", "#!/usr/bin/env python3\ndef broken(:\n",
-                   executable=True)
+        self.write(
+            "broken worker",
+            "#!/usr/bin/env python3\ndef broken(:\n",
+            executable=True,
+        )
         result = self.run_check()
         self.assertEqual(result.returncode, 1, result.stdout + result.stderr)
         self.assertIn("broken worker", result.stderr)
@@ -163,11 +183,20 @@ class CheckContractTest(unittest.TestCase):
 
     def test_canonical_policy_document_symlink_is_rejected(self):
         self.write("AGENTS.md", "# Synthetic\n")
-        for name in ("PRODUCT", "ARCHITECTURE", "DESIGN", "DATA", "QUALITY",
-                     "SECURITY", "DECISIONS"):
+        for name in (
+            "PRODUCT",
+            "ARCHITECTURE",
+            "DESIGN",
+            "DATA",
+            "QUALITY",
+            "SECURITY",
+            "DECISIONS",
+        ):
             self.write(f"docs/{name}.md", "# Synthetic\n")
-        self.write("outside-context.txt", "## System shape\n## Boundaries\n"
-                   "## External systems\n")
+        self.write(
+            "outside-context.txt",
+            "## System shape\n## Boundaries\n## External systems\n",
+        )
         (self.target / "docs/ARCHITECTURE.md").unlink()
         (self.target / "docs/ARCHITECTURE.md").symlink_to(
             self.target / "outside-context.txt"
@@ -180,12 +209,18 @@ class CheckContractTest(unittest.TestCase):
     def test_overrides_preserve_precedence_and_run_once_without_python(self):
         self.write("pyproject.toml", "[project]\nname = 'synthetic'\n")
         self.write("bad.py", "def broken(:\n")
-        self.write(".harness/config.toml", self.config.replace(
-            'check = ""', 'check = "echo config >> selected.txt"'
-        ))
+        self.write(
+            ".harness/config.toml",
+            self.config.replace(
+                'check = ""', 'check = "echo config >> selected.txt"'
+            ),
+        )
         for arguments, environment, expected in (
-            (("--command", "echo cli >> selected.txt"),
-             {"HARNESS_CHECK_COMMAND": "echo env >> selected.txt"}, "cli"),
+            (
+                ("--command", "echo cli >> selected.txt"),
+                {"HARNESS_CHECK_COMMAND": "echo env >> selected.txt"},
+                "cli",
+            ),
             ((), {"HARNESS_CHECK_COMMAND": "echo env >> selected.txt"}, "env"),
             ((), {}, "config"),
         ):
@@ -219,7 +254,9 @@ class CheckContractTest(unittest.TestCase):
         self.assertFalse((self.target / "project-ran").exists())
 
     def test_override_failure_is_not_hidden(self):
-        result = self.run_check("--command", "echo once >> selected.txt; exit 7")
+        result = self.run_check(
+            "--command", "echo once >> selected.txt; exit 7"
+        )
         self.assertEqual(result.returncode, 1)
         self.assertIn("project command failed with exit 7", result.stderr)
         self.assertEqual((self.target / "selected.txt").read_text(), "once\n")
@@ -227,11 +264,18 @@ class CheckContractTest(unittest.TestCase):
     def test_package_check_is_one_implementation_without_auto_python(self):
         self.write("pyproject.toml", "[project]\nname = 'synthetic'\n")
         self.write("bad.py", "def broken(:\n")
-        self.write("package.json", json.dumps({"scripts": {
-            "check": "echo check >> selected.txt",
-            "lint": "echo lint >> selected.txt",
-            "typecheck": "echo typecheck >> selected.txt",
-        }}))
+        self.write(
+            "package.json",
+            json.dumps(
+                {
+                    "scripts": {
+                        "check": "echo check >> selected.txt",
+                        "lint": "echo lint >> selected.txt",
+                        "typecheck": "echo typecheck >> selected.txt",
+                    }
+                }
+            ),
+        )
         result = self.run_check()
         self.assertEqual(result.returncode, 0, result.stderr)
         self.assertEqual((self.target / "selected.txt").read_text(), "check\n")
@@ -239,24 +283,34 @@ class CheckContractTest(unittest.TestCase):
     def test_package_lint_and_typecheck_fallback_each_run_once(self):
         self.write("pyproject.toml", "[project]\nname = 'synthetic'\n")
         self.write("bad.py", "def broken(:\n")
-        self.write("package.json", json.dumps({"scripts": {
-            "lint": "echo lint >> selected.txt",
-            "typecheck": "echo typecheck >> selected.txt",
-        }}))
+        self.write(
+            "package.json",
+            json.dumps(
+                {
+                    "scripts": {
+                        "lint": "echo lint >> selected.txt",
+                        "typecheck": "echo typecheck >> selected.txt",
+                    }
+                }
+            ),
+        )
         result = self.run_check()
         self.assertEqual(result.returncode, 0, result.stderr)
-        self.assertEqual((self.target / "selected.txt").read_text(),
-                         "lint\ntypecheck\n")
+        self.assertEqual(
+            (self.target / "selected.txt").read_text(), "lint\ntypecheck\n"
+        )
 
     def test_native_tools_own_their_scope(self):
         self.syntax_environment()
         self.write("pyproject.toml", "[project]\nname = 'synthetic'\n")
         self.write("generated/native.py", "value = 1\n")
         self.write("generated/README.md", "# Synthetic\n")
-        self.write("ruff/__main__.py", RECORDER.replace(
-            "Path(sys.argv[0]).name", "'ruff'"
-        ) + "if sys.argv[1:2] == ['check']:\n"
-          "    assert Path('generated/native.py').exists()\n")
+        self.write(
+            "ruff/__main__.py",
+            RECORDER.replace("Path(sys.argv[0]).name", "'ruff'")
+            + "if sys.argv[1:2] == ['check']:\n"
+            "    assert Path('generated/native.py').exists()\n",
+        )
         result = self.run_check()
         self.assertEqual(result.returncode, 0, result.stderr)
         self.assertIn(["ruff", "format", "--check", "."], self.calls())

@@ -23,7 +23,8 @@ Describe the user or system outcome this plan coordinates and why it matters.
 ## Implementation slices
 
 Keep each slice independently understandable and verifiable. Create a task from
-`tasks/TASK_TEMPLATE.md` when a slice needs its own owner, acceptance criteria, or
+`tasks/TASK_TEMPLATE.md` when a slice needs its own owner, acceptance criteria,
+or
 work history.
 
 | Slice | Outcome | Task | Dependencies | Status |

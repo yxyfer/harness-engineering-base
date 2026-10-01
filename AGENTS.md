@@ -73,13 +73,17 @@ test, or smoke behaviour.
 
 - Treat `AGENTS.md`, `docs/`, `plans/`, `tasks/`, `verification/`, and
   `.harness/config.toml` as project-owned after creation.
-- Treat `harness`, other `.harness/` files, and shipped `.agents/skills/` as
-  managed harness files. Modify them only when the task explicitly changes the
-  harness itself.
+- Managed ownership is the explicit file list in `.harness/release-files.json`,
+  including each shipped skill file. Shared folders are not wholly managed:
+  project skills/additions and generated environments remain project/local.
+  Modify shipped files only when the task explicitly changes the harness.
 - Never overwrite project-owned files during installation or updates. Propose a
   reviewable merge or side file instead.
 - A managed-file checksum mismatch is a conflict to investigate, not permission
   to discard the local version.
+- `manifest.py generate-release` is release authoring to stdout from reviewed
+  inputs. Never use it to accept a consumer conflict; compare release inventory
+  and checksum changes before replacing release metadata.
 - Keep literal credentials, tokens, and machine-specific absolute paths out of
   committed harness configuration.
 

@@ -1,0 +1,7 @@
+{
+  "include": [".harness/bin", ".harness/tests/test_*.py", ".harness/ci/run.py"],
+  "exclude": ["**/__pycache__", "**/.venv", ".harness/tests/fixtures"],
+  "extraPaths": [".harness/bin"],
+  "pythonVersion": "3.14",
+  "typeCheckingMode": "standard"
+}

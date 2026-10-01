@@ -8,9 +8,14 @@ import sys
 root = Path(__file__).parents[1]
 environment = {**os.environ, "PORT": "0"}
 process = subprocess.Popen(
-    [sys.executable, "app.py"], cwd=root, env=environment,
-    stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True
+    [sys.executable, "app.py"],
+    cwd=root,
+    env=environment,
+    stdout=subprocess.PIPE,
+    stderr=subprocess.PIPE,
+    text=True,
 )
+assert process.stdout is not None and process.stderr is not None
 try:
     selector = selectors.DefaultSelector()
     selector.register(process.stdout, selectors.EVENT_READ)

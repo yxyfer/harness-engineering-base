@@ -3,16 +3,17 @@ from pathlib import Path
 import re
 import sys
 
+sys.path.insert(0, str(Path(__file__).resolve().parents[2] / "bin"))
+from source_paths import load_config, profile_for, project_file, walk_files
+
 target = Path(sys.argv[1] if len(sys.argv) > 1 else ".").resolve()
-ignored_dirs = {".git", "node_modules", ".venv", "dist", "build"}
 text_extensions = {".md", ".txt", ".js", ".jsx", ".ts", ".tsx", ".py", ".html"}
 claim = re.compile(r"\b(live integration|production data|connected to production|real[- ]time data)\b", re.I)
 matches = []
 
-for path in target.rglob("*"):
-    if not path.is_file() or path.suffix.lower() not in text_extensions:
-        continue
-    if any(part in ignored_dirs for part in path.parts):
+for path in walk_files(target, load_config(target)["analysis"]["exclude"]):
+    if (path.suffix.lower() not in text_extensions
+            and profile_for(path) not in {"python", "shell"}):
         continue
     try:
         text = path.read_text(encoding="utf-8")
@@ -25,7 +26,11 @@ if not matches:
     print("demo-integrity: pass (no strong live/production claims detected)")
     raise SystemExit(0)
 
-data_file = target / "docs" / "DATA.md"
+try:
+    data_file = project_file(target, "docs/DATA.md")
+except ValueError as error:
+    print(f"demo-integrity: {error}", file=sys.stderr)
+    raise SystemExit(1)
 if not data_file.is_file():
     print("demo-integrity: live/production claim found but docs/DATA.md is missing", file=sys.stderr)
     raise SystemExit(1)

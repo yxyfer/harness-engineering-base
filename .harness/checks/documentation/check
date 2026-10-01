@@ -4,12 +4,14 @@ import re
 import sys
 from urllib.parse import unquote
 
+sys.path.insert(0, str(Path(__file__).resolve().parents[2] / "bin"))
+from source_paths import load_config, walk_files
+
 target = Path(sys.argv[1] if len(sys.argv) > 1 else ".").resolve()
-ignored_dirs = {".git", "node_modules", ".venv", "dist", "build"}
 markdown_files = [
     path
-    for path in target.rglob("*.md")
-    if not any(part in ignored_dirs for part in path.parts)
+    for path in walk_files(target, load_config(target)["analysis"]["exclude"])
+    if path.suffix == ".md"
 ]
 
 link_pattern = re.compile(r"(?<!!)\[[^\]]+\]\(([^)]+)\)")
@@ -17,7 +19,9 @@ errors = []
 for path in markdown_files:
     text = path.read_text(encoding="utf-8")
     for raw_target in link_pattern.findall(text):
-        link = raw_target.strip().strip("<>").split()[0]
+        raw_target = raw_target.strip()
+        link = (raw_target[1:].split(">", 1)[0] if raw_target.startswith("<")
+                else raw_target.split()[0])
         if link.startswith(("http://", "https://", "mailto:", "#")):
             continue
         local = unquote(link.split("#", 1)[0])
@@ -34,8 +38,10 @@ if errors:
     raise SystemExit(1)
 
 unfinished = []
-for path in [target / "AGENTS.md", *(target / "docs").glob("*.md")]:
-    if path.is_file() and "Status: needs-project-input" in path.read_text(encoding="utf-8"):
+for path in markdown_files:
+    if path != target / "AGENTS.md" and path.parent != target / "docs":
+        continue
+    if "Status: needs-project-input" in path.read_text(encoding="utf-8"):
         unfinished.append(str(path.relative_to(target)))
 if unfinished:
     print(f"documentation: warning: project input needed in {', '.join(unfinished)}")

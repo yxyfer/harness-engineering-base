@@ -2,9 +2,17 @@
 from pathlib import Path
 import sys
 
+sys.path.insert(0, str(Path(__file__).resolve().parents[2] / "bin"))
+from source_paths import project_file
+
 target = Path(sys.argv[1] if len(sys.argv) > 1 else ".").resolve()
-data_file = target / "docs" / "DATA.md"
-if not (target / "AGENTS.md").is_file():
+try:
+    agents_file = project_file(target, "AGENTS.md")
+    data_file = project_file(target, "docs/DATA.md")
+except ValueError as error:
+    print(f"provenance: {error}", file=sys.stderr)
+    raise SystemExit(1)
+if not agents_file.is_file():
     print("provenance: skip (AGENTS.md not present)")
     raise SystemExit(0)
 if not data_file.is_file():

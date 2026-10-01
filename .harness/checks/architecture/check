@@ -2,8 +2,17 @@
 from pathlib import Path
 import sys
 
+sys.path.insert(0, str(Path(__file__).resolve().parents[2] / "bin"))
+from source_paths import project_file
+
 target = Path(sys.argv[1] if len(sys.argv) > 1 else ".").resolve()
-if not (target / "AGENTS.md").is_file():
+try:
+    agents_file = project_file(target, "AGENTS.md")
+    architecture_file = project_file(target, "docs/ARCHITECTURE.md")
+except ValueError as error:
+    print(f"architecture: {error}", file=sys.stderr)
+    raise SystemExit(1)
+if not agents_file.is_file():
     print("architecture: skip (AGENTS.md not present)")
     raise SystemExit(0)
 
@@ -16,12 +25,17 @@ required = [
     "SECURITY.md",
     "DECISIONS.md",
 ]
-missing = [name for name in required if not (target / "docs" / name).is_file()]
+try:
+    missing = [name for name in required
+               if not project_file(target, f"docs/{name}").is_file()]
+except ValueError as error:
+    print(f"architecture: {error}", file=sys.stderr)
+    raise SystemExit(1)
 if missing:
     print(f"architecture: missing context files: {', '.join(missing)}", file=sys.stderr)
     raise SystemExit(1)
 
-architecture = (target / "docs" / "ARCHITECTURE.md").read_text(encoding="utf-8")
+architecture = architecture_file.read_text(encoding="utf-8")
 headings = ["## System shape", "## Boundaries", "## External systems"]
 missing_headings = [heading for heading in headings if heading not in architecture]
 if missing_headings:

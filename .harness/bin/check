@@ -48,7 +48,9 @@ else
   fi
 fi
 
-if [ -f "$TARGET/pyproject.toml" ] || [ -f "$TARGET/requirements.txt" ]; then
+if [ "$ran_project_check" -eq 0 ] && {
+  [ -f "$TARGET/pyproject.toml" ] || [ -f "$TARGET/requirements.txt" ]
+}; then
   py=$(python_command) || fail 'Python is required for the detected Python project'
   if "$py" -m ruff --version >/dev/null 2>&1; then
     note 'checking Python formatting with ruff'
@@ -58,16 +60,7 @@ if [ -f "$TARGET/pyproject.toml" ] || [ -f "$TARGET/requirements.txt" ]; then
   else
     warn 'ruff not detected; formatting and lint checks are degraded'
     note 'parsing Python sources for syntax errors'
-    run_project_command "$py" -c '
-import ast
-from pathlib import Path
-
-ignored = {".git", ".venv", "node_modules", "dist", "build", "__pycache__"}
-for path in Path(".").rglob("*.py"):
-    if any(part in ignored for part in path.parts):
-        continue
-    ast.parse(path.read_text(encoding="utf-8"), filename=str(path))
-'
+    run_project_command "$py" "$KIT_ROOT/bin/source_paths.py" "$TARGET"
   fi
   if "$py" -m pyright --version >/dev/null 2>&1; then
     note 'type-checking Python with pyright'

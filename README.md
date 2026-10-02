@@ -27,6 +27,16 @@ fails with an actionable message where they do not.
 The root `harness` executable is the only public entry point into managed
 machinery.
 
+## Real application reference
+
+Step 10 adds [Workroom](examples/nextjs-app/README.md), a production-buildable
+Next.js/TypeScript reference with synthetic work items, browser-only edit
+previews and an owned Radix/shadcn-style kit in two semantic themes. All source,
+themes, native configs and dependencies are project-owned, never shipped kit
+inputs. Invoke the harness on this package root separately; root aggregation
+remains unsupported. The existing Node dispatcher fixture is retained unchanged.
+Persistence/authentication are pending, and state cards are labelled examples.
+
 ## Command contract
 
 All commands accept one optional target directory and default to the current

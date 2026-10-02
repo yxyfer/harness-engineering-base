@@ -1,0 +1,6 @@
+{
+  "schema_version": 1,
+  "locks": [{ "path": "package-lock.json", "ecosystem": "npm" }],
+  "dependency_scope": "All production and development packages in this standalone synthetic app; no remote integrations.",
+  "exceptions": []
+}

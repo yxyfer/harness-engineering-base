@@ -30,6 +30,11 @@ The argv must invoke the same required suite, not a smaller replacement.
 `{report}` expands to a fresh path; `HARNESS_TEST_REPORT` also supplies it.
 Supported adapters are junit and unittest; others remain explicitly unsupported.
 Smoke/static exits give outcomes, not test counts. Existing managers survive.
+For Next.js, a reviewed root build/test/smoke contract with a native adapter
+enables initial framework/browser controls. Verify always runs a required native
+production build (lock-selected npm/pnpm/yarn); missing/failed builds cannot pass.
+Browser smoke is initial project navigation, not full accessibility/performance
+or authorization assurance. Missing contracts/other capabilities remain visible.
 
 Zero tests, absent/oversized/malformed reports, failures, skips, expected
 failures, unexpected successes and retries block completeness. Native redacted

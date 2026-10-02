@@ -36,7 +36,10 @@ def test_command(
         settings = json.loads(evidence.read_text())
         if set(settings) != {"adapter", "command"} or settings[
             "adapter"
-        ] not in {"junit", "unittest"}:
+        ] not in {
+            "junit",
+            "unittest",
+        }:
             raise ValueError(
                 "evidence.json requires adapter (junit/unittest) and command"
             )
@@ -256,6 +259,35 @@ def main() -> int:
     static = control("check", "shared applicable static and policy controls")
     tests = control("tests", "shared application test controls")
     smoke = control("smoke", "required application golden-path smoke")
+    if "nextjs" in selection["frameworks"]:
+        item = control("nextjs-build", "real native production build")
+        controls.append(item)
+        if interrupted or (secured and not isolation_ok):
+            item["reason"] = (
+                "production build not run after isolation/interruption gap"
+            )
+        elif "check" not in selected:
+            item["reason"] = (
+                "required production build omitted by partial scope"
+            )
+        else:
+            manager = (
+                "pnpm"
+                if (target / "pnpm-lock.yaml").exists()
+                else "yarn"
+                if (target / "yarn.lock").exists()
+                else "npm"
+            )
+            argv = [manager, "run", "build"]
+            run_control(
+                item,
+                isolate(argv) if secured else argv,
+                target,
+                directory,
+                isolated_env if secured else env,
+                args.timeout,
+            )
+            interrupted |= item["reason"].startswith("interrupted")
     test_required = any(
         c["name"].endswith("-tests") for c in selection["controls"]
     ) or bool(

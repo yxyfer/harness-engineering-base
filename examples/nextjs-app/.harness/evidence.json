@@ -1,0 +1,10 @@
+{
+  "adapter": "junit",
+  "command": [
+    "node",
+    "node_modules/vitest/vitest.mjs",
+    "run",
+    "--reporter=default",
+    "--reporter=junit"
+  ]
+}

@@ -89,6 +89,37 @@ class VerifyEvidenceTest(unittest.TestCase):
         check, _, _ = self.run_verify("--validate-report", str(path))
         self.assertEqual(check.returncode, 0, check.stdout + check.stderr)
 
+    def test_declared_nextjs_production_build_failure_is_required(self):
+        self.write(
+            "package.json",
+            json.dumps(
+                {
+                    "dependencies": {"next": "16.3.8"},
+                    "scripts": {"build": "node -e 'process.exit(23)'"},
+                }
+            ),
+        )
+        result, report, _ = self.run_verify()
+        build = next(
+            c for c in report["controls"] if c["name"] == "nextjs-build"
+        )
+        self.assertEqual(build["state"], "failed")
+        self.assertTrue(build["required"])
+        self.assertNotEqual(result.returncode, 0)
+        self.assertFalse(report["complete"])
+
+    def test_nextjs_build_is_omitted_not_passed_in_test_only_scope(self):
+        self.write(
+            "package.json",
+            '{"dependencies":{"next":"16.3.8"},"scripts":{"build":"true"}}',
+        )
+        _, report, _ = self.run_verify("--only", "tests")
+        build = next(
+            c for c in report["controls"] if c["name"] == "nextjs-build"
+        )
+        self.assertEqual(build["state"], "unavailable")
+        self.assertIn("omitted", build["reason"])
+
     def test_failure_and_skip_preserved(self):
         for body, counter in (
             ("self.fail('synthetic failure')", "failures"),

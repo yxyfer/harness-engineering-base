@@ -13,6 +13,13 @@ sessions or production services. Reviewed commands, adapters, plugins and tests
 execute repository code. Config, reports and checksums are unsigned: independent
 review/CI enforcement must protect them. The harness is not its own sandbox.
 
+Step 10 adds a separately owned synthetic reference UI, not real users/sessions.
+No authentication, authorization or persisted mutation exists. Its no-access
+card is a labelled display example, never a permission control. Its own reviewed
+npm lock/security config selects the existing offline baseline. The app uses
+maintained ESLint 10 with compatible native Next/hooks plugins instead of the
+Next bundled React/import/a11y plugins that require unsupported ESLint 9.
+
 Opted-in verify wraps static checks/tests/self-tests/smoke and scanners in
 external macOS
 Seatbelt. It asserts actual permission-denied direct/child sockets, synthetic

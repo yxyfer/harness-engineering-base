@@ -42,6 +42,7 @@ mode = "local"
 
 [analysis]
 exclude = [
+  "examples",
   ".harness/tmp",
   ".harness/reports",
   ".git",

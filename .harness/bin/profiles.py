@@ -117,6 +117,28 @@ def root_issues(target: Path, declared: list[str], metadata, packages):
     return issues
 
 
+def initial_nextjs_contract(target: Path, packages: dict) -> bool:
+    """Reviewed native initial controls, not complete browser assurance."""
+    scripts = packages.get("package.json", {}).get("scripts", {})
+    if not all(
+        isinstance(scripts.get(name), str) and scripts[name].strip()
+        for name in ("build", "test", "smoke")
+    ):
+        return False
+    try:
+        path = project_file(target, ".harness/evidence.json")
+        evidence = json.loads(path.read_text())
+        return (
+            set(evidence) == {"adapter", "command"}
+            and evidence["adapter"] in {"junit", "unittest"}
+            and type(evidence["command"]) is list
+            and bool(evidence["command"])
+            and all(type(part) is str and part for part in evidence["command"])
+        )
+    except (OSError, ValueError, TypeError):
+        return False
+
+
 def resolve(target: Path, config: dict[str, Any]) -> dict[str, Any]:
     target = target.resolve()
     evidence, packages, metadata, issues = project_evidence(target, config)
@@ -169,8 +191,22 @@ def resolve(target: Path, config: dict[str, Any]) -> dict[str, Any]:
                     "reason": f"application test command for {name}",
                 }
             )
+    initial_nextjs = "nextjs" in frameworks and initial_nextjs_contract(
+        target, packages
+    )
     for name in sorted(frameworks | capabilities):
         reason = "; ".join(reasons[name])
+        if initial_nextjs and name in {"nextjs", "browser-ui"}:
+            controls.append(
+                {
+                    "name": name,
+                    "status": "implemented",
+                    "reason": reason + "; initial native production build, "
+                    "reported application tests and project browser smoke; "
+                    "not full accessibility/performance/security assurance",
+                }
+            )
+            continue
         controls.append(
             {"name": name, "status": "unsupported", "reason": reason}
         )

@@ -12,10 +12,18 @@ scope, adapter responsibility, timeout cleanup, redaction and stale validation.
 `./harness doctor [TARGET]` reports selection reasons, required context and
 prerequisite gaps. Exit 0 means ready to run controls, not verified. Missing
 tools never remove controls. Python/TypeScript static and test delegation use
-existing commands; Next.js-specific/browser controls remain visible unsupported
-gaps. Requested capabilities are unsupported until executable controls exist.
+existing commands. Step 10 recognizes only a reviewed initial native Next.js
+build/test/browser-smoke contract; missing contracts remain unsupported.
+Other requested capabilities are unsupported until executable controls exist.
 No browser engine or multi-package aggregator is introduced. Step 09 adds the
 narrow [native security baseline](../.harness/security/README.md).
+
+Step 10's project-owned Chromium suite runs against a real production build;
+the engine delegates, never grades screenshots or invents browser case counts.
+Vitest JUnit reports nine component/domain cases; Playwright independently
+reports initial navigation/reflow cases. Full accessibility/performance and
+persisted/authenticated journeys remain pending. Root checks explicitly exclude
+independent `examples/` packages from aggregation; invoke each package root.
 
 For schema 2, review profiles/frameworks (`auto` or explicit lists), capabilities
 and roots in the example side file. Keep existing command overrides and native

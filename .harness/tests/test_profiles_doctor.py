@@ -17,8 +17,7 @@ V2 = (
     VALID_CONFIG.replace("schema_version = 1", "schema_version = 2")
     .replace(
         'profiles = ["auto"]',
-        'profiles = ["auto"]\nframeworks = ["auto"]\n'
-        'capabilities = []\nroots = ["."]',
+        'profiles = ["auto"]\nframeworks = ["auto"]\ncapabilities = []\nroots = ["."]',
     )
     .replace('mode = "local"', 'mode = "off"')
     .replace(
@@ -93,6 +92,69 @@ class ProfilesDoctorTest(unittest.TestCase):
         self.assertNotIn("DATA.md", selection["documents"])
         self.assertTrue(
             any(c["name"] == "python-static" for c in selection["controls"])
+        )
+
+    def test_nextjs_initial_contract_requires_native_build_tests_and_smoke(
+        self,
+    ):
+        self.write(
+            "package.json",
+            json.dumps(
+                {
+                    "dependencies": {"next": "16.3.8"},
+                    "scripts": {
+                        "build": "next build",
+                        "test": "vitest run",
+                        "smoke": "playwright test",
+                    },
+                }
+            ),
+        )
+        self.write(
+            ".harness/evidence.json",
+            json.dumps(
+                {
+                    "adapter": "junit",
+                    "command": ["node", "local-runner", "{report}"],
+                }
+            ),
+        )
+        selection = self.resolve()
+        initial = [
+            c
+            for c in selection["controls"]
+            if c["name"] in {"nextjs", "browser-ui"}
+        ]
+        self.assertTrue(all(c["status"] == "implemented" for c in initial))
+        self.assertFalse(selection["issues"])
+        self.write(
+            "package.json", json.dumps({"dependencies": {"next": "16.3.8"}})
+        )
+        self.assertTrue(self.resolve()["issues"])
+
+    def test_nextjs_native_contract_does_not_establish_other_capabilities(self):
+        self.write(
+            "package.json",
+            json.dumps(
+                {
+                    "dependencies": {"next": "16.3.8"},
+                    "scripts": {
+                        "build": "next build",
+                        "test": "vitest run",
+                        "smoke": "playwright test",
+                    },
+                }
+            ),
+        )
+        self.write(
+            ".harness/evidence.json",
+            '{"adapter":"junit","command":["node","runner"]}',
+        )
+        self.config.write_text(
+            V2.replace("capabilities = []", 'capabilities = ["identity"]')
+        )
+        self.assertTrue(
+            any("identity" in issue for issue in self.resolve()["issues"])
         )
 
     def test_typescript_selects_native_controls(self):

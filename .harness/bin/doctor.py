@@ -148,7 +148,7 @@ def prerequisites(target: Path, config: dict[str, Any], selection):
         record(
             "next",
             tool.is_file() and os.access(tool, os.X_OK),
-            "Next.js native prerequisite; framework verification still unsupported",
+            "local Next.js production-build prerequisite; presence is not verification",
         )
     for profile, tools in {
         "shell": ("shellcheck", "shfmt"),

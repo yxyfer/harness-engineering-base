@@ -1,5 +1,21 @@
 # Architecture Context
 
+## Step 10 application foundation
+
+`examples/nextjs-app/` is a separately invoked project-owned package, outside the
+managed inventory. Real Next.js pages/layout render synthetic fixtures on the
+server; small Client Components own theme/edit/dialog state. Native strict
+TypeScript, ESLint/Next/hooks rules, Vitest and production Chromium navigation
+check maintained TSX. No persistence, session or mutation endpoint exists.
+
+Shared resolution recognizes the initial Next.js/browser contract only when
+root package scripts declare build/test/smoke and a native evidence adapter is
+reviewed. `verify` executes a required production-build row using the existing
+lock-selected package manager. Browser smoke is initial navigation, not full
+accessibility/performance/authorization assurance. Missing contracts retain
+unsupported controls. Root `analysis.exclude = ["examples", ...]` explicitly
+keeps independent packages out of root aggregation; check each example root.
+
 ## Step 08 evidence coordination
 
 Step 09 adds fixed native security adapters and external macOS test isolation,
@@ -133,7 +149,8 @@ shell binary digests. Job/command deadlines bound execution. See the
 
 The [product vision](PRODUCT.md) retains the three ownership layers and adds a
 small programmatic control-selection and evidence pipeline. Selection and native
-evidence coordination are implemented; application foundations remain planned.
+evidence coordination are implemented; Step 10 adds the real synthetic Next.js
+foundation, while persistence/security application boundaries remain planned.
 
 TypeScript and Python are the language profiles; Next.js is a framework profile
 on TypeScript. Reviewed project capabilities activate additional controls for

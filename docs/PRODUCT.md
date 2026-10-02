@@ -25,14 +25,21 @@ records today's behaviour and defects. The
 
 ## Users and jobs
 
+Step 10 adds the real [Next.js reference](../examples/nextjs-app/README.md),
+separate from the lightweight Node dispatcher fixture. It demonstrates synthetic
+list/detail/browser-edit previews, shared components and two token themes.
+Authentication, authorization and persistence remain pending; initial browser
+checks do not establish the later accessibility/performance controls.
+
 Step 07 implements native format/check delegation and required static-tool
 failure, with opt-in strict Python/TypeScript defaults. Native boundary rules
-protect the demonstrated layout; this is not complete runtime validation or a
-Next.js application foundation. See [QH-07](../verification/QH-07.md).
+protect the demonstrated layout; this is not complete runtime validation.
+See [QH-07](../verification/QH-07.md) and the Step 10 foundation above.
 
 Step 06 now implements read-only applicability and prerequisite diagnosis for
-Python, TypeScript and Next.js. Framework-specific/browser verification remains
-unsupported. Step 09 adds narrow native security checks and external macOS
+Python, TypeScript and Next.js. Step 10 adds initial native build/navigation
+verification; broader browser controls remain pending. Step 09 adds narrow
+native security checks and external macOS
 direct-egress isolation, not security certification. Multi-package
 aggregation is explicitly unsupported. See [QH-06](../verification/QH-06.md).
 

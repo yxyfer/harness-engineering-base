@@ -17,18 +17,20 @@ not source contents. No cloud export, durable database or production dataset is
 introduced. Retention/removal is local owner responsibility; no cleanup deletes
 project-owned reports. Stale-input validation is provenance, not authenticity.
 
-Status: needs-project-input
+Status: current; synthetic reference and local verification artifacts
 
 ## Data classes
 
 | Dataset or entity | Owner | Source | Classification | Retention |
 | --- | --- | --- | --- | --- |
-| TBD | TBD | TBD | TBD | TBD |
+| Reference work items | Repository owner | Owned deterministic fixtures | Synthetic, fictional people | Committed fixture source |
+| Edit draft/preview | Browser user | Local input | Synthetic demonstration | Memory only; reload resets |
 
 ## Contracts
 
-Link to schemas and describe identifiers, required fields, lifecycle, validation,
-and compatibility expectations.
+The [app contract](../examples/nextjs-app/src/domain/work-item.ts) defines id,
+title, summary, status union and owner. Title previews accept trimmed length
+3–80. This is local UI validation, not a secured server mutation boundary.
 
 ## Provenance
 
@@ -38,10 +40,11 @@ modelled, or simulated.
 
 ## Storage and movement
 
-Describe persistence, caching, regional boundaries, exports, deletion, and
-recovery.
+No application database, cache/session policy or live data movement exists.
+Server-rendered synthetic fixture values feed local browser state; no edit is
+submitted to a server. Persistence and resource-level access belong to Step 11.
 
 ## Test and demo data
 
-State how non-production data is generated, labelled, and kept separate from live
-data.
+WI-101–WI-103 and fictional owners are labelled in the UI and source. Tests use
+those deterministic fixtures and local server/browser runtimes only.

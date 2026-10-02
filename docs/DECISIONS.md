@@ -231,6 +231,29 @@ rather than rewriting history.
 - **Supersedes:** ADR-008's unsupported security-mode result only. Ownership,
   native tool authority, unsigned evidence and independent runtime trust remain.
 
+### ADR-012: Keep the real Next.js foundation project-owned and narrowly verified
+
+- **Date:** 2026-10-02
+- **Status:** accepted; Step 10 implementation
+- **Decision:** Add `examples/nextjs-app/` with exact Next.js/React/native tool
+  pins and its own config/lock. Retain the lightweight Node dispatcher fixture.
+  Use a small owned shadcn-style Radix kit, two semantic token themes and local
+  assets. Server Components render synthetic fixtures; only interaction state
+  is client-owned. No application persistence/auth boundary is claimed.
+- **Consequences:** App/components/dependencies never enter managed ownership.
+  Package roots run independently. A reviewed native build/test/smoke plus
+  evidence adapter enables initial Next.js/browser controls; verify executes
+  the production build explicitly. Missing contracts and other capabilities
+  remain required unsupported results. This is not complete browser assurance.
+  Use maintained ESLint 10 with native Next/hooks rules: the bundled Next plugin
+  set currently requires unsupported ESLint 9. No incompatible peer overrides.
+- **Evidence:** [TASK-013](../tasks/TASK-013-NEXTJS-REFERENCE-APP.md),
+  [reference](../examples/nextjs-app/README.md),
+  [partial verification](../verification/QH-10.md).
+- **Supersedes:** ADR-008's initial Next.js/browser unsupported result only;
+  full accessibility/performance, aggregation and application security remain
+  unimplemented. Native coverage/config ownership and Step 09 trust limits stay.
+
 ## Decision template
 
 ### ADR-000: Short title

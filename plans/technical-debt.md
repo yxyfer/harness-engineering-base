@@ -1,5 +1,13 @@
 # Technical Debt
 
+## Step 10 verification follow-up
+
+- The standalone Next.js foundation has passing production-build, static and
+  component evidence on the final kit. Earlier navigation/render evidence is
+  retained, but the owner stopped final browser execution. Resume only with
+  owner authorization; do not treat the earlier full report as current or begin
+  Step 11 here. See [QH-10](../verification/QH-10.md).
+
 ## Step 09 security follow-up
 
 - Review pytest 8.4.2 advisory `PYSEC-2026-1845` across existing development

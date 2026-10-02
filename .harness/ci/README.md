@@ -1,5 +1,15 @@
 # Core CI
 
+Step 09 adds checksum/hash-locked security setup and explicit PyPI/npm advisory
+capture before application testing. Contract/fixture/negative phases launch
+through `.harness/ci/security.py` with clean synthetic environments under
+external macOS Seatbelt. Actual egress preflight is mandatory without fallback.
+The separate offline security gate blocks findings/errors/unavailable data.
+Deprecated Seatbelt is direct process-network restriction, not hostile-code
+host/VM isolation. No production/provider secrets are supplied. Existing
+runtime/action pins and package managers are unchanged. See the
+[security contract](../security/README.md). Remote execution is unverified.
+
 GitHub Actions is the default because this repository had no CI provider.
 `.github/workflows/core.yml` uses one bounded `macos-15` Apple Silicon job,
 read-only repository permissions, SHA-pinned actions and retained failure logs.

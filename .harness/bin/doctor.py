@@ -41,6 +41,24 @@ def prerequisites(target: Path, config: dict[str, Any], selection):
         )
 
     profiles = selection["profiles"]
+    from security import KIT, enabled
+
+    if enabled(target, config):
+        record(
+            "security-policy",
+            (target / ".harness/security.json").is_file(),
+            "reviewed locks, scope and exact expiring exceptions",
+        )
+        record(
+            "gitleaks",
+            (KIT / "tmp/security-bin/gitleaks").is_file(),
+            "explicit pinned tool setup; scanner not executed",
+        )
+        record(
+            "sandbox-exec",
+            Path("/usr/bin/sandbox-exec").is_file(),
+            "external runtime presence only; verify must test actual denial",
+        )
     if "python" in profiles:
         environment = target / ".venv"
         python = (

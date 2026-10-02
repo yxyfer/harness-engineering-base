@@ -1,0 +1,9 @@
+;; External macOS Seatbelt, deprecated by Apple. Not an application URL filter.
+;; Direct internet access is denied, including inherited child processes.
+;; Loopback services must be trusted synthetic services, never egress proxies.
+(version 1)
+(allow default)
+(deny network*)
+(allow network-bind (local ip "localhost:*"))
+(allow network-inbound (local ip "localhost:*"))
+(allow network-outbound (remote ip "localhost:*"))

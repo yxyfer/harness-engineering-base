@@ -2,6 +2,13 @@
 
 ## Harness verification artifacts
 
+Step 09 setup records public PyPI/npm native advisory data in fixed ignored
+reports/advisories. Source/time, tool version, lock/manifest identity, native
+collection and capture hash are required; 24h freshness is enforced. Capture
+bytes join verification inputs. Sanitized findings omit secret values/snippets.
+Tests generate synthetic token/advisory fixtures; live setup is separate. No
+production/model integration or cloud export is introduced.
+
 Step 08 uses local synthetic test data and native runner evidence. The versioned
 contract is `.harness/verification/schema.json`; output lives in fixed ignored
 `.harness/reports/verify-*/` directories. Reports hold source/config/environment

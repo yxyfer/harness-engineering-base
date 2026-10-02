@@ -10,6 +10,7 @@
   },
   "globs": [
     "**/*.md", "!**/node_modules/**", "!**/vendor/**",
-    "!**/.venv/**", "!.harness/tmp/**", "!**/.pytest_cache/**"
+    "!**/.venv/**", "!.harness/tmp/**", "!**/.harness/reports/**",
+    "!**/.pytest_cache/**"
   ]
 }

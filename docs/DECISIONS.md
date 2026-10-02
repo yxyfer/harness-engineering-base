@@ -210,6 +210,27 @@ rather than rewriting history.
   [QH-08](../verification/QH-08.md), [contract](../.harness/verification/README.md).
 - **Supersedes:** ADR-004's deferred evidence requirement only.
 
+### ADR-011: Separate offline security evidence from test network isolation
+
+- **Date:** 2026-10-01
+- **Status:** accepted; Step 09 implementation
+- **Decision:** Use pinned Gitleaks, native npm audit/pip-audit captures and a
+  few Ruff/ESLint rules. Explicit registry setup records source/time/version,
+  native package coverage and lock/manifest identity; offline verify rejects
+  stale/missing data. Critical/high/unknown block; exact source/dependency
+  exceptions need owner/reason/expiry within 90 days. Secrets cannot be excepted.
+  Project-owned security.json is explicit schema 1 opt-in; schema 2 mode selects
+  required controls. No automatic project-file replacement or fixes.
+- **Consequences:** Application verify/CI test phases use synthetic allowlisted
+  environments and external macOS Seatbelt with actual direct/child/HTTP denial
+  preflight. Seatbelt is deprecated, unavailable launch fails closed, and no
+  hostile-code filesystem/VM or IPC-escape guarantee is made. Plain developer
+  test/smoke are unisolated. Capability-specific security remains unsupported.
+- **Evidence:** [TASK-012](../tasks/TASK-012-SECURITY-AND-ISOLATION.md),
+  [QH-09](../verification/QH-09.md), [contract](../.harness/security/README.md).
+- **Supersedes:** ADR-008's unsupported security-mode result only. Ownership,
+  native tool authority, unsigned evidence and independent runtime trust remain.
+
 ## Decision template
 
 ### ADR-000: Short title

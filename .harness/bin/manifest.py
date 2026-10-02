@@ -34,6 +34,7 @@ IGNORED_SUFFIXES = {".pyc", ".pyo", ".DS_Store"}
 PROJECT_OWNED_PATHS = {
     Path(".harness/config.toml"),
     Path(".harness/evidence.json"),
+    Path(".harness/security.json"),
     Path(".harness/exceptions.yml"),
     Path(".harness/manifest.json"),
 }

@@ -75,7 +75,8 @@ test, or smoke behaviour.
 ## Ownership boundaries
 
 - Treat `AGENTS.md`, `docs/`, `plans/`, `tasks/`, `verification/`, and
-  `.harness/config.toml` as project-owned after creation.
+  `.harness/config.toml`, `.harness/evidence.json`, and `.harness/security.json`
+  as project-owned after creation.
   `.harness/evidence.json` native evidence invocation is also project-owned.
 - Managed ownership is the explicit file list in `.harness/release-files.json`,
   including each shipped skill file. Shared folders are not wholly managed:

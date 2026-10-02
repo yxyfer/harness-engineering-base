@@ -1,6 +1,6 @@
 # Application quality harness implementation plan
 
-- **Status:** active; Steps 01-08 complete locally; Steps 09-19 not started
+- **Status:** active; Steps 01-09 complete locally; Steps 10-19 not started
 - **Owner:** repository owner
 - **Created and expanded:** 2026-10-01
 - **Direction:** [Product vision](../../docs/PRODUCT.md)
@@ -77,7 +77,8 @@ exist. Partially verified steps stay incomplete.
 
 ## Delivery sequence and checkpoints
 
-Steps 01-08 are **complete locally**; Steps 09-19 are **not started**. Step 05's
+Steps 01-09 are **complete locally**; Steps 10-19 are **not started**. Step 09's
+dependency findings still block security approval. Step 05's
 remote execution is unverified. Proposed paths may use established equivalents
 if implementation records the mapping.
 
@@ -91,7 +92,7 @@ if implementation records the mapping.
 | 06   | [Relevant profiles and prerequisite diagnostics](../../tasks/TASK-009-PROFILES-AND-DOCTOR.md)         | 05         | [Complete locally](../../verification/QH-06.md)                    |
 | 07   | [Native formatting and static checks](../../tasks/TASK-010-NATIVE-STATIC-TOOLS.md)                    | 06         | [Complete locally](../../verification/QH-07.md)                    |
 | 08   | [Native verification evidence](../../tasks/TASK-011-VERIFICATION-EVIDENCE.md)                         | 07         | [Complete locally](../../verification/QH-08.md)                    |
-| 09   | Security checks and isolated verification                                                             | 08         | Not started                                                        |
+| 09   | Security checks and isolated verification                                                             | 08         | [Complete; findings retained](../../verification/QH-09.md)         |
 | 10   | Real Next.js foundation and shared UI                                                                 | 09         | Not started                                                        |
 | 11   | Secure server operations and real persistence                                                         | 10         | Not started                                                        |
 | 12   | Complete application journey tests                                                                    | 11         | Not started                                                        |
@@ -1028,6 +1029,9 @@ unchanged. Root smoke remains undefined.
 Steps 06-08 are complete locally: QH-06, QH-07 and QH-08 document selection,
 native tools and input-bound evidence. Root verify remains incomplete because
 root smoke is undefined; actual fixture verify/smoke are the applicable
-acceptance evidence. Remote CI is unverified. Step 09 is next eligible; future
+acceptance evidence. Remote CI is unverified. Step 09 is complete locally;
+QH-09 records executable security, 147-case test/self-test passes and actual
+external macOS denial probes. Existing pytest advisories block security approval;
+no automatic fixes or exceptions were applied. Step 10 is not started. Future
 application journey acceptance cases remain specifications, not execution
 evidence.

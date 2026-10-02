@@ -186,7 +186,25 @@ def resolve(target: Path, config: dict[str, Any]) -> dict[str, Any]:
             documents |= CAPABILITY_DOCUMENTS.get(name, {"SECURITY.md"})
     warnings = []
     mode = config["security"]["mode"]
-    if config["schema_version"] == 1:
+    from security import enabled
+
+    if enabled(target, config):
+        documents.add("SECURITY.md")
+        controls.extend(
+            [
+                {
+                    "name": "security-baseline",
+                    "status": "implemented",
+                    "reason": "reviewed security mode and explicit policy (schema 1 opt-in)",
+                },
+                {
+                    "name": "test-isolation",
+                    "status": "implemented",
+                    "reason": "required external macOS direct-egress isolation",
+                },
+            ]
+        )
+    elif config["schema_version"] == 1:
         warnings.append(
             "schema 1 compatibility: reviewed documents preserved; "
             "review config-v2.example.toml to opt in; no files changed"
@@ -194,19 +212,6 @@ def resolve(target: Path, config: dict[str, Any]) -> dict[str, Any]:
         warnings.append(
             f"deprecated schema 1 security.mode={mode}: no scanner "
             "selection or security assurance; mode was historically inert"
-        )
-    elif mode != "off":
-        documents.add("SECURITY.md")
-        controls.append(
-            {
-                "name": f"security-{mode}",
-                "status": "unsupported",
-                "reason": "reviewed security.mode",
-            }
-        )
-        issues.append(
-            f"unsupported security.mode={mode}: security automation "
-            "is not implemented; no security pass is claimed"
         )
     else:
         warnings.append(

@@ -246,11 +246,16 @@ class ProfilesDoctorTest(unittest.TestCase):
         self.assertIn("deprecated", " ".join(selection["warnings"]))
         self.assertEqual(self.config.read_bytes(), before)
 
-    def test_v2_requested_security_mode_is_visible_unsupported(self):
+    def test_v2_requested_security_mode_selects_required_controls(self):
         self.config.write_text(V2.replace('mode = "off"', 'mode = "ci"'))
         selection = self.resolve()
-        self.assertIn("security", " ".join(selection["issues"]))
-        self.assertIn("unsupported", " ".join(selection["issues"]))
+        self.assertTrue(
+            any(c["name"] == "security-baseline" for c in selection["controls"])
+        )
+        self.assertTrue(
+            any(c["name"] == "test-isolation" for c in selection["controls"])
+        )
+        self.assertIn("SECURITY.md", selection["documents"])
 
     def test_v2_required_context_cannot_be_excluded(self):
         self.config.write_text(

@@ -56,6 +56,7 @@ def sources(profile: str) -> list[str]:
         ROOT / ".harness",
         [
             "tmp",
+            "reports",
             "node_modules",
             "fixtures",
             ".venv",
@@ -173,9 +174,16 @@ def negatives():
         assert "SC2086" in output
         markdown = target / "bad.md"
         markdown.write_text("# Heading\n### Skipped level\n")
+        # Generated report directories are rightly excluded by authoring lint.
+        # This isolated negative fixture owns a native default config so its
+        # deliberate violation is actually scanned, not excluded by the parent.
+        (target / ".markdownlint-cli2.jsonc").write_text(
+            json.dumps({"config": {"default": True}}) + "\n"
+        )
         output = run(
             "negative-markdown",
             ["markdownlint-cli2", str(markdown)],
+            cwd=target,
             negative=True,
         )
         assert "MD001" in output

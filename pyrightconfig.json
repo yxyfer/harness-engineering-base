@@ -1,5 +1,5 @@
 {
-  "include": [".harness/bin", ".harness/tests/test_*.py", ".harness/ci/run.py"],
+  "include": [".harness/bin", ".harness/tests/test_*.py", ".harness/ci/run.py", ".harness/ci/security.py"],
   "exclude": ["**/__pycache__", "**/.venv", ".harness/tests/fixtures"],
   "extraPaths": [".harness/bin"],
   "pythonVersion": "3.14",

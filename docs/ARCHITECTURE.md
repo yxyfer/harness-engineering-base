@@ -2,6 +2,18 @@
 
 ## Step 08 evidence coordination
 
+Step 09 adds fixed native security adapters and external macOS test isolation,
+not a policy DSL or self-sandbox. Shared selection activates reviewed local/ci
+security requirements; schema 1 needs explicit project-owned security.json.
+Advisory setup is network-enabled, separate from offline verify. Its native
+package collections/source/time/version and lock/manifest-bound captures feed
+security_reports.py; capture bytes also enter evidence identity. Gitleaks and
+local Ruff/ESLint run under external Seatbelt. All commands get a clean synthetic
+environment and actual egress preflight; no unrestricted fallback. Plain native
+test/smoke remain unisolated. The deprecated OS policy establishes only direct
+process-network restriction, not hostile-code host/VM safety. See the
+[security contract](../.harness/security/README.md).
+
 `verify.py` coordinates existing check/smoke and native test evidence adapters;
 it does not implement a second scheduler or linter. Shared resolver requirements
 remain intact. `evidence_reports.py` validates the fixed shipped JSON Schema

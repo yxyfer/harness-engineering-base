@@ -31,8 +31,9 @@ protect the demonstrated layout; this is not complete runtime validation or a
 Next.js application foundation. See [QH-07](../verification/QH-07.md).
 
 Step 06 now implements read-only applicability and prerequisite diagnosis for
-Python, TypeScript and Next.js. Framework-specific, browser and security
-verification remain unsupported results, not shipped assurance. Multi-package
+Python, TypeScript and Next.js. Framework-specific/browser verification remains
+unsupported. Step 09 adds narrow native security checks and external macOS
+direct-egress isolation, not security certification. Multi-package
 aggregation is explicitly unsupported. See [QH-06](../verification/QH-06.md).
 
 | User or actor | Job to be done | Current pain | Success signal |

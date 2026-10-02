@@ -75,6 +75,24 @@ def fingerprint(target: Path, kit: Path, config: Path) -> dict:
         path = kit.parent / name
         files[f"kit:{name}"] = digest(path.read_bytes())
     files["selected-config"] = digest(config.read_bytes())
+    # Advisory captures are setup inputs, unlike generated verification output.
+    # Bind their exact bytes without making reports fingerprint themselves.
+    security_policy = target / ".harness/security.json"
+    if security_policy.is_file():
+        from source_paths import project_file
+
+        settings = json.loads(
+            project_file(target, ".harness/security.json").read_text()
+        )
+        for lock in settings.get("locks", []):
+            if type(lock) is dict and type(lock.get("path")) is str:
+                name = digest(lock["path"].encode())
+                cache = project_file(
+                    target, f".harness/reports/advisories/{name}.json"
+                )
+                files[f"advisory:{name}"] = (
+                    digest(cache.read_bytes()) if cache.is_file() else "missing"
+                )
     for key in (
         "PATH",
         "HARNESS_CHECK_COMMAND",

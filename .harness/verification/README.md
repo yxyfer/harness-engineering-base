@@ -33,7 +33,8 @@ Smoke/static exits give outcomes, not test counts. Existing managers survive.
 
 Zero tests, absent/oversized/malformed reports, failures, skips, expected
 failures, unexpected successes and retries block completeness. Native redacted
-artifacts preserve detail. No exception approval/retry policy is implemented.
+artifacts preserve detail. No test exception/retry approval policy is implemented;
+security-finding exceptions do not waive native test outcomes.
 Executed means runner-accounted cases (including separately recorded skips),
 not assertion count.
 
@@ -74,6 +75,11 @@ evidence; report writes never hash themselves.
   Escaped sessions, SIGKILL, OS denial and crashes cannot guarantee cleanup or
   report writing. Ordinary command leftovers are also terminated.
 - Provenance is editable, unsigned and not race-proof or a runtime sandbox.
-  Network/model isolation is Step 09, not inferred from a pass.
+  Step 09 opts in to external macOS direct-egress isolation, not inferred from
+  an ordinary pass. See [scope/limits](../security/README.md). Plain native
+  test/smoke remain unisolated.
+- Advisory captures are setup inputs: their bytes join identity, unlike ordinary
+  generated output. Missing/stale/partial native collections cannot satisfy
+  security. Verification never refreshes advisory data.
 - Invalid config/unsafe identity startup errors fail before a run report.
   Once initialized, required execution/evidence gaps are reported explicitly.

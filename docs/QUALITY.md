@@ -14,7 +14,8 @@ prerequisite gaps. Exit 0 means ready to run controls, not verified. Missing
 tools never remove controls. Python/TypeScript static and test delegation use
 existing commands; Next.js-specific/browser controls remain visible unsupported
 gaps. Requested capabilities are unsupported until executable controls exist.
-No scanner, browser engine or multi-package aggregator is introduced.
+No browser engine or multi-package aggregator is introduced. Step 09 adds the
+narrow [native security baseline](../.harness/security/README.md).
 
 For schema 2, review profiles/frameworks (`auto` or explicit lists), capabilities
 and roots in the example side file. Keep existing command overrides and native
@@ -29,9 +30,10 @@ SECURITY and fail unsupported. Explicit extra context remains required.
 `readiness.fail_on_needs_input` now blocks unfinished required context when true;
 false permits unfinished (not missing/unsafe) context. Presence is not prose QA.
 
-Schema 1 preserves its exact reviewed document list and warns that security.mode
-was inert. Schema 2 security `off` explicitly means no scanner assurance;
-`local`/`ci` fail unsupported. Neither removes capability requirements.
+Schema 1 without security.json preserves reviewed documents and warns that
+security.mode was inert. Explicit side-file opt-in (or schema 2 local/ci) selects
+required offline security and external test isolation. Off means no assurance.
+Neither removes capability requirements or changes project-owned files.
 Explicit profile lists now cannot silently suppress detected applicable controls;
 review contradictions before proceeding. Step 07 removes optional static-tool
 success. Native defaults require project-local tools; reviewed equivalent
@@ -76,6 +78,13 @@ they do not establish native tool correctness. Real installed native tools and
 missing coverage are reported separately in [QH-03](../verification/QH-03.md).
 
 ## Core CI
+
+Step 09 separates explicit advisory setup from isolated test phases. CI launches
+contracts/fixtures/negative cases with a synthetic environment under external
+macOS Seatbelt and adds a required offline security gate. Findings block;
+errors/missing/stale data remain unavailable. Root policy includes authoring and
+default locks. Known pytest advisories await compatibility review. Remote runs
+remain unverified; protection settings unchanged.
 
 Step 05 adds a pinned macOS GitHub Actions workflow and
 [locked native CI setup](../.harness/ci/README.md). Its static phase requires

@@ -55,20 +55,37 @@ jobs:
           echo "$PWD/.venv/bin" >> "$GITHUB_PATH"
           echo "$PWD/.harness/ci/node_modules/.bin" >> "$GITHUB_PATH"
           echo "$RUNNER_TEMP/harness-bin" >> "$GITHUB_PATH"
+          sh .harness/security/setup-tools.sh .harness/tmp/security-bin
+          python3 -m venv .harness/tmp/security-env
+          .harness/tmp/security-env/bin/python -m pip install --require-hashes \
+            --only-binary=:all: -r .harness/security/requirements.lock
+      - name: Explicit dependency advisory setup (not application verification)
+        run: |
+          set +e
+          python3 .harness/bin/security_advisories.py setup .
+          status=$?
+          # Exit 1 means captured findings, not a setup error. The offline gate
+          # below still blocks findings; exit 2 must not reuse stale success.
+          if [ "$status" -gt 1 ]; then exit "$status"; fi
       - name: Native static checks and policy
-        run: python3 .harness/ci/run.py static
+        run: python3 .harness/ci/security.py static
       - name: Harness contract tests and self-tests
-        run: python3 .harness/ci/run.py contracts
+        run: python3 .harness/ci/security.py contracts
       - name: Existing fixture checks, tests and smoke
-        run: python3 .harness/ci/run.py fixtures
+        run: python3 .harness/ci/security.py fixtures
       - name: Disposable negative controls
-        run: python3 .harness/ci/run.py negatives
+        run: python3 .harness/ci/security.py negatives
+      - name: Required offline security baseline
+        run: python3 .harness/ci/security.py security
       - name: Preserve diagnostic logs
         if: always()
         uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
         with:
           name: harness-core-logs
-          path: .harness/tmp/ci-logs/
+          path: |
+            .harness/tmp/ci-logs/
+            .harness/reports/security-ci-*/
+            .harness/reports/advisories/*.json
           include-hidden-files: true
           if-no-files-found: warn
           retention-days: 7

@@ -19,6 +19,8 @@ from evidence_identity import digest, fingerprint
 from evidence_reports import native_report, result_problem, validate_evidence
 from evidence_runner import execute, redact, tools
 from profiles import resolve
+from isolation import command as isolate, environment as synthetic_environment
+from security import enabled as security_enabled, run as security_controls
 
 KIT = Path(__file__).resolve().parents[1]
 ROOT = KIT.parent
@@ -213,6 +215,44 @@ def main() -> int:
     )
     controls = []
     interrupted = False
+    secured = security_enabled(target, config)
+    isolation_ok = False
+    isolated_env = {}
+    if secured:
+        item = control(
+            "test-isolation", "external macOS sandbox direct-egress preflight"
+        )
+        controls.append(item)
+        isolated_env = synthetic_environment(target, directory)
+        try:
+            run_control(
+                item,
+                isolate([sys.executable, str(KIT / "bin/isolation_probe.py")]),
+                target,
+                directory,
+                isolated_env,
+                min(args.timeout, 10),
+            )
+        except ValueError:
+            item["reason"] = "external macOS isolation unavailable; no fallback"
+        isolation_ok = item["state"] == "passed"
+        interrupted |= item["reason"].startswith("interrupted")
+        if not args.only and not interrupted:
+            controls.extend(
+                security_controls(target, config_path, config, directory)
+            )
+            interrupted |= any(
+                c["reason"].startswith("interrupted") for c in controls
+            )
+        else:
+            controls.append(
+                control(
+                    "security-baseline",
+                    "not run after interruption"
+                    if interrupted
+                    else "required security omitted by partial scope",
+                )
+            )
     static = control("check", "shared applicable static and policy controls")
     tests = control("tests", "shared application test controls")
     smoke = control("smoke", "required application golden-path smoke")
@@ -233,11 +273,21 @@ def main() -> int:
             )
         elif interrupted:
             item["reason"] = "not run after interruption"
+        elif secured and not isolation_ok:
+            item["reason"] = (
+                "required external isolation unavailable; application not executed"
+            )
         elif item["name"] not in selected:
             item["reason"] = "required control omitted by partial scope"
         else:
             report_path = directory / "tests.native"
             run_env = dict(env, HARNESS_TEST_REPORT=str(report_path))
+            if secured:
+                run_env = dict(
+                    isolated_env,
+                    HARNESS_CONFIG=str(config_path),
+                    HARNESS_TEST_REPORT=str(report_path),
+                )
             try:
                 command, adapter = (
                     test_command(target, config, report_path)
@@ -249,7 +299,7 @@ def main() -> int:
                 )
                 run_control(
                     item,
-                    command,
+                    isolate(command) if secured else command,
                     target,
                     directory,
                     run_env,
@@ -262,14 +312,22 @@ def main() -> int:
     if args.self_test or "self-test" in selected:
         item = control("self-test", "explicit harness-change contract suite")
         controls.append(item)
-        if not interrupted and "self-test" in selected:
+        if (
+            not interrupted
+            and "self-test" in selected
+            and (not secured or isolation_ok)
+        ):
             run_control(
                 item,
-                [str(ROOT / "harness"), "self-test", str(target)],
+                isolate([str(ROOT / "harness"), "self-test", str(target)])
+                if secured
+                else [str(ROOT / "harness"), "self-test", str(target)],
                 target,
                 directory,
                 dict(
-                    env, HARNESS_TEST_REPORT=str(directory / "self-test.native")
+                    isolated_env if secured else env,
+                    HARNESS_CONFIG=str(config_path),
+                    HARNESS_TEST_REPORT=str(directory / "self-test.native"),
                 ),
                 args.timeout,
                 "unittest",

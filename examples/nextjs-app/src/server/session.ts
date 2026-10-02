@@ -1,5 +1,5 @@
 import { getIronSession } from "iron-session";
-import { cookies } from "next/headers";
+import { cookies, headers } from "next/headers";
 import { randomUUID } from "node:crypto";
 import { verify } from "@node-rs/argon2";
 import { z } from "zod";
@@ -31,8 +31,11 @@ export async function sessionCookie() {
 }
 
 export async function currentPrincipal(): Promise<Principal | undefined> {
+  if ((await headers()).get("host") !== new URL(localRuntime().origin).host)
+    return;
   const session = await sessionCookie();
-  if (!session.id) return;
+  const parsed = z.string().uuid().safeParse(session.id);
+  if (!parsed.success) return;
   const db = openDatabase();
   try {
     const row = db
@@ -40,7 +43,7 @@ export async function currentPrincipal(): Promise<Principal | undefined> {
         `SELECT u.id,u.tenant,u.role FROM sessions s
       JOIN users u ON u.id=s.user_id WHERE s.id=? AND s.expires_at>?`,
       )
-      .get(session.id, Date.now());
+      .get(parsed.data, Date.now());
     return row ? principalSchema.parse(row) : undefined;
   } finally {
     db.close();

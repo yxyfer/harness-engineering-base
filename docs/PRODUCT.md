@@ -28,8 +28,13 @@ records today's behaviour and defects. The
 Step 10 adds the real [Next.js reference](../examples/nextjs-app/README.md),
 separate from the lightweight Node dispatcher fixture. It demonstrates synthetic
 list/detail/browser-edit previews, shared components and two token themes.
-Authentication, authorization and persistence remain pending; initial browser
-checks do not establish the later accessibility/performance controls.
+Step 11 adds actual synthetic credential sessions, owned/tenant/role permissions
+and disposable SQLite saves; SSO/production remain unsupported. Native Step 13
+axe/keyboard/reflow and lab budgets do not establish accessibility conformance
+or field performance. Visual baselines await human acceptance.
+Step 12 proves authenticated user and recovery journeys against production and
+actual storage, including dependency failure and permission denial. See
+[QH-12](../verification/QH-12.md); human acceptance remains separate.
 
 Step 07 implements native format/check delegation and required static-tool
 failure, with opt-in strict Python/TypeScript defaults. Native boundary rules

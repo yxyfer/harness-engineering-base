@@ -1,15 +1,18 @@
-import { afterAll, beforeAll, beforeEach, expect, it } from "vitest";
-import { spawn, type ChildProcess } from "node:child_process";
+import { afterAll, beforeAll, beforeEach, expect, it, vi } from "vitest";
+import { spawn, spawnSync, type ChildProcess } from "node:child_process";
 import { once } from "node:events";
 import { createServer } from "node:net";
+import { request as httpRequest } from "node:http";
 import {
   mkdtempSync,
   mkdirSync,
   writeFileSync,
   rmSync,
   symlinkSync,
+  realpathSync,
+  unlinkSync,
 } from "node:fs";
-import { join, resolve } from "node:path";
+import { join } from "node:path";
 import { tmpdir } from "node:os";
 import { initialize, seed } from "../../src/server/setup.ts";
 import { openDatabase, migrate } from "../../src/server/database.ts";
@@ -83,7 +86,7 @@ beforeAll(async () => {
     throw new Error("No disposable port.");
   origin = `http://127.0.0.1:${address.port}`;
   await new Promise<void>((resolve) => listener.close(() => resolve()));
-  directory = mkdtempSync(join(tmpdir(), "workroom-http-"));
+  directory = mkdtempSync(join(realpathSync(tmpdir()), "workroom-http-"));
   process.env.WORKROOM_DB_DIR = directory;
   initialize(directory, origin);
   await seed();
@@ -112,6 +115,40 @@ async function request(
   body?: unknown,
   extra: Record<string, string> = {},
 ) {
+  if (extra.Host) {
+    return new Promise<Response>((resolve, reject) => {
+      const wire = httpRequest(
+        `${origin}${path}`,
+        {
+          method,
+          headers: {
+            Cookie: cookie,
+            Origin: origin,
+            "Content-Type": "application/json",
+            ...extra,
+          },
+        },
+        (response) => {
+          const chunks: Buffer[] = [];
+          response.on("data", (chunk: Buffer) => {
+            chunks.push(chunk);
+          });
+          response.on("end", () =>
+            resolve(
+              new Response(Buffer.concat(chunks), {
+                status: response.statusCode,
+              }),
+            ),
+          );
+        },
+      );
+      wire.on("error", reject);
+      wire.setTimeout(5000, () =>
+        wire.destroy(new Error("HTTP test deadline exceeded.")),
+      );
+      wire.end(body === undefined ? undefined : JSON.stringify(body));
+    });
+  }
   return fetch(`${origin}${path}`, {
     method,
     headers: {
@@ -122,6 +159,7 @@ async function request(
     },
     body: body === undefined ? undefined : JSON.stringify(body),
     redirect: "manual",
+    signal: AbortSignal.timeout(5000),
   });
 }
 async function signIn(username = "alex") {
@@ -131,8 +169,8 @@ async function signIn(username = "alex") {
   });
   expect(response.status).toBe(200);
   const cookie = response.headers.get("set-cookie");
-  expect(cookie).toContain("HttpOnly");
-  expect(cookie).toContain("SameSite=Strict");
+  expect(cookie?.includes("HttpOnly")).toBe(true);
+  expect(cookie?.toLowerCase().includes("samesite=strict")).toBe(true);
   return cookie!.split(";")[0]!;
 }
 const change = {
@@ -146,9 +184,12 @@ it("anonymous direct reads and writes require real sign-in", async () => {
   expect(
     (await request("/api/work-items/WI-101", "", "PATCH", change)).status,
   ).toBe(401);
-  expect((await request("/work-items/WI-101")).headers.get("location")).toBe(
-    "/sign-in",
-  );
+  const denied = await request("/work-items/WI-101");
+  const html = await denied.text();
+  expect(
+    denied.headers.get("location") === "/sign-in" || html.includes("/sign-in"),
+  ).toBe(true);
+  expect(html).not.toContain("Review the onboarding journey");
 });
 
 it("real sessions allow owned reads, minimal DTOs and committed writes", async () => {
@@ -285,6 +326,7 @@ it("unsafe/missing/null origins, cross-site and forged Host are refused", async 
           headers,
         )
       ).status,
+      JSON.stringify(headers),
     ).toBe(403);
     expect(
       (
@@ -305,11 +347,16 @@ it("tampered, expired and revoked sessions fail closed", async () => {
   expect(
     (await request("/api/work-items", cookie.replace("=", "=tampered"))).status,
   ).toBe(401);
-  const expiredSeal = await sealData(
-    { id: "no-session" },
-    { password: secret, ttl: 1 },
-  );
-  await new Promise((resolve) => setTimeout(resolve, 2200));
+  const sessionDb = openDatabase();
+  const id = sessionDb.prepare("SELECT id FROM sessions").get()?.id;
+  sessionDb.close();
+  const clock = vi.spyOn(Date, "now").mockReturnValue(Date.now() - 120_000);
+  let expiredSeal: string;
+  try {
+    expiredSeal = await sealData({ id }, { password: secret, ttl: 1 });
+  } finally {
+    clock.mockRestore();
+  }
   expect(
     (await request("/api/work-items", `workroom_session=${expiredSeal}`))
       .status,
@@ -444,12 +491,12 @@ it("unsafe production, traversal and symlink database targets are refused", () =
   expect(() => safeDirectory("/production/database")).toThrow();
   expect(() => safeDirectory(".harness/tmp/workroom-local")).toThrow();
   expect(() => safeDirectory(`${directory}/../other`)).toThrow();
-  const alias = resolve(directory, "../workroom-symlink-test");
+  const alias = `${directory}-link`;
   symlinkSync(directory, alias);
   try {
     expect(() => safeDirectory(alias)).toThrow(/Symlink/);
   } finally {
-    rmSync(alias);
+    unlinkSync(alias);
   }
   const original = process.env.DEPLOYMENT_ENV;
   process.env.DEPLOYMENT_ENV = "production";
@@ -458,5 +505,30 @@ it("unsafe production, traversal and symlink database targets are refused", () =
   } finally {
     if (original === undefined) delete process.env.DEPLOYMENT_ENV;
     else process.env.DEPLOYMENT_ENV = original;
+  }
+});
+
+it("native database commands are repeatable and refuse unsafe production targets", () => {
+  for (const command of ["migrate", "seed", "reset"]) {
+    const args = ["scripts/database.ts", command, "--confirm-disposable"];
+    const safe = spawnSync(process.execPath, args, {
+      env: process.env,
+      timeout: 10_000,
+      encoding: "utf8",
+    });
+    expect(safe.status).toBe(0);
+    const denied = spawnSync(process.execPath, args, {
+      env: { ...process.env, DEPLOYMENT_ENV: "production" },
+      timeout: 10_000,
+      encoding: "utf8",
+    });
+    expect(denied.status).toBe(1);
+    expect(denied.stderr).not.toContain(secret);
+    const unsafe = spawnSync(process.execPath, args, {
+      env: { ...process.env, WORKROOM_DB_DIR: "/production/database" },
+      timeout: 10_000,
+      encoding: "utf8",
+    });
+    expect(unsafe.status).toBe(1);
   }
 });

@@ -1,0 +1,4 @@
+{
+  "adapter": "junit",
+  "command": ["node", "scripts/journeys.ts"]
+}

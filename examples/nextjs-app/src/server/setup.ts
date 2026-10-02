@@ -1,4 +1,10 @@
-import { mkdirSync, writeFileSync, existsSync, chmodSync } from "node:fs";
+import {
+  mkdirSync,
+  writeFileSync,
+  existsSync,
+  chmodSync,
+  readdirSync,
+} from "node:fs";
 import { randomBytes } from "node:crypto";
 import { join } from "node:path";
 import { hash } from "@node-rs/argon2";
@@ -13,6 +19,8 @@ export function initialize(
   mkdirSync(directory, { recursive: true, mode: 0o700 });
   const marker = join(directory, "runtime.json");
   if (!existsSync(marker)) {
+    if (readdirSync(directory).length)
+      throw new Error("Refusing to adopt an unmarked nonempty directory.");
     writeFileSync(
       marker,
       JSON.stringify({

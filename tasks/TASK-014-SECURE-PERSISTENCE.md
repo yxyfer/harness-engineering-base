@@ -1,6 +1,6 @@
 # TASK-014: Persist authorized synthetic work-item edits
 
-- **Status:** active
+- **Status:** partially verified; server evidence passes, browser execution paused
 - **Owner:** repository owner
 - **Related plan:** `plans/active/QUALITY_FIRST_HARNESS.md`, Step 11 only
 
@@ -11,14 +11,23 @@ validated changes to real disposable SQLite storage. No production auth bypass.
 
 ## Acceptance criteria
 
-- [ ] Direct HTTP requests prove allowed, anonymous, role/owner/tenant denials.
-- [ ] Expired/tampered/revoked sessions and unsafe origins cannot mutate.
-- [ ] Runtime input validation, minimal DTOs and safe errors are demonstrated.
-- [ ] Committed writes survive reread/restart; failed audit writes roll back.
-- [ ] Migration/seed/reset refuse production, unsafe paths and symlinks.
-- [ ] React escapes malicious stored text; no user-data cache is introduced.
-- [ ] Native static/tests/build and harness checks retain meaningful evidence.
-- [ ] Context and QH-11 describe actual boundaries and remaining gaps.
+- [x] Direct HTTP requests prove allowed, anonymous, role/owner/tenant denials.
+- [x] Expired/tampered/revoked sessions and unsafe origins cannot mutate.
+- [x] Runtime input validation, minimal DTOs and safe errors are demonstrated.
+- [x] Committed writes survive reread/restart; failed audit writes roll back.
+- [x] Migration/seed/reset refuse production, unsafe paths and symlinks.
+- [x] React escapes malicious stored text; no user-data cache is introduced.
+- [x] Native static/tests/build and harness checks retain meaningful evidence.
+- [x] Context and QH-11 describe actual boundaries and remaining gaps.
+- [ ] Updated browser UI/rendered evidence remains owner-paused.
+
+## Cohesion review
+
+The server integration file holds one production-server fixture and 14 named
+boundary cases. Its formatter-expanded length exceeds the 350-line advisory;
+it is not suppressed or treated as a hard gate. Shared request/runtime setup
+stays in one place while the independent domain and client suites stay separate.
+Extract the fixture if another integration family needs it, not a second runner.
 
 ## Constraints and verification
 

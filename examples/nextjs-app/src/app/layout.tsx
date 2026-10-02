@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { ThemeSwitch } from "@/components/theme-switch";
+import { SignOutButton } from "@/components/sign-out-button";
 import "./globals.css";
 
 export const metadata: Metadata = {
@@ -48,6 +49,7 @@ export default function RootLayout({
             <header className="topbar">
               <span>Workspace / Foundation</span>
               <ThemeSwitch />
+              <SignOutButton />
             </header>
             <div className="demo-banner">
               SYNTHETIC DATA{" "}
@@ -55,7 +57,9 @@ export default function RootLayout({
                 Local SQLite and synthetic sessions · external SSO untested
               </span>
             </div>
-            <main id="main">{children}</main>
+            <main id="main" tabIndex={-1}>
+              {children}
+            </main>
             <footer>
               Next.js reference foundation{" "}
               <span>Step 11 · disposable local demonstration</span>

@@ -1,12 +1,37 @@
 # Technical Debt
 
+## Step 13 acceptance and support limits
+
+- Human acceptance of 44 screenshot candidates is pending; full verify remains
+  incomplete, without automatic approval. Review the pinned environment and
+  source before adding accepted baselines. Firefox/WebKit and assistive
+  technology remain unverified. Lab budgets are measured proposals, not field
+  Core Web Vitals. See [QH-13](../verification/QH-13.md).
+
+## Step 12 operating limits
+
+- Chromium/macOS only; fixed port 3100 requires sequential browser commands.
+  Success and SIGINT cleanup pass. Machine crash/SIGKILL/escaped processes remain
+  outside guaranteed cleanup. Step 13 adds native UI checks, not other-browser
+  or accessibility-conformance assurance.
+  See [QH-12](../verification/QH-12.md); no production/SSO assurance is added.
+
+## Step 11 verification follow-up
+
+- Direct production HTTP, real sessions and disposable storage are exercised.
+  Step 12's renewed authorization exercises current sign-in/save/permission
+  browser rendering. Historical Step 10/11 reports remain partial; new evidence
+  closes that execution gap rather than promoting old results.
+  SSO/TLS/production auth remain explicitly unsupported. See
+  [QH-11](../verification/QH-11.md). Full UI quality controls remain Step 13.
+
 ## Step 10 verification follow-up
 
 - The standalone Next.js foundation has passing production-build, static and
   component evidence on the final kit. Earlier navigation/render evidence is
-  retained, but the owner stopped final browser execution. Resume only with
-  owner authorization; do not treat the earlier full report as current or begin
-  Step 11 here. See [QH-10](../verification/QH-10.md).
+  retained, but the owner stopped that step's final browser execution. Step 12
+  explicitly authorizes current journeys; do not treat old reports as current.
+  See [QH-10](../verification/QH-10.md).
 
 ## Step 09 security follow-up
 

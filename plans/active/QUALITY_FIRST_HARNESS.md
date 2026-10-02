@@ -1,7 +1,7 @@
 # Application quality harness implementation plan
 
-- **Status:** active; Steps 01-09 complete locally; Step 10 partially verified;
-  Steps 11-19 not started
+- **Status:** active; Steps 01-09 complete locally; Steps 10-11 partially verified;
+  Steps 12-19 not started
 - **Owner:** repository owner
 - **Created and expanded:** 2026-10-01
 - **Direction:** [Product vision](../../docs/PRODUCT.md)
@@ -78,9 +78,11 @@ exist. Partially verified steps stay incomplete.
 
 ## Delivery sequence and checkpoints
 
-Steps 01-09 are **complete locally**; Step 10 is **partially verified**;
-Steps 11-19 are **not started**. Step 10's final current-kit browser evidence
-is unavailable because the owner explicitly stopped browser execution. Step 09's
+Steps 01-09 and 12 are **complete locally**. Steps 10-11 retain historical
+**partial reports**; Step 12's renewed authorization closes their current browser
+execution gap with new source-bound evidence. Step 13 is **implemented with
+human visual acceptance pending**; Steps 14-19 are **not started**.
+Step 09's
 dependency findings still block security approval. Step 05's
 remote execution is unverified. Proposed paths may use established equivalents
 if implementation records the mapping.
@@ -97,9 +99,9 @@ if implementation records the mapping.
 | 08   | [Native verification evidence](../../tasks/TASK-011-VERIFICATION-EVIDENCE.md)                         | 07         | [Complete locally](../../verification/QH-08.md)                    |
 | 09   | Security checks and isolated verification                                                             | 08         | [Complete; findings retained](../../verification/QH-09.md)         |
 | 10   | Real Next.js foundation and shared UI                                                                 | 09         | [Partial](../../verification/QH-10.md)                             |
-| 11   | Secure server operations and real persistence                                                         | 10         | Not started                                                        |
-| 12   | Complete application journey tests                                                                    | 11         | Not started                                                        |
-| 13   | Accessibility, visual and performance checks                                                          | 12         | Not started                                                        |
+| 11   | Secure server operations and real persistence                                                         | 10         | [Partial](../../verification/QH-11.md)                             |
+| 12   | [Complete application journeys](../../tasks/TASK-015-USER-JOURNEYS.md)                                | 11         | [Complete locally](../../verification/QH-12.md)                    |
+| 13   | Accessibility, visual and performance checks                                                          | 12         | [Implemented; human approval pending](../../verification/QH-13.md) |
 | 14   | Useful Python reference application                                                                   | 09         | Not started                                                        |
 | 15   | Stronger tests for critical decisions                                                                 | 12, 14     | Not started                                                        |
 | 16   | Full CI enforcement and concise agent guidance                                                        | 13, 15     | Not started                                                        |

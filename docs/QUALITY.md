@@ -1,5 +1,13 @@
 # Quality Context
 
+Step 12 adds production Chromium user/recovery journeys with durable SQL
+assertions, narrowly documented negative HTTP errors, disposable save/ownership
+mutants and interruption cleanup checks. Native smoke-evidence reports preserve
+browser collection in verify; no counts are inferred from shell success.
+Step 13 adds native axe/keyboard/reflow, candidate/comparison and measured lab
+budgets in the project-owned example. Approved baselines remain pending; the
+full native report fails visibly rather than claiming visual acceptance.
+
 Step 08 implements full/partial verify reports with typed per-control states,
 native counts and artifact/input hashes. Zero collection, skips, retries,
 missing/malformed evidence and unsupported controls block completeness. No
@@ -20,9 +28,16 @@ narrow [native security baseline](../.harness/security/README.md).
 
 Step 10's project-owned Chromium suite runs against a real production build;
 the engine delegates, never grades screenshots or invents browser case counts.
-Vitest JUnit reports nine component/domain cases; Playwright independently
-reports initial navigation/reflow cases. Full accessibility/performance and
-persisted/authenticated journeys remain pending. Root checks explicitly exclude
+Vitest JUnit reports 25 application cases (14 server plus 11 domain/component);
+Playwright independently reports 22 production/UI cases; four visual cases
+require pending human acceptance. The nine-case independent UI subset is not
+complete verification. See [app quality](../examples/nextjs-app/docs/QUALITY.md).
+Accessibility conformance and field performance remain unverified.
+Step 11 adds required native
+direct-server
+JUnit evidence for identity/tenant/storage boundaries before component tests;
+missing/zero/failing native reports cannot pass these declared capabilities.
+Root checks explicitly exclude
 independent `examples/` packages from aggregation; invoke each package root.
 
 For schema 2, review profiles/frameworks (`auto` or explicit lists), capabilities

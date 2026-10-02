@@ -139,6 +139,29 @@ def initial_nextjs_contract(target: Path, packages: dict) -> bool:
         return False
 
 
+def native_server_contract(target: Path, packages: dict) -> bool:
+    """Fixed native evidence contract, not a policy/scenario DSL."""
+    scripts = packages.get("package.json", {}).get("scripts", {})
+    if type(scripts) is not dict:
+        return False
+    script = scripts.get("test:server")
+    if not isinstance(script, str) or not script.strip():
+        return False
+    try:
+        settings = json.loads(
+            project_file(target, ".harness/server-evidence.json").read_text()
+        )
+        return (
+            set(settings) == {"adapter", "command"}
+            and settings["adapter"] == "junit"
+            and type(settings["command"]) is list
+            and bool(settings["command"])
+            and all(type(part) is str and part for part in settings["command"])
+        )
+    except (OSError, ValueError, TypeError):
+        return False
+
+
 def resolve(target: Path, config: dict[str, Any]) -> dict[str, Any]:
     target = target.resolve()
     evidence, packages, metadata, issues = project_evidence(target, config)
@@ -194,8 +217,24 @@ def resolve(target: Path, config: dict[str, Any]) -> dict[str, Any]:
     initial_nextjs = "nextjs" in frameworks and initial_nextjs_contract(
         target, packages
     )
+    server_boundaries = native_server_contract(target, packages)
     for name in sorted(frameworks | capabilities):
         reason = "; ".join(reasons[name])
+        if server_boundaries and name in {
+            "identity",
+            "multi-tenancy",
+            "persistence",
+        }:
+            controls.append(
+                {
+                    "name": name,
+                    "status": "implemented",
+                    "reason": reason
+                    + "; required separately reported native server-boundary suite; "
+                    "project owns scenario adequacy, not SSO or production certification",
+                }
+            )
+            continue
         if initial_nextjs and name in {"nextjs", "browser-ui"}:
             controls.append(
                 {

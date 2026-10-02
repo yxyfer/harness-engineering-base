@@ -20,6 +20,128 @@ from evidence_runner import execute, LOG_LIMIT, redact  # noqa: E402
 
 
 class VerifyEvidenceTest(unittest.TestCase):
+    def test_smoke_native_evidence_and_missing_report_fail_closed(self):
+        config = self.target / ".harness/config.toml"
+        original = config.read_text()
+        config.write_text(
+            original.replace("schema_version = 1", "schema_version = 2")
+            .replace('mode = "local"', 'mode = "off"')
+            .replace(
+                'profiles = ["auto"]',
+                'profiles = ["auto"]\nframeworks = []\ncapabilities = ["browser-ui"]\nroots = ["."]',
+            )
+        )
+        _, report, _ = self.run_verify("--only", "smoke")
+        row = next(c for c in report["controls"] if c["name"] == "smoke")
+        self.assertEqual(row["state"], "unavailable")
+        self.assertIn("required browser smoke-evidence", row["reason"])
+        config.write_text(original)
+        for xml, state in (
+            (
+                '<testsuite tests="1"><testcase name="journey"/></testsuite>',
+                "passed",
+            ),
+            (
+                '<testsuite tests="1"><testcase><failure/></testcase></testsuite>',
+                "failed",
+            ),
+            ('<testsuite tests="0"/>', "failed"),
+            ("malformed", "unavailable"),
+        ):
+            self.write(
+                ".harness/smoke-evidence.json",
+                json.dumps(
+                    {
+                        "adapter": "junit",
+                        "command": [
+                            sys.executable,
+                            "-c",
+                            "import os;from pathlib import Path;Path(os.environ['HARNESS_TEST_REPORT']).write_text("
+                            + repr(xml)
+                            + ")",
+                        ],
+                    }
+                ),
+            )
+            _, report, _ = self.run_verify("--only", "smoke")
+            row = next(c for c in report["controls"] if c["name"] == "smoke")
+            self.assertEqual(row["state"], state, row)
+            self.assertFalse(report["complete"])
+        self.write(
+            ".harness/smoke-evidence.json",
+            json.dumps(
+                {"adapter": "junit", "command": [sys.executable, "-c", "pass"]}
+            ),
+        )
+        _, report, _ = self.run_verify("--only", "smoke")
+        self.assertEqual(
+            next(c for c in report["controls"] if c["name"] == "smoke")[
+                "state"
+            ],
+            "unavailable",
+        )
+        (self.target / ".harness/smoke-evidence.json").unlink()
+        (self.target / ".harness/smoke-evidence.json").symlink_to(
+            self.target / "pyproject.toml"
+        )
+        result = subprocess.run(
+            [str(ROOT / "harness"), "verify", str(self.target)],
+            capture_output=True,
+            text=True,
+            timeout=30,
+        )
+        self.assertNotEqual(result.returncode, 0)
+        self.assertIn("symlink", result.stderr)
+
+    def test_server_capability_never_passes_missing_or_failed_native_evidence(
+        self,
+    ):
+        config_path = self.target / ".harness/config.toml"
+        config_path.write_text(
+            config_path.read_text()
+            .replace("schema_version = 1", "schema_version = 2")
+            .replace('mode = "local"', 'mode = "off"')
+            .replace(
+                'profiles = ["auto"]',
+                'profiles = ["auto"]\nframeworks = []\ncapabilities = ["identity"]\nroots = ["."]',
+            )
+        )
+        self.write(
+            "package.json",
+            '{"scripts":{"test:server":"reviewed-native-suite"}}',
+        )
+        _, report, _ = self.run_verify("--only", "tests")
+        row = next(
+            c for c in report["controls"] if c["name"] == "server-boundaries"
+        )
+        self.assertEqual(row["state"], "unavailable")
+        self.assertFalse(report["complete"])
+        self.write(
+            ".harness/server-evidence.json",
+            json.dumps(
+                {
+                    "adapter": "junit",
+                    "command": [
+                        sys.executable,
+                        "-c",
+                        'import os;from pathlib import Path;Path(os.environ[\'HARNESS_TEST_REPORT\']).write_text(\'<testsuite tests="1" failures="1"><testcase name="synthetic-gate"><failure/></testcase></testsuite>\');raise SystemExit(1)',
+                    ],
+                }
+            ),
+        )
+        _, report, _ = self.run_verify("--only", "tests")
+        row = next(
+            c for c in report["controls"] if c["name"] == "server-boundaries"
+        )
+        self.assertEqual(row["state"], "failed", row)
+        self.assertEqual(row["counts"]["failures"], 1)
+        _, report, _ = self.run_verify("--only", "check")
+        row = next(
+            c for c in report["controls"] if c["name"] == "server-boundaries"
+        )
+        self.assertEqual(row["state"], "unavailable")
+        self.assertFalse(report["complete"])
+
     def setUp(self):
         temporary = tempfile.TemporaryDirectory(prefix="verify evidence ")
         self.addCleanup(temporary.cleanup)

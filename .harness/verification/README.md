@@ -12,6 +12,14 @@ or model grading are added.
 
 ## Native evidence
 
+Identity, multi-tenancy and persistence require a separate native server suite:
+review `test:server` plus project-owned `.harness/server-evidence.json` using the
+same fixed adapter/argv shape, restricted to JUnit. `verify` runs the required
+`server-boundaries` control before application tests, after the production build
+where applicable. Missing/zero/failed reports and partial omissions fail closed.
+Projects own scenario adequacy; declaring this contract does not certify SSO,
+production auth or arbitrary database security. No scenario/policy DSL is added.
+
 Python preserves existing pytest/unittest metadata and local environments.
 Pytest writes JUnit; the stdlib adapter serializes discovery and TestResult
 counts. JUnit reads testcase records and failure/error/skip/rerun/flaky tags.
@@ -29,11 +37,24 @@ reviewed project-owned `.harness/evidence.json`:
 The argv must invoke the same required suite, not a smaller replacement.
 `{report}` expands to a fresh path; `HARNESS_TEST_REPORT` also supplies it.
 Supported adapters are junit and unittest; others remain explicitly unsupported.
-Smoke/static exits give outcomes, not test counts. Existing managers survive.
+Static and legacy smoke exits give outcomes, not test counts. Projects may
+review `.harness/smoke-evidence.json` with the same native adapter/argv shape;
+verify then requires its native collection and preserves outcomes in a distinct
+`smoke.native` artifact. Missing/malformed/zero/failing reports cannot pass.
+Selected browser-ui (including Next.js) requires this side file: absence is
+unavailable, never a fallback to exit-only browser assurance. Existing non-browser
+projects without the side file retain exit-only smoke compatibility; no native
+collection is claimed for them. Existing managers survive. Browser consumers
+review/add the native side file explicitly; no project config is replaced.
+
+The reference app's smoke script selects one real sign-in/save/reload journey.
+Its reviewed smoke-evidence argv deliberately runs the full production journey
+suite in verify, a superset of that small smoke. Both use Playwright JUnit,
+unique real SQLite fixtures and native teardown, never fabricated collection.
 For Next.js, a reviewed root build/test/smoke contract with a native adapter
 enables initial framework/browser controls. Verify always runs a required native
 production build (lock-selected npm/pnpm/yarn); missing/failed builds cannot pass.
-Browser smoke is initial project navigation, not full accessibility/performance
+Browser evidence is project-declared scope, not full accessibility/performance
 or authorization assurance. Missing contracts/other capabilities remain visible.
 
 Zero tests, absent/oversized/malformed reports, failures, skips, expected

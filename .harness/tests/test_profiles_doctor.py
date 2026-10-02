@@ -165,6 +165,30 @@ class ProfilesDoctorTest(unittest.TestCase):
             any(c["name"] == "typescript-static" for c in selection["controls"])
         )
 
+    def test_server_capabilities_require_a_separate_reported_native_suite(self):
+        self.config.write_text(
+            V2.replace(
+                "capabilities = []",
+                'capabilities = ["identity", "persistence", "multi-tenancy"]',
+            )
+        )
+        self.write(
+            "package.json", '{"scripts":{"test:server":"native-server-tests"}}'
+        )
+        self.assertTrue(self.resolve()["issues"])
+        self.write(
+            ".harness/server-evidence.json",
+            '{"adapter":"junit","command":["native-runner","{report}"]}',
+        )
+        selection = self.resolve()
+        self.assertFalse(selection["issues"])
+        self.assertIn("DATA.md", selection["documents"])
+        self.assertIn("SECURITY.md", selection["documents"])
+        self.write(
+            ".harness/server-evidence.json", '{"adapter":"junit","command":[]}'
+        )
+        self.assertTrue(self.resolve()["issues"])
+
     def test_next_dependency_selects_framework_even_without_source(self):
         self.write("package.json", json.dumps({"dependencies": {"next": "1"}}))
         selection = self.resolve()

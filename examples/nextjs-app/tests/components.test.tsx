@@ -1,11 +1,16 @@
 import { render, screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
-import { expect, it } from "vitest";
+import { afterEach, expect, it, vi } from "vitest";
 import { WorkItemEditor } from "@/components/work-item-editor";
 import { ThemeSwitch } from "@/components/theme-switch";
 import { StateExample } from "@/components/state-example";
 import { Button } from "@/components/ui/button";
 import type { WorkItem } from "@/domain/work-item";
+
+vi.mock("next/navigation", () => ({ useRouter: () => ({ refresh: vi.fn() }) }));
+afterEach(() => {
+  vi.unstubAllGlobals();
+});
 
 const item: WorkItem = {
   id: "WI-101",
@@ -29,27 +34,39 @@ it("links title validation errors to the input without confirming", async () => 
   expect(screen.queryByRole("dialog")).not.toBeInTheDocument();
 });
 
-it("confirms a browser-only preview and reset preserves that preview", async () => {
+it("confirms a server save response and reset preserves the saved draft", async () => {
+  const saved = {
+    ...item,
+    title: "Revised synthetic title",
+    status: "In progress",
+    version: 2,
+  };
+  const fetchMock = vi.fn().mockResolvedValue(Response.json({ item: saved }));
+  vi.stubGlobal("fetch", fetchMock);
   const user = userEvent.setup();
   render(<WorkItemEditor item={item} />);
   await user.clear(screen.getByLabelText("Title"));
   await user.type(screen.getByLabelText("Title"), "Revised synthetic title");
   await user.selectOptions(screen.getByLabelText("Status"), "In progress");
   await user.click(screen.getByRole("button", { name: "Review change" }));
-  expect(screen.getByRole("dialog")).toHaveAccessibleName(
-    "Apply this preview?",
-  );
-  await user.click(screen.getByRole("button", { name: "Apply preview" }));
-  expect(screen.getByRole("status")).toHaveTextContent(
+  expect(screen.getByRole("dialog")).toHaveAccessibleName("Save this change?");
+  await user.click(screen.getByRole("button", { name: "Save change" }));
+  expect(await screen.findByRole("status")).toHaveTextContent(
     "Revised synthetic title · In progress",
   );
-  expect(screen.getByRole("status")).toHaveTextContent("not saved");
+  expect(screen.getByRole("status")).toHaveTextContent(
+    "Saved to local database",
+  );
+  expect(fetchMock).toHaveBeenCalledWith(
+    "/api/work-items/WI-101",
+    expect.objectContaining({ method: "PATCH" }),
+  );
   await user.type(screen.getByLabelText("Title"), " unsaved draft");
   await user.click(screen.getByRole("button", { name: "Reset draft" }));
   expect(screen.getByLabelText("Title")).toHaveValue("Revised synthetic title");
 });
 
-it("Escape cancels confirmation without changing the preview", async () => {
+it("Escape cancels confirmation without saving", async () => {
   const user = userEvent.setup();
   render(<WorkItemEditor item={item} />);
   await user.click(screen.getByRole("button", { name: "Review change" }));
@@ -57,6 +74,23 @@ it("Escape cancels confirmation without changing the preview", async () => {
   expect(screen.queryByRole("dialog")).not.toBeInTheDocument();
   expect(screen.queryByRole("status")).not.toBeInTheDocument();
   expect(screen.getByRole("button", { name: "Review change" })).toHaveFocus();
+});
+
+it("a refused server save exposes recovery without claiming success", async () => {
+  vi.stubGlobal(
+    "fetch",
+    vi
+      .fn()
+      .mockResolvedValue(Response.json({ error: "conflict" }, { status: 409 })),
+  );
+  const user = userEvent.setup();
+  render(<WorkItemEditor item={item} />);
+  await user.click(screen.getByRole("button", { name: "Review change" }));
+  await user.click(screen.getByRole("button", { name: "Save change" }));
+  expect(await screen.findByRole("alert")).toHaveTextContent(
+    "Changed elsewhere",
+  );
+  expect(screen.queryByRole("status")).not.toBeInTheDocument();
 });
 
 it("switches both semantic themes through the same component", async () => {

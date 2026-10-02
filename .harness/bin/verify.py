@@ -21,16 +21,21 @@ from evidence_runner import execute, redact, tools
 from profiles import resolve
 from isolation import command as isolate, environment as synthetic_environment
 from security import enabled as security_enabled, run as security_controls
+from source_paths import project_file
 
 KIT = Path(__file__).resolve().parents[1]
 ROOT = KIT.parent
 
 
 def test_command(
-    target: Path, config: dict, report: Path
+    target: Path,
+    config: dict,
+    report: Path,
+    filename: str = ".harness/evidence.json",
 ) -> tuple[list[str], str]:
-    evidence = target / ".harness/evidence.json"
+    evidence = target / filename
     if evidence.exists():
+        evidence = project_file(target, filename)
         if evidence.is_symlink():
             raise ValueError("evidence configuration must not be a symlink")
         settings = json.loads(evidence.read_text())
@@ -288,6 +293,51 @@ def main() -> int:
                 args.timeout,
             )
             interrupted |= item["reason"].startswith("interrupted")
+    if set(selection["capabilities"]) & {
+        "identity",
+        "multi-tenancy",
+        "persistence",
+    }:
+        item = control(
+            "server-boundaries",
+            "direct native identity/tenant/storage evidence",
+        )
+        controls.append(item)
+        if (
+            interrupted
+            or (secured and not isolation_ok)
+            or "tests" not in selected
+        ):
+            item["reason"] = (
+                "required server boundaries omitted or isolation/interruption unavailable"
+            )
+        else:
+            report_path = directory / "server-boundaries.native"
+            run_env = dict(
+                isolated_env if secured else env,
+                HARNESS_TEST_REPORT=str(report_path),
+            )
+            try:
+                path = project_file(target, ".harness/server-evidence.json")
+                if not path.is_file():
+                    raise ValueError(
+                        "required server-evidence.json unavailable"
+                    )
+                command, adapter = test_command(
+                    target, config, report_path, ".harness/server-evidence.json"
+                )
+                run_control(
+                    item,
+                    isolate(command) if secured else command,
+                    target,
+                    directory,
+                    run_env,
+                    args.timeout,
+                    adapter,
+                )
+                interrupted |= item["reason"].startswith("interrupted")
+            except (OSError, ValueError, TypeError) as error:
+                item.update(state="unavailable", reason=redact(str(error)))
     test_required = any(
         c["name"].endswith("-tests") for c in selection["controls"]
     ) or bool(
@@ -312,7 +362,7 @@ def main() -> int:
         elif item["name"] not in selected:
             item["reason"] = "required control omitted by partial scope"
         else:
-            report_path = directory / "tests.native"
+            report_path = directory / (item["name"] + ".native")
             run_env = dict(env, HARNESS_TEST_REPORT=str(report_path))
             if secured:
                 run_env = dict(
@@ -321,9 +371,30 @@ def main() -> int:
                     HARNESS_TEST_REPORT=str(report_path),
                 )
             try:
+                smoke_evidence = target / ".harness/smoke-evidence.json"
+                browser_required = "browser-ui" in selection["capabilities"]
+                if item is smoke and browser_required:
+                    if not project_file(
+                        target, ".harness/smoke-evidence.json"
+                    ).is_file():
+                        raise ValueError(
+                            "required browser smoke-evidence.json unavailable"
+                        )
                 command, adapter = (
                     test_command(target, config, report_path)
                     if item is tests
+                    else test_command(
+                        target,
+                        config,
+                        report_path,
+                        ".harness/smoke-evidence.json",
+                    )
+                    if item is smoke
+                    and (
+                        browser_required
+                        or smoke_evidence.exists()
+                        or smoke_evidence.is_symlink()
+                    )
                     else (
                         [str(ROOT / "harness"), item["name"], str(target)],
                         None,

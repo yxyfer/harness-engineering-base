@@ -40,9 +40,14 @@ export async function safely(
 
 export function trustedRequest(request: Request, mutation = false) {
   const origin = localRuntime().origin;
+  // Next may normalize Request.url to localhost internally. Authenticate the
+  // actual Host and explicit Origin instead, never trust proxy host overrides.
   if (
-    new URL(request.url).origin !== origin ||
-    request.headers.get("host") !== new URL(origin).host
+    request.headers.get("host") !== new URL(origin).host ||
+    (request.headers.has("x-forwarded-host") &&
+      request.headers.get("x-forwarded-host") !== new URL(origin).host) ||
+    (request.headers.has("x-forwarded-proto") &&
+      request.headers.get("x-forwarded-proto") !== "http")
   )
     return false;
   if (

@@ -1,18 +1,39 @@
 # Architecture Context
 
+## Step 12 production journeys
+
+The project-owned reference native runner owns unique SQLite fixtures and local
+production processes. It explicitly cleans recorded children on interruption;
+test-only audit-trigger injection exercises the real transactional dependency.
+Project-owned smoke-evidence.json reuses the native report adapter and is required
+for selected browser-ui. Legacy non-browser smoke remains exit-only; reviewed
+adapters require actual collection.
+The reference's verify adapter runs all journeys, a superset of its small smoke.
+
+## Step 11 secured local data boundary
+
+The standalone app now uses real disposable SQLite with library-sealed session
+cookies referencing database-backed identities and revocable expiry. Thin HTTP
+entry points validate runtime input; pure domain policy checks owner/tenant/role.
+Prepared statements, optimistic versions and transactional audit protect writes.
+Dynamic pages/API reads are private and uncached. Production/SSO are unsupported.
+The fixed native server-evidence contract adds a required separately reported
+control for reviewed identity/multi-tenancy/persistence capabilities; no scenario
+DSL or application-specific engine route is introduced. See the app's context.
+
 ## Step 10 application foundation
 
 `examples/nextjs-app/` is a separately invoked project-owned package, outside the
 managed inventory. Real Next.js pages/layout render synthetic fixtures on the
 server; small Client Components own theme/edit/dialog state. Native strict
 TypeScript, ESLint/Next/hooks rules, Vitest and production Chromium navigation
-check maintained TSX. No persistence, session or mutation endpoint exists.
+check maintained TSX. Step 11 supersedes its fixture-only data boundary above.
 
 Shared resolution recognizes the initial Next.js/browser contract only when
 root package scripts declare build/test/smoke and a native evidence adapter is
 reviewed. `verify` executes a required production-build row using the existing
-lock-selected package manager. Browser smoke is initial navigation, not full
-accessibility/performance/authorization assurance. Missing contracts retain
+lock-selected package manager. Reference smoke is real sign-in/save/reload, not
+full accessibility/performance assurance. Missing contracts retain
 unsupported controls. Root `analysis.exclude = ["examples", ...]` explicitly
 keeps independent packages out of root aggregation; check each example root.
 

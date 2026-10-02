@@ -49,6 +49,11 @@ export function localRuntime() {
   const directory = safeDirectory(
     process.env.WORKROOM_DB_DIR ?? resolve(".harness/tmp/workroom-local"),
   );
+  if (
+    (lstatSync(directory).mode & 0o077) !== 0 ||
+    (lstatSync(join(directory, "runtime.json")).mode & 0o077) !== 0
+  )
+    throw new Error("Disposable runtime must be private to its local owner.");
   for (const name of [
     "runtime.json",
     "data.sqlite",

@@ -5,10 +5,11 @@ Next.js 16.3.8 / React 19.3.0, Node 24.10.0 / npm 11.6.0; exact npm lock.
 
 ```sh
 npm ci --ignore-scripts --no-audit --no-fund
+npm run db:init
 PLAYWRIGHT_BROWSERS_PATH=.harness/tmp/browsers node node_modules/@playwright/test/cli.js install chromium
 npm run check
-npm test
 npm run build
+npm test
 PLAYWRIGHT_BROWSERS_PATH=.harness/tmp/browsers npm run smoke
 npm run start
 ```
@@ -16,7 +17,12 @@ npm run start
 Browser installation is explicit online setup. Build uses webpack deliberately
 for a bounded, inspectable production baseline; two workers, no remote fonts.
 Smoke starts its own production server at 127.0.0.1:3100, refuses a pre-existing
-server and performs real navigation. Run harness commands from the repo root:
+server and signs in, opens owned work, saves, reloads and asserts actual SQLite.
+`npm run test:journeys` runs all 22 production cases. `npm run test:regressions`
+builds disposable copies and proves broken save/ownership/browser-error detection.
+`npm run test:cleanup` follows a successful journey run and proves success/SIGINT
+storage/server cleanup. All fixtures are synthetic and unique; lifecycle scripts
+are outside production routes. Run harness commands from the repo root:
 
 ```sh
 ./harness check examples/nextjs-app
@@ -46,8 +52,31 @@ Run packages separately: root multi-package aggregation is not implemented.
 
 ## Honest limits
 
-All records/people are synthetic. Edit confirmation applies a browser-memory
-preview; reload resets it. No authentication, authorization, database or mutation
-endpoint exists. No-access and success cards are examples, not enforced access
-or persisted saves. Persistence/auth belong to Step 11. Initial component and
-navigation tests are not full accessibility/performance/visual acceptance.
+All records/people are synthetic. Sign in with alex, sam, viewer or outsider and
+the generated password in private `.harness/tmp/workroom-local/runtime.json`.
+Never commit that file or copy it into a deployment. No identity-only test login
+route exists. Edits commit to actual SQLite; refresh/restart retains them.
+Viewer can read owned work; only editors can write owned same-tenant work.
+Other resources are hidden. External SSO and production deployment are untested
+and unsupported; this is a disposable loopback application, not production auth.
+
+`npm run db:migrate` and `npm run db:seed` are repeatable without discarding edits.
+`npm run db:reset` explicitly resets only a marked safe disposable target and
+revokes sessions. All commands refuse unsafe targets/production markers/links.
+Set `WORKROOM_DB_DIR` only to a canonical private `workroom-*` directory directly
+under app `.harness/tmp` or the current canonical temporary directory.
+
+`npm run test:server` calls actual production HTTP endpoints, uses its own fresh
+database, proves permissions/expiry/rollback/restart, and cleans owned processes
+and data. `npm test` uses native ordered Vitest projects: direct server first,
+then domain/components. Native JUnit evidence is available for both. No shared
+user-data cache exists; dynamic pages and API responses are private/no-store.
+No-access/success catalogue cards remain labelled display examples. Browser
+journeys execute in Step 12 under renewed explicit authorization. Verify runs
+the full journey superset through native JUnit, while the smoke command remains
+one meaningful case. Step 13 adds `test:ui`, `test:visual`, `ui:candidates` and
+`test:ui-regressions`; see [quality scope](docs/QUALITY.md) and the
+[human baseline procedure](tests/visual-baselines/README.md). Missing visual
+approval intentionally fails the full native suite/verify, while independent
+UI checks can pass. No baseline is auto-approved. Firefox/WebKit, assistive
+technology and human product acceptance remain unverified.

@@ -23,14 +23,15 @@ Status: current; synthetic reference and local verification artifacts
 
 | Dataset or entity | Owner | Source | Classification | Retention |
 | --- | --- | --- | --- | --- |
-| Reference work items | Repository owner | Owned deterministic fixtures | Synthetic, fictional people | Committed fixture source |
-| Edit draft/preview | Browser user | Local input | Synthetic demonstration | Memory only; reload resets |
+| Reference work items | Repository owner | Owned deterministic seed and local SQLite | Synthetic, fictional people | Disposable local owner policy |
+| Edit draft | Browser user | Local input | Synthetic demonstration | Memory until authorized save |
 
 ## Contracts
 
 The [app contract](../examples/nextjs-app/src/domain/work-item.ts) defines id,
 title, summary, status union and owner. Title previews accept trimmed length
-3–80. This is local UI validation, not a secured server mutation boundary.
+3–80. Step 11 also runtime-validates strict server JSON and integer versions;
+static/client validation alone is not the secured mutation boundary.
 
 ## Provenance
 
@@ -40,11 +41,20 @@ modelled, or simulated.
 
 ## Storage and movement
 
-No application database, cache/session policy or live data movement exists.
-Server-rendered synthetic fixture values feed local browser state; no edit is
-submitted to a server. Persistence and resource-level access belong to Step 11.
+Step 11 supersedes the Step 10 preview rows above: the standalone application
+uses private marked local SQLite and real synthetic sessions. Users, sessions,
+versioned work items and transactional audit are stored; reset revokes sessions.
+Minimal DTOs omit identity secrets and tenant fields. Fresh private/no-store
+reads are not shared-cached. Generated credentials/databases are ignored local
+runtime artifacts, not shipped release content. See the
+[actual data contract](../examples/nextjs-app/docs/DATA.md).
 
 ## Test and demo data
+
+Step 12's production journeys use private unique per-run storage, reset between
+isolated browser contexts and remove only their owned fixture. SQL values,
+versions and audit counts corroborate UI outcomes; the audit trigger exercises
+real rollback/recovery outside production paths. Developer storage is preserved.
 
 WI-101–WI-103 and fictional owners are labelled in the UI and source. Tests use
 those deterministic fixtures and local server/browser runtimes only.

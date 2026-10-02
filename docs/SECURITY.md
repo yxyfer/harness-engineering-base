@@ -1,5 +1,10 @@
 # Security Context
 
+Step 12 adds actual-session browser permission/recovery cases and disposable
+ownership-mutation detection. Fault controls remain test-only SQLite triggers,
+never production routes or authorization bypasses. Unexpected browser errors
+fail; only the exact deliberate 503 resource error is narrowly allowed.
+
 Status: current; Step 09 controls implemented, not security certification
 
 The [security contract](../.harness/security/README.md) defines executable scope,
@@ -13,12 +18,21 @@ sessions or production services. Reviewed commands, adapters, plugins and tests
 execute repository code. Config, reports and checksums are unsigned: independent
 review/CI enforcement must protect them. The harness is not its own sandbox.
 
-Step 10 adds a separately owned synthetic reference UI, not real users/sessions.
-No authentication, authorization or persisted mutation exists. Its no-access
-card is a labelled display example, never a permission control. Its own reviewed
+Step 11 extends the separately owned reference with actual synthetic credentials,
+iron-session verification, database session revocation and owner/tenant/editor
+authorization at direct server entry points. Runtime validation, exact mutation
+origins, safe DTOs/errors, fresh uncached reads and atomic SQLite writes are
+tested locally. This is not production auth/SSO certification; runtime commands
+refuse unsafe production targets. Its no-access catalogue card remains a labelled
+display example. Its own reviewed
 npm lock/security config selects the existing offline baseline. The app uses
 maintained ESLint 10 with compatible native Next/hooks plugins instead of the
 Next bundled React/import/a11y plugins that require unsupported ESLint 9.
+
+Generated local runtime secrets remain private/ignored. Argon2 and iron-session
+own cryptography; no identity-only test route exists. Detailed supported scope
+and remaining environment limits are in the
+[application security context](../examples/nextjs-app/docs/SECURITY.md).
 
 Opted-in verify wraps static checks/tests/self-tests/smoke and scanners in
 external macOS

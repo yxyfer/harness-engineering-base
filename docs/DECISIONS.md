@@ -254,6 +254,61 @@ rather than rewriting history.
   full accessibility/performance, aggregation and application security remain
   unimplemented. Native coverage/config ownership and Step 09 trust limits stay.
 
+### ADR-013: Secure disposable persistence through real server boundaries
+
+- **Date:** 2026-10-02
+- **Status:** accepted; Step 11 implementation
+- **Decision:** Replace the app's fixture-only edits with SQLite, versioned
+  atomic save/audit, pure owner/tenant/editor policy and fresh private reads.
+  Iron-session owns encrypted cookie verification; Argon2 owns password hashes.
+  Opaque sessions load current identity/role/tenant and hard expiry from storage.
+  Generated local credentials use the same actual sign-in path as every user.
+- **Consequences:** Only private marked disposable loopback targets are supported;
+  migration/seed/reset refuse production/unsafe/symlink targets. No handmade
+  cryptography, impersonation route, shared user cache or production SSO bypass.
+  Node's SQLite API is experimental on the pinned runtime. Native direct HTTP
+  tests prove storage and denials; browser execution remains owner-paused.
+  Declared identity/tenant/persistence controls require a separate native JUnit
+  adapter, not merely successful UI tests or test-file presence.
+- **Evidence:** [TASK-014](../tasks/TASK-014-SECURE-PERSISTENCE.md),
+  [app security](../examples/nextjs-app/docs/SECURITY.md).
+- **Supersedes:** ADR-012's no-persistence/auth boundary only; ownership, native
+  tool authority and external macOS isolation limits remain unchanged.
+
+### ADR-014: Prove journeys through native production and storage evidence
+
+- **Date:** 2026-10-02
+- **Status:** accepted; Step 12 implementation
+- **Decision:** Use pinned Playwright against the production build and actual
+  synthetic sessions/SQLite. Inject audit dependency failure outside production
+  code; assert visible outcomes and durable versions/audits. Test-only lifecycle
+  scripts own unique storage and recorded server processes. Optional reviewed
+  smoke-evidence.json reuses the native evidence contract; the reference adapter
+  runs full journeys while smoke stays one meaningful case.
+- **Consequences:** Unexpected console/page errors fail with one exact deliberate
+  503 resource-error allowance. Disposable save/ownership mutants must fail
+  intended assertions. Renewed authorization closes the current browser gap
+  without rewriting historical partial evidence. Chromium/macOS only; full UI
+  quality controls and human acceptance remain separate.
+- **Evidence:** [TASK-015](../tasks/TASK-015-USER-JOURNEYS.md).
+- **Supersedes:** ADR-013's owner-paused current browser status only; security,
+  ownership and unsigned/native evidence trust limits remain unchanged.
+
+### ADR-015: Native UI controls do not impersonate human acceptance
+
+- **Date:** 2026-10-02
+- **Status:** accepted implementation boundary; visual approval pending
+- **Decision:** Keep axe, keyboard/reflow, native screenshot comparison and
+  measured lab budgets in the project-owned Next.js tests. Delegate their JUnit
+  through the existing browser evidence adapter. Chromium/macOS is the declared
+  matrix; untested engines remain unverified. Disable native snapshot updating.
+- **Consequences:** Missing human-reviewed baseline metadata/images fail the
+  native full suite and block verify completeness. Forty-four pinned candidates
+  and synthetic disposable comparator tests do not establish human acceptance.
+  Lab budgets are reviewable proposals, not field performance or conformance.
+- **Evidence:** [QH-13](../verification/QH-13.md), app quality/baseline procedure.
+- **Supersedes:** Step 12's pending programmatic UI controls only.
+
 ## Decision template
 
 ### ADR-000: Short title

@@ -22,7 +22,14 @@
     "db:migrate": "node scripts/database.ts migrate",
     "db:seed": "node scripts/database.ts seed",
     "db:reset": "node scripts/database.ts reset --confirm-disposable",
-    "smoke": "playwright test",
+    "smoke": "node scripts/journeys.ts --grep @smoke",
+    "test:journeys": "node scripts/journeys.ts",
+    "test:ui": "node scripts/journeys.ts --grep @ui",
+    "test:visual": "node scripts/journeys.ts --grep @visual-approved",
+    "test:ui-regressions": "node scripts/ui-regressions.ts",
+    "ui:candidates": "node scripts/ui-candidates.ts",
+    "test:regressions": "node scripts/journey-regressions.ts",
+    "test:cleanup": "node scripts/journey-lifecycle.ts",
     "test:evidence": "vitest run --reporter=default --reporter=junit"
   },
   "dependencies": {
@@ -40,6 +47,7 @@
     "zod": "4.6.5"
   },
   "devDependencies": {
+    "@axe-core/playwright": "4.13.0",
     "@eslint/js": "10.0.1",
     "@next/eslint-plugin-next": "16.3.8",
     "@playwright/test": "1.63.0",

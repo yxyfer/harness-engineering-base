@@ -19,9 +19,19 @@ foundations. Instructions direct the coding model to those assets and commands.
 All automated testing and gate decisions use programmatic tools; no additional
 AI reviewers, LLM judges, or model calls are part of verification.
 
-This is a target vision. The [audit](../verification/AUDIT_2026_10_01.md)
+This is a target vision. The
+[audit](../project/plans/P002-quality-first-harness/evidence/AUDIT_2026_10_01.md)
 records today's behaviour and defects. The
-[delivery plan](../plans/active/QUALITY_FIRST_HARNESS.md) defines the next work.
+[delivery plan](../project/plans/P002-quality-first-harness/README.md) defines
+the next work.
+
+The [work index](../project/README.md) and [reviewer entry](README.md) provide
+short
+paths to bounded tasks, implementation maps and evidence. Plans coordinate
+sequence; tasks explain intent, acceptance, choices and operational risk;
+architecture and ADRs describe the durable system. Human review challenges
+necessity and missing context alongside the automated gates. No productivity
+gain or human approval is inferred from document/check completion.
 
 ## Users and jobs
 
@@ -34,19 +44,22 @@ axe/keyboard/reflow and lab budgets do not establish accessibility conformance
 or field performance. Visual baselines await human acceptance.
 Step 12 proves authenticated user and recovery journeys against production and
 actual storage, including dependency failure and permission denial. See
-[QH-12](../verification/QH-12.md); human acceptance remains separate.
+[QH-12](../project/plans/P002-quality-first-harness/evidence/QH-12.md); human
+acceptance remains separate.
 
 Step 07 implements native format/check delegation and required static-tool
 failure, with opt-in strict Python/TypeScript defaults. Native boundary rules
 protect the demonstrated layout; this is not complete runtime validation.
-See [QH-07](../verification/QH-07.md) and the Step 10 foundation above.
+See [QH-07](../project/plans/P002-quality-first-harness/evidence/QH-07.md) and
+the Step 10 foundation above.
 
 Step 06 now implements read-only applicability and prerequisite diagnosis for
 Python, TypeScript and Next.js. Step 10 adds initial native build/navigation
 verification; broader browser controls remain pending. Step 09 adds narrow
 native security checks and external macOS
 direct-egress isolation, not security certification. Multi-package
-aggregation is explicitly unsupported. See [QH-06](../verification/QH-06.md).
+aggregation is explicitly unsupported. See
+[QH-06](../project/plans/P002-quality-first-harness/evidence/QH-06.md).
 
 | User or actor | Job to be done | Current pain | Success signal |
 | --- | --- | --- | --- |
@@ -86,7 +99,8 @@ aggregation is explicitly unsupported. See [QH-06](../verification/QH-06.md).
 
 1. Inspect the project and resolve its language, framework, and capabilities.
 2. Present the relevant existing components, patterns, and acceptance criteria.
-3. Define the changed behaviour, including material failure and permission cases.
+3. Define the changed behaviour, including material failure and permission
+cases.
 4. Implement using the approved foundation and project conventions.
 5. Format automatically, run the applicable checks, and correct real failures.
 6. Verify the running application's affected user journey where applicable.
@@ -168,7 +182,8 @@ native lint rules; use duplication reports as advisory signals rather than
 pretending arbitrary duplicate intent can be detected reliably.
 
 Share stable behaviour and foundation contracts across applications. Customer
-themes, branding, content, and intentional layout differences stay project-owned.
+themes, branding, content, and intentional layout differences stay
+project-owned.
 Start with an in-repository component catalogue and rendered examples. Extract
 a versioned shared package when multiple applications demonstrate common needs;
 pin consumers and test upgrades before propagation. Never automatically replace
@@ -180,7 +195,8 @@ require them. Prefer the framework's routing, links, image and font facilities
 where applicable. Keep server-only data access, minimal response shapes, input
 validation, and resource-level authorization at server entry points. Existing
 backend APIs can retain their established access boundary. These choices follow
-the framework's [component model](https://nextjs.org/docs/app/getting-started/server-and-client-components)
+the framework's [component
+model](https://nextjs.org/docs/app/getting-started/server-and-client-components)
 and [data-security guidance](https://nextjs.org/docs/app/guides/data-security).
 
 Do not apply blanket caching rules. Make freshness, invalidation, and account
@@ -190,7 +206,8 @@ loading, and recovery patterns without exposing implementation details to users.
 ## Testing that establishes behaviour
 
 Every critical journey has named acceptance cases tied to real assertions.
-Checking that a test file exists or that a page returns HTTP 200 is insufficient.
+Checking that a test file exists or that a page returns HTTP 200 is
+insufficient.
 
 - Bugs get a regression that fails on the defect and passes on the fix.
 - Core decisions get positive, negative, and boundary cases. Use generated-input
@@ -231,7 +248,8 @@ must not satisfy the gate. Mutation checks complement these measures; see
 Automated checks cover only measurable aspects of UX. Product usefulness,
 information hierarchy, brand fit, and full accessibility still need human
 acceptance. The automated workflow contains no AI evaluation calls. Playwright
-documents the limits of [accessibility automation](https://playwright.dev/docs/accessibility-testing)
+documents the limits of [accessibility
+automation](https://playwright.dev/docs/accessibility-testing)
 and the need for consistent environments in
 [visual comparisons](https://playwright.dev/docs/test-snapshots).
 

@@ -12,7 +12,8 @@ production/model integration or cloud export is introduced.
 Step 08 uses local synthetic test data and native runner evidence. The versioned
 contract is `.harness/verification/schema.json`; output lives in fixed ignored
 `.harness/reports/verify-*/` directories. Reports hold source/config/environment
-hashes, collection outcomes, commands, versions and redacted artifact identities,
+hashes, collection outcomes, commands, versions and redacted artifact
+identities,
 not source contents. No cloud export, durable database or production dataset is
 introduced. Retention/removal is local owner responsibility; no cleanup deletes
 project-owned reports. Stale-input validation is provenance, not authenticity.

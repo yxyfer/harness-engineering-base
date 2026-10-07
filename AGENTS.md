@@ -1,8 +1,8 @@
 # Agent Operating Contract
 
 This file governs all work in this repository. Read it before changing code, and
-read the canonical context under `docs/` before making product or architectural
-decisions.
+read canonical context under `docs/` and `project/architecture/` before making
+product or architectural decisions.
 
 Before editing source, also read `.harness/standards/BASE.md`,
 `NAMING.md`, `TESTING.md`, and `ARCHITECTURE.md`, plus every relevant profile
@@ -38,14 +38,22 @@ durable choice in the appropriate context file or decision record.
 
 ## Standard workflow
 
-1. Read the task, relevant context, and active plan.
+1. Start at `project/README.md`. Read `project/FORMAT.md`, the selected plan and
+   its task; task IDs must contain their parent plan ID. Load only relevant
+   implementation instructions and context. Legacy projects retain their layout.
 2. Reproduce or inspect the current behaviour.
 3. Define observable acceptance criteria and verification before implementation.
-4. Make the smallest coherent change.
+4. Make the smallest coherent change. Keep the task's reviewer brief current:
+   intent, implementation choice, affected boundaries, risk and recovery. Update
+   the architecture map and ADRs for durable changes; link instead of duplicating.
 5. Run `./harness check`, `./harness test`, and the relevant smoke or visual
    check.
 6. Write a verification report with commands, results, evidence, and limitations.
-7. Move a completed plan to `plans/completed/` and update context or debt.
+7. Update task state/evidence and run `./harness project sync` before checks.
+   Complete tasks stay with their plan. When every task is complete, run
+   `./harness project archive PNNN` to move the bundle and repair navigation.
+   Replaced plans may be explicitly superseded; unfinished scope stays incomplete.
+   Update `project/debt.md` and the shared architecture for durable changes.
 
 ## Harness commands
 
@@ -60,6 +68,9 @@ durable choice in the appropriate context file or decision record.
 ./harness self-test
 ./harness smoke
 ./harness verify
+./harness project check
+./harness project sync
+./harness project archive PNNN
 ```
 
 Commands accept an optional target directory. A non-zero exit is a failed gate,
@@ -74,7 +85,7 @@ test, or smoke behaviour.
 
 ## Ownership boundaries
 
-- Treat `AGENTS.md`, `docs/`, `plans/`, `tasks/`, `verification/`, and
+- Treat `AGENTS.md`, `docs/`, `project/`, legacy context folders, and
   `.harness/config.toml`, `.harness/evidence.json`, and `.harness/security.json`
   as project-owned after creation.
   `.harness/evidence.json` native evidence invocation is also project-owned.

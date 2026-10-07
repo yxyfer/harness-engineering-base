@@ -1,15 +1,22 @@
 # Project Harness
 
+Start at the [work index](project/README.md) for current plans and tasks, or the
+[reviewer entry](docs/README.md) for linked architecture, choices and evidence.
+
 Step 08 adds `./harness verify`: shared controls, native test counts, bounded
-redacted artifacts and input-bound JSON. Full and partial outcomes stay separate.
+redacted artifacts and input-bound JSON. Full and partial outcomes stay
+separate.
 See the [evidence contract](.harness/verification/README.md) for adapters,
 `--self-test`, timeouts, stale-report validation and trust limits.
 
-A small, inspectable engineering harness for agent-assisted software projects. It
-keeps project intent, implementation constraints, work plans, and verification in
+A small, inspectable engineering harness for agent-assisted software projects.
+It
+keeps project intent, implementation constraints, work plans, and verification
+in
 the repository so that humans and coding agents operate from the same context.
 
-The repository is itself the starter layout: clone it or create a repository from
+The repository is itself the starter layout: clone it or create a repository
+from
 it and the project context, harness commands, checks, fixtures, and Codex skills
 are already in their runtime locations. The harness detects common Node.js and
 Python conventions, delegates to project-owned scripts where they exist, and
@@ -17,8 +24,8 @@ fails with an actionable message where they do not.
 
 ## Three-layer structure
 
-- Project context stays visible in `AGENTS.md`, `docs/`, `plans/`, `tasks/`, and
-  `verification/` so humans and agents can maintain it together.
+- Project context stays visible in `AGENTS.md`, `docs/`, and `project/` so
+  humans and agents can maintain it together.
 - Managed machinery lives under `.harness/`, including command implementations,
   policy checks, and test fixtures.
 - Agent workflows live under `.agents/skills/`, where Codex can discover them at
@@ -30,17 +37,20 @@ machinery.
 ## Real application reference
 
 Step 10 adds [Workroom](examples/nextjs-app/README.md), a production-buildable
-Next.js/TypeScript reference with synthetic work items, browser-only edit
-previews and an owned Radix/shadcn-style kit in two semantic themes. All source,
+Next.js/TypeScript reference with synthetic work items, real local sessions and
+SQLite saves, and an owned Radix/shadcn-style kit in two semantic themes. All
+source,
 themes, native configs and dependencies are project-owned, never shipped kit
 inputs. Invoke the harness on this package root separately; root aggregation
 remains unsupported. The existing Node dispatcher fixture is retained unchanged.
-Persistence/authentication are pending, and state cards are labelled examples.
+Production identity/SSO are unsupported; state cards are labelled examples.
 
 ## Command contract
 
-All commands accept one optional target directory and default to the current
-directory. Use `--config PATH` to select another TOML file or `--command COMMAND`
+Most commands accept one optional target directory and default to the current
+directory. `project check|sync [target]` and `project archive PNNN [target]`
+use their own positional interface, without command/config overrides.
+Use `--config PATH` to select another TOML file or `--command COMMAND`
 to override a project command for one invocation. `self-test` rejects
 `--command`; application command overrides cannot redirect that suite.
 
@@ -60,6 +70,7 @@ to override a project command for one invocation. `self-test` rejects
 | `self-test` | Run the executing harness's contract suite independently. |
 | `smoke` | Run the smallest user-visible health check. |
 | `inspect` | Print detected stack, commands, context coverage, and Git state. |
+| `project check/sync/archive` | Validate work records, derive progress, archive complete bundles. |
 | `doctor` | Explain applicable controls and fail on readiness gaps; no checks run. |
 | `format` | Delegate mechanical formatting to project-native formatters. |
 
@@ -73,7 +84,8 @@ The [core CI guide](.harness/ci/README.md) describes the default pinned macOS
 GitHub Actions workflow and reproducible locked setup. It executes actual native
 checks, both harness suites, fixture tests/smokes and disposable negative cases.
 Local execution evidence and remote execution status are separate in
-[QH-05](verification/QH-05.md). No remote protection settings are configured.
+[QH-05](project/plans/P002-quality-first-harness/evidence/QH-05.md). No remote
+protection settings are configured.
 
 ## Version and configuration
 
@@ -115,7 +127,8 @@ correctness to established tools instead of reimplementing their parsers:
 | Shell | shfmt | ShellCheck | command/exit behaviour |
 | Markdown | formatter/editor wrapping | markdownlint and local-link check | rendered/config evidence |
 
-Missing required tools fail; no syntax-only success replaces lint/types. Project-native
+Missing required tools fail; no syntax-only success replaces lint/types.
+Project-native
 commands and tool configuration remain authoritative. The fixture projects show
 complete Python and Node configurations aligned to the shared defaults.
 
@@ -129,17 +142,21 @@ symlinks. Native tools retain their own scope; see
 [the exclusion contract](.harness/standards/BASE.md).
 
 Extensionless executables with direct, `env` or `env -S` shebangs are classified
-as Python (`python`, `python3`, versioned Python 3) or shell (`sh`, `bash`, `dash`).
+as Python (`python`, `python3`, versioned Python 3) or shell (`sh`, `bash`,
+`dash`).
 Unknown interpreters and complex env prefixes do not default to shell. Other
 interpreters require deliberate project-native coverage.
 
 After required policy checks, `check` selects one project implementation:
 CLI override, environment override, configured command, package `check`, package
 `format:check`/`lint`/`typecheck` trio, then project-local native defaults.
-All three split scripts are required and run once. Any override/package path prevents
+All three split scripts are required and run once. Any override/package path
+prevents
 an additional automatic Python stage. A failed policy or selected command stops
-the gate. Python defaults require .venv Ruff/Pyright; TypeScript defaults require
-node_modules Prettier/ESLint/TypeScript. No npx/global fallback or install occurs.
+the gate. Python defaults require .venv Ruff/Pyright; TypeScript defaults
+require
+node_modules Prettier/ESLint/TypeScript. No npx/global fallback or install
+occurs.
 Native defaults request only check/noEmit modes. Reviewed equivalent commands
 own coverage and must be non-mutating; the harness does not parse arbitrary
 shell bodies to prove their adequacy.
@@ -204,7 +221,8 @@ own their collection/exit contract; full evidence enforcement is future Step 08.
 `self-test [target]` selects the executing kit's tests and kit-root Python
 environment, irrespective of the target's runner, package script or test
 override. When kit and app share a root, they also share that root environment.
-There is no `commands.self-test` configuration key. The schema remains version 1.
+There is no `commands.self-test` configuration key. The schema remains version
+1.
 
 This repository deliberately configures `commands.test` as a direct guarded
 unittest invocation of `.harness/tests`, without calling the dispatcher again.
@@ -252,7 +270,7 @@ normalised to exit `1` at the public harness boundary.
 | Additional files in shared folders, including project skills | Project/local | Never absorb into release ownership automatically. |
 | `harness` | Harness | Check its checksum before replacing. |
 | `.harness/config.toml` and future `exceptions.yml` | Project | Never overwrite automatically. |
-| `AGENTS.md`, `docs/`, `plans/`, `tasks/`, `verification/` | Project | Never overwrite automatically. |
+| `AGENTS.md`, `docs/`, `project/` | Project | Never overwrite automatically. |
 | Language and tool configuration | Shared | Change only through a reviewable merge. |
 
 `.harness/manifest.json` records the installed harness version, manifest schema,
@@ -288,18 +306,21 @@ a defence against concurrent filesystem replacement or a malicious maintainer.
 
 ## Starting a new project
 
-1. Create a repository from this base or clone the complete repository, including
+1. Create a repository from this base or clone the complete repository,
+including
    its hidden `.harness/` and `.agents/` directories.
 2. Fill in the seven files under `docs/`; delete prompts that do not apply.
-3. Put the first bounded plan in `plans/active/` and create a task from
-   `tasks/TASK_TEMPLATE.md`.
+3. Use the [work index](project/README.md) to create a short bounded plan and
+task.
+   Maintain the architecture map and reviewer brief with implementation changes.
 4. Add project-native `check`, `test`, and `smoke` scripts where the detected
    defaults are insufficient.
 5. Run `./harness inspect`, then `./harness check`, `./harness test`, and
    `./harness smoke`.
 
 Automated, conflict-aware adoption into an existing repository is planned but is
-not part of this phase. Until then, do not paste these files over existing project
+not part of this phase. Until then, do not paste these files over existing
+project
 files without reviewing collisions.
 
 The templates contain `Status: needs-project-input` markers on purpose. The
@@ -311,7 +332,8 @@ specific.
 - Repository files are the durable source of truth; chat history is not.
 - Project-native commands remain authoritative; the harness orchestrates them.
 - Verification records evidence and limitations instead of asserting success.
-- Demo and data provenance are explicit, including synthetic and simulated paths.
+- Demo and data provenance are explicit, including synthetic and simulated
+  paths.
 - Human approval is required at consequential product, security, and release
   boundaries.
 

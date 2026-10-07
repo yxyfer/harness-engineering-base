@@ -1,0 +1,815 @@
+{
+  "records": [
+    {
+      "old": "plans/PLAN_TEMPLATE.md",
+      "new": "project/templates/plan.md",
+      "original_sha256": "0e58b7c64efe23397a977a1333769470550b57da0d589a654763dffed89da6d0",
+      "current_sha256": "0e58b7c64efe23397a977a1333769470550b57da0d589a654763dffed89da6d0"
+    },
+    {
+      "old": "plans/README.md",
+      "new": "project/plans/P004-project-organisation/evidence/navigation-before/plans-README.md.md",
+      "original_sha256": "5f50b2dc1abc0e9ced64c1502494508d401148504041af6d4abe6edd99a5e7f1",
+      "current_sha256": "08f3ea6bbbb17351d44be79fdfbf374c757a879860963d9ecd5edf13a7f9c650"
+    },
+    {
+      "old": "plans/active/QUALITY_FIRST_HARNESS.md",
+      "new": "project/plans/P002-quality-first-harness/README.md",
+      "original_sha256": "454832a0b5251701290f18dcf85e6fd209a9fe639f35450c100a477bd30f56e5",
+      "current_sha256": "764cd6a7c1ffe745fde791f813034ed22c3813bc5086e66aa24dcf20b6302232"
+    },
+    {
+      "old": "plans/active/README.md",
+      "new": "project/plans/P004-project-organisation/evidence/navigation-before/plans-active-README.md.md",
+      "original_sha256": "fc9d3d616c3836b9511389f4a93cdc3d94226907df91408d60e1878855a986c9",
+      "current_sha256": "b5c0937865d6e80ff8d68d3e84174aaf7f621f4164341f90677e1a46e95058bb"
+    },
+    {
+      "old": "plans/completed/README.md",
+      "new": "project/plans/P004-project-organisation/evidence/navigation-before/plans-completed-README.md.md",
+      "original_sha256": "33037761087be725d0353efd0fb3e90946588181d35e909ffd509b710691f08e",
+      "current_sha256": "481b917c7f4e96215e79c70a075fa663b005ccb9ff8434a43210f1a088ab3b53"
+    },
+    {
+      "old": "plans/completed/REVIEWABLE_WORK.md",
+      "new": "project/archive/P003-reviewable-work/README.md",
+      "original_sha256": "44ece3fd41c935523c735905f1d9d0ec64b95762dd32a7435bc7e2264d495a1a",
+      "current_sha256": "11270954daf5426726a2de2a41eebaf34d3552cc9052419cb47e1074eadff11a"
+    },
+    {
+      "old": "plans/guides/quality-first/01-establish-the-baseline-and-acceptance-cases.md",
+      "new": "project/plans/P002-quality-first-harness/evidence/instructions/01-establish-the-baseline-and-acceptance-cases.md",
+      "original_sha256": "7de76ac4987839d8317995cdfa98e1d51025b97b504929dbff4b68499d7ecae0",
+      "current_sha256": "db0606616e6bfd2d74119aa2819449affbe5d4c15a33eff08005c912f6b48baf"
+    },
+    {
+      "old": "plans/guides/quality-first/02-separate-application-tests-from-harness-tests.md",
+      "new": "project/plans/P002-quality-first-harness/evidence/instructions/02-separate-application-tests-from-harness-tests.md",
+      "original_sha256": "512cbb05a82e90431947bf147e91deb4f54a0bbad277658fba4803b3e44e3ef6",
+      "current_sha256": "14d43bb0d1855f3ef1ea0de6d992d327a55ae0d1f1c0219557ad0c60582497a0"
+    },
+    {
+      "old": "plans/guides/quality-first/03-unify-discovery-and-honour-command-precedence.md",
+      "new": "project/plans/P002-quality-first-harness/evidence/instructions/03-unify-discovery-and-honour-command-precedence.md",
+      "original_sha256": "c294b6020e220301bb91ca6e2efb93556d05e4ceb4159670c9ae6e0c7341861d",
+      "current_sha256": "fe8b3bbcbe922fdf4f6d02a89f7c8b19a31654691953e2e8dbb5e0e9a5006095"
+    },
+    {
+      "old": "plans/guides/quality-first/04-preserve-managed-and-project-ownership.md",
+      "new": "project/plans/P002-quality-first-harness/evidence/instructions/04-preserve-managed-and-project-ownership.md",
+      "original_sha256": "e730d7959339c49a8566692a15dd18fa9d90fdb4c989c069682fcbb33479a053",
+      "current_sha256": "2058020756c6dd2c14280b5f7d7f4a35a1a35476440c1734233cf6c1417e439d"
+    },
+    {
+      "old": "plans/guides/quality-first/05-add-ci-for-the-repaired-core.md",
+      "new": "project/plans/P002-quality-first-harness/evidence/instructions/05-add-ci-for-the-repaired-core.md",
+      "original_sha256": "854b06f8ee88649a3a0df0b8fac5819723d35574ce66a73dbf6c0a56ad1fa62c",
+      "current_sha256": "916a6727f9320f8be5651fa682f54f0c891ed13197213fc443a060c7276b53b3"
+    },
+    {
+      "old": "plans/guides/quality-first/06-resolve-relevant-profiles-and-prerequisites.md",
+      "new": "project/plans/P002-quality-first-harness/evidence/instructions/06-resolve-relevant-profiles-and-prerequisites.md",
+      "original_sha256": "2245fae84be054681b332d35c8fcc376ff94a312f78bd0b36cde89fafff85453",
+      "current_sha256": "6639e50f9af88b26c8c883ec89b2e74066861fbf3ac2861e7efb02f3b3e9083d"
+    },
+    {
+      "old": "plans/guides/quality-first/07-delegate-formatting-and-static-quality-to-native-tools.md",
+      "new": "project/plans/P002-quality-first-harness/evidence/instructions/07-delegate-formatting-and-static-quality-to-native-tools.md",
+      "original_sha256": "3d2dbcb725eed77a82532649c46922f2e9b087770231f773dc2e821fccf31987",
+      "current_sha256": "c5ea46cc4ba6e495a91254202e1261214a5b7ea023fa12615577f1a65bc7f945"
+    },
+    {
+      "old": "plans/guides/quality-first/08-make-complete-verification-produce-trustworthy-evidence.md",
+      "new": "project/plans/P002-quality-first-harness/evidence/instructions/08-make-complete-verification-produce-trustworthy-evidence.md",
+      "original_sha256": "67929a11ebf3d8c8fdbc1751c2c89fb56460c632caa272943cfbcb6df11d191f",
+      "current_sha256": "1251cbd5247055ea7af3ffa03c2e17f8ef9ca839dfbe7f1f18efdde4ecf1026c"
+    },
+    {
+      "old": "plans/guides/quality-first/09-add-executable-security-checks-and-test-isolation.md",
+      "new": "project/plans/P002-quality-first-harness/evidence/instructions/09-add-executable-security-checks-and-test-isolation.md",
+      "original_sha256": "3fdd5752e8f7ae7c4286b69780d5a09ef54b42f7e0859b62439310b09079cd76",
+      "current_sha256": "b74951cc0445aa77cdec246103638f1f9afd98db899511847ad99d7cfb08cf6e"
+    },
+    {
+      "old": "plans/guides/quality-first/10-build-a-real-next-js-foundation-with-reusable-ui.md",
+      "new": "project/plans/P002-quality-first-harness/evidence/instructions/10-build-a-real-next-js-foundation-with-reusable-ui.md",
+      "original_sha256": "fb8e44d57e7731c54d7bd890d47371e47a9d663bed1735987c116a631e118860",
+      "current_sha256": "a23a22237e76074e3fbf84e3de8c411f099316505a50aea341515fa7405fa3f4"
+    },
+    {
+      "old": "plans/guides/quality-first/11-implement-secure-mutations-and-real-persistence.md",
+      "new": "project/plans/P002-quality-first-harness/evidence/instructions/11-implement-secure-mutations-and-real-persistence.md",
+      "original_sha256": "0b8a77211bbd902fe6fe77a2916703935bf6244998f5490d027176ab36393084",
+      "current_sha256": "91c2db2ab69bb33405477fd231569f4546bfcc9f604c2c931ab3a938968b5d62"
+    },
+    {
+      "old": "plans/guides/quality-first/12-prove-complete-user-and-recovery-journeys.md",
+      "new": "project/plans/P002-quality-first-harness/evidence/instructions/12-prove-complete-user-and-recovery-journeys.md",
+      "original_sha256": "928064c7aabadbb3d99daefb77492cbb896ebe8e70cbc624b5dbe3a4bd6a11a8",
+      "current_sha256": "4ce3249e5f2d8787bc7cffd1f9fa3edfb04ca16e9dfd095b6cf93fb7614cdab6"
+    },
+    {
+      "old": "plans/guides/quality-first/13-protect-accessibility-appearance-and-responsiveness.md",
+      "new": "project/plans/P002-quality-first-harness/evidence/instructions/13-protect-accessibility-appearance-and-responsiveness.md",
+      "original_sha256": "cfe82a691d6ffd954dbf3fb933714cb4b988f3a58be4c3015596cff5a58e13b5",
+      "current_sha256": "c4a0cfc67b8987796783bcabc01c3b1b21bedebbe2715c865c946d4cbaec66c9"
+    },
+    {
+      "old": "plans/guides/quality-first/14-prove-a-useful-python-application.md",
+      "new": "project/plans/P002-quality-first-harness/evidence/instructions/14-prove-a-useful-python-application.md",
+      "original_sha256": "0f7fd405daf82715fb6feb579aaf59ce36df927baa524cb0f3eab623d4da12f4",
+      "current_sha256": "f49ba6b61e2c594ebc5cc6afdad8362faf3bed1bff57dbc9f7d7cc5e065e5143"
+    },
+    {
+      "old": "plans/guides/quality-first/15-establish-that-important-tests-detect-wrong-behaviour.md",
+      "new": "project/plans/P002-quality-first-harness/evidence/instructions/15-establish-that-important-tests-detect-wrong-behaviour.md",
+      "original_sha256": "033fbf76671ec8881c198c4dbc2ca1c7e926a502b9eb0ae7ad66f1ebaaef950d",
+      "current_sha256": "d196bf8fb87d82cc822ba34c1860fca7203f40fc8e118f8fc09c8ff978511c58"
+    },
+    {
+      "old": "plans/guides/quality-first/16-enforce-the-full-policy-and-simplify-agent-guidance.md",
+      "new": "project/plans/P002-quality-first-harness/evidence/instructions/16-enforce-the-full-policy-and-simplify-agent-guidance.md",
+      "original_sha256": "332638f08697b7a2f00241c50dfd7886e9c26d93df0d915986b30ee5424ef1e1",
+      "current_sha256": "71604d487e1bdb6d5316b58581d335b7ef9593c805a560d1a71a31b14ab5e5e2"
+    },
+    {
+      "old": "plans/guides/quality-first/17-measure-usefulness-on-real-projects.md",
+      "new": "project/plans/P002-quality-first-harness/evidence/instructions/17-measure-usefulness-on-real-projects.md",
+      "original_sha256": "9f26a7b408ef6f02d630d215da938745138b3e248bffb1881866db0671bdc333",
+      "current_sha256": "abb2ceae3e96eb4b62b335f87b66a33cd0f12e6db0f669fa1aed549c4f51300f"
+    },
+    {
+      "old": "plans/guides/quality-first/18-make-adoption-and-updates-safe-where-they-earn-their-cost.md",
+      "new": "project/plans/P002-quality-first-harness/evidence/instructions/18-make-adoption-and-updates-safe-where-they-earn-their-cost.md",
+      "original_sha256": "b39e4275791a94624c2be28ed390463540a26cd2381f3b1c7eb5860f2821ce6a",
+      "current_sha256": "5505fe1de406101527cf275c6d8b4d4dcb30d3c97ac880995cdf6f34c1901b67"
+    },
+    {
+      "old": "plans/guides/quality-first/19-rehearse-release-and-hand-over-operation.md",
+      "new": "project/plans/P002-quality-first-harness/evidence/instructions/19-rehearse-release-and-hand-over-operation.md",
+      "original_sha256": "ab022217a332a9b51518ca0a138b0219f174f32b1989da172dff7869f0557c6a",
+      "current_sha256": "ef9196e2f4a3358db0235884ec62fb6bbf4ee456afe8f15c0118dc6ced6cb320"
+    },
+    {
+      "old": "plans/guides/quality-first/execution.md",
+      "new": "project/plans/P002-quality-first-harness/evidence/instructions/execution.md",
+      "original_sha256": "2ffecda2e6168c44a340a67c13ba42a743ce480cd0755fce869dc9c0f486ebed",
+      "current_sha256": "62c0707d01c57a07030ecb6fcc6b79e05b6ee62f79ee0c383a69936bd54595c7"
+    },
+    {
+      "old": "plans/superseded/PROJECT_HARNESS_V2.md",
+      "new": "project/archive/P001-harness-foundation/README.md",
+      "original_sha256": "547c279257990782df49c241a355f9c3672205a09908a8a1948423291dd44378",
+      "current_sha256": "01d4b7ed24d14ad330de8d45b265095381b6faaffa50ab37b124a48a57768afa"
+    },
+    {
+      "old": "plans/superseded/README.md",
+      "new": "project/plans/P004-project-organisation/evidence/navigation-before/plans-superseded-README.md.md",
+      "original_sha256": "f79bcc58cd02247006baef62abd7dcce52d4290733979d414f04d8e16be85968",
+      "current_sha256": "3d89a8c5ffac82dbcc74b50ba79aacbb0d411dae9128013ae76180c38d6c4ca1"
+    },
+    {
+      "old": "plans/superseded/quality-first-progress.md",
+      "new": "project/plans/P002-quality-first-harness/evidence/quality-first-progress.md",
+      "original_sha256": "51e103577d2d3f7d12feeb75b96adc6d03eef3df653e43e3bd1f4d3167568ac7",
+      "current_sha256": "7f08e5d434c8930ffd4e70ff7d51604e0b56d5da230d832901b84064ab330796"
+    },
+    {
+      "old": "plans/technical-debt.md",
+      "new": "project/debt.md",
+      "original_sha256": "d11f7288f1930493a408290db27a45614bf4de118ba43969c24a7cf1439b20bb",
+      "current_sha256": "d08e65fd9b5ac49ac101f87c3e95497ac756b10208796c0e4ec53d513c4ac38f"
+    },
+    {
+      "old": "tasks/README.md",
+      "new": "project/plans/P004-project-organisation/evidence/navigation-before/tasks-README.md",
+      "original_sha256": "dc2bb58a2787be6086d13be01d0dc4f079c375e5b3fd54f9c9aba3ea1deb5daf",
+      "current_sha256": "bf96dcbee4d496dc1d0b7195164788ebce0bffc88c4611c7db1cc5352b9711c5"
+    },
+    {
+      "old": "tasks/TASK-001-THREE-LAYER-STRUCTURE.md",
+      "new": "project/archive/P001-harness-foundation/tasks/P001-T001-three-layer-structure.md",
+      "original_sha256": "8b60fb6424e93e7605c11bc32953100f80a9f882ecf01a26e112356bdc367c8d",
+      "current_sha256": "e3326a1218e58e08625914e1ae4f164020d2d1bdef680188e471ba5f8aa4d456"
+    },
+    {
+      "old": "tasks/TASK-002-VERSIONED-CONFIGURATION.md",
+      "new": "project/archive/P001-harness-foundation/tasks/P001-T002-versioned-configuration.md",
+      "original_sha256": "6acc5d015b32e08f924bc957a078c2dce61e293746edd5364c1913257d213533",
+      "current_sha256": "9cf887f6cf91c828e1cafc9a1d660fb64ea472586df029edbeb932e4d484395b"
+    },
+    {
+      "old": "tasks/TASK-003-ENGINEERING-STANDARDS.md",
+      "new": "project/archive/P001-harness-foundation/tasks/P001-T003-engineering-standards.md",
+      "original_sha256": "dc983bd49fd33b774a89c726d985de4f92bc4a2fa2747350fade72c499a35795",
+      "current_sha256": "1db501a756ee5835508919084d8b26596c6df33e365aa1be5d505c44768e9f31"
+    },
+    {
+      "old": "tasks/TASK-004-QUALITY-BASELINE.md",
+      "new": "project/plans/P002-quality-first-harness/tasks/P002-T001-quality-baseline.md",
+      "original_sha256": "c0e77984357e18d91a92307fbfd2fc5e4738ff9549b2dd642c6fe91c5616f8ec",
+      "current_sha256": "4ccb25b7a0d8460e43911610096a9d5159a6d0c76a86b837f1b99244b73751f6"
+    },
+    {
+      "old": "tasks/TASK-005-APPLICATION-TEST-ROUTING.md",
+      "new": "project/plans/P002-quality-first-harness/tasks/P002-T002-application-test-routing.md",
+      "original_sha256": "fbd5df282b78c1b7c7680b989aa80a9f6a3f58c67ec061a6c0e6da63d43b3767",
+      "current_sha256": "fe71b2a99fda5eca31444380c602d69f8701b44d49dfa482bcb1823d9abbfb00"
+    },
+    {
+      "old": "tasks/TASK-006-DISCOVERY-AND-CHECK-PRECEDENCE.md",
+      "new": "project/plans/P002-quality-first-harness/tasks/P002-T003-discovery-and-check-precedence.md",
+      "original_sha256": "dafa7cffe4464319f3b982f43272d46ece8e19c17778f53e0e4e41e4debca96e",
+      "current_sha256": "e6dcaaddac0f3f9eed53e0d3cdb17b1c05f3cdfd6759126fb5d641aa8491cb9a"
+    },
+    {
+      "old": "tasks/TASK-007-RELEASE-OWNERSHIP.md",
+      "new": "project/plans/P002-quality-first-harness/tasks/P002-T004-release-ownership.md",
+      "original_sha256": "1c181ba62a4ee45ea8a0bab83af07387948293ef7994b67d2886a02a0b00d293",
+      "current_sha256": "b0a0103f3bde217f548684eba200a2664d2c6e5379dd2bd0bcb868b7784933e1"
+    },
+    {
+      "old": "tasks/TASK-008-CORE-CI.md",
+      "new": "project/plans/P002-quality-first-harness/tasks/P002-T005-core-ci.md",
+      "original_sha256": "b53383f6dae7d0000bd9719a2eb9a50bb5dbcc220d47d98566c591e1fe1b915f",
+      "current_sha256": "3c658555d36423c12fa65ff065d6ebe6e63253377df119ea3d313091611e328a"
+    },
+    {
+      "old": "tasks/TASK-009-PROFILES-AND-DOCTOR.md",
+      "new": "project/plans/P002-quality-first-harness/tasks/P002-T006-profiles-and-doctor.md",
+      "original_sha256": "1ca66a5050a4d36fd98c7df428d67ad461f1ffbe497a5c5d3951fb399560ea45",
+      "current_sha256": "49d5ff1f36fe7eadeeac2e19432cc8a115cd6315ddfba5fb48d8e5e53cc29451"
+    },
+    {
+      "old": "tasks/TASK-010-NATIVE-STATIC-TOOLS.md",
+      "new": "project/plans/P002-quality-first-harness/tasks/P002-T007-native-static-tools.md",
+      "original_sha256": "be842e20fb578f8697dbd2d47671531e90ef95c06fea485838475d414225aeb7",
+      "current_sha256": "ddaf2c3d6bcdd9a703ccf5a2a8a3d02f3ac91f37864e6bba061ac7ea2fd25348"
+    },
+    {
+      "old": "tasks/TASK-011-VERIFICATION-EVIDENCE.md",
+      "new": "project/plans/P002-quality-first-harness/tasks/P002-T008-verification-evidence.md",
+      "original_sha256": "eb09eb3f1e75ec4c0b2924f92ba8f67ce9b6845dfc7c85c31f77a91565f36663",
+      "current_sha256": "54a3bd8acbb0062529ab146c1f0e90e5ca7895dc4f3592ebf8ada8015dba4971"
+    },
+    {
+      "old": "tasks/TASK-012-SECURITY-AND-ISOLATION.md",
+      "new": "project/plans/P002-quality-first-harness/tasks/P002-T009-security-and-isolation.md",
+      "original_sha256": "27e3162013e351f66fe1ada357ad7ede8a69f5ba4895d76b9f5f490661ad3bb8",
+      "current_sha256": "0981c0cef1a7e367f1c0a20e67edbaccacc7e09722f9d38efbe340ccd6327266"
+    },
+    {
+      "old": "tasks/TASK-013-NEXTJS-REFERENCE-APP.md",
+      "new": "project/plans/P002-quality-first-harness/tasks/P002-T010-nextjs-reference-app.md",
+      "original_sha256": "130122537499fbd07988a00fc78d633e3d247f766668535f4c67eb4ea2bf1858",
+      "current_sha256": "c2a8ac3b4b4f09b8c5a8095b93d53a087fd59e560c4f2c4f02a82c176de3ed59"
+    },
+    {
+      "old": "tasks/TASK-014-SECURE-PERSISTENCE.md",
+      "new": "project/plans/P002-quality-first-harness/tasks/P002-T011-secure-persistence.md",
+      "original_sha256": "acd59f12acf0a55defc523b774a900e901fad95f971f615016f2ca017ad09d9c",
+      "current_sha256": "b3fde6d491e6c740d42b4fbb3d867b7c7094e363f9cf97fd7179f3d18ad6a303"
+    },
+    {
+      "old": "tasks/TASK-015-USER-JOURNEYS.md",
+      "new": "project/plans/P002-quality-first-harness/tasks/P002-T012-user-journeys.md",
+      "original_sha256": "ff2356112ba22aa7f1d39bcd279d94f0c2e08623caf48eeeee8feda79733a60c",
+      "current_sha256": "1ca05a0c8d3f659bd95612d7c31814037e9dc828e1e8fc776728d487fb6e9681"
+    },
+    {
+      "old": "tasks/TASK-016-UI-QUALITY.md",
+      "new": "project/plans/P002-quality-first-harness/tasks/P002-T013-ui-quality.md",
+      "original_sha256": "d4042fb735952239aaca3bebd08b00e6d5e2e471e279551aff7f9fbef92b14e2",
+      "current_sha256": "a272f759a162fe99db1d2845ea0cbc71d5218e216ab9e9a051a0826a8bf895f2"
+    },
+    {
+      "old": "tasks/TASK-017-REVIEWABLE-WORK.md",
+      "new": "project/archive/P003-reviewable-work/tasks/P003-T001-reviewable-work.md",
+      "original_sha256": "692132c866d07259b4e8311efe1e4ee86f5cd4a25c2191a5316c97211cd100d2",
+      "current_sha256": "559b32febf227454ecd3e0976ac6ce3bdc3ae696e71236a098d721d07073e158"
+    },
+    {
+      "old": "tasks/TASK_TEMPLATE.md",
+      "new": "project/templates/task.md",
+      "original_sha256": "5cd778366c5dab329b66df0c2679ad16088ad1fbf4c1d35398b411d88e3bf495",
+      "current_sha256": "5cd778366c5dab329b66df0c2679ad16088ad1fbf4c1d35398b411d88e3bf495"
+    },
+    {
+      "old": "verification/AUDIT_2026_10_01.md",
+      "new": "project/plans/P002-quality-first-harness/evidence/AUDIT_2026_10_01.md",
+      "original_sha256": "ad9146171cc2b83187224d0a9ac1b32a08aff3390422402336d9a8ae56f68647",
+      "current_sha256": "ad9146171cc2b83187224d0a9ac1b32a08aff3390422402336d9a8ae56f68647"
+    },
+    {
+      "old": "verification/IMPLEMENTATION_PLAN_2026_10_01.md",
+      "new": "project/plans/P002-quality-first-harness/evidence/IMPLEMENTATION_PLAN_2026_10_01.md",
+      "original_sha256": "9c4858d873ab497f733643653ca5e4f71bc75e868d88a0ff5d1b8297f0049661",
+      "current_sha256": "f5fb8e8be59a6edbf532f581cd759a4b1d8db6c4d5ef014c147125bd1dcf1dfc"
+    },
+    {
+      "old": "verification/MEASUREMENT_TEMPLATE.md",
+      "new": "project/templates/measurement-template.md",
+      "original_sha256": "6a82dcd75d3152a78aeb35102a28ed83877a21c5a8f5d274d221a6fcab1ac851",
+      "current_sha256": "6a82dcd75d3152a78aeb35102a28ed83877a21c5a8f5d274d221a6fcab1ac851"
+    },
+    {
+      "old": "verification/PHASE_1_THREE_LAYER_STRUCTURE.md",
+      "new": "project/archive/P001-harness-foundation/evidence/PHASE_1_THREE_LAYER_STRUCTURE.md",
+      "original_sha256": "9fedc03e404ad85d860b8975d9f13227f80684cc6c99edffdc40c334371ae3b8",
+      "current_sha256": "9fedc03e404ad85d860b8975d9f13227f80684cc6c99edffdc40c334371ae3b8"
+    },
+    {
+      "old": "verification/PHASE_2_VERSIONED_CONFIGURATION.md",
+      "new": "project/archive/P001-harness-foundation/evidence/PHASE_2_VERSIONED_CONFIGURATION.md",
+      "original_sha256": "bca2b448a64165bcc951b594c383a1bbadc3cdc815a9b92eda55467c3dadc185",
+      "current_sha256": "bca2b448a64165bcc951b594c383a1bbadc3cdc815a9b92eda55467c3dadc185"
+    },
+    {
+      "old": "verification/PHASE_3_ENGINEERING_STANDARDS.md",
+      "new": "project/archive/P001-harness-foundation/evidence/PHASE_3_ENGINEERING_STANDARDS.md",
+      "original_sha256": "9c9c11322b4bf38d394421c7bc8959a3c48cdccb5d0b16146663dcab07bb4640",
+      "current_sha256": "9c9c11322b4bf38d394421c7bc8959a3c48cdccb5d0b16146663dcab07bb4640"
+    },
+    {
+      "old": "verification/QH-01.md",
+      "new": "project/plans/P002-quality-first-harness/evidence/QH-01.md",
+      "original_sha256": "68f4597ecdc8e6d70e249a9f554292cd31b27842e66db4c10dae49d026be8af4",
+      "current_sha256": "1f9dfce835d5db5712fa979624f970699dfea63dbbb3bddba7398a64616bc073"
+    },
+    {
+      "old": "verification/QH-02.md",
+      "new": "project/plans/P002-quality-first-harness/evidence/QH-02.md",
+      "original_sha256": "b32861f8ce73de6ee92790ec79a7307d536ba877f9bc7f64601a1e3f533e39ed",
+      "current_sha256": "64933fd9290ad079c8baae411f96d3b7f3acf1258c1b0f268544daadbefe4976"
+    },
+    {
+      "old": "verification/QH-03.md",
+      "new": "project/plans/P002-quality-first-harness/evidence/QH-03.md",
+      "original_sha256": "948e1aa4f61c81f22b34720e60b89fcf89e20b006324cdd51415c5a0e1c71524",
+      "current_sha256": "b5b426f86b731bb7d75f93da3d7135eb6c25dd48c02db6226c74a9eb9d5dddcd"
+    },
+    {
+      "old": "verification/QH-04.md",
+      "new": "project/plans/P002-quality-first-harness/evidence/QH-04.md",
+      "original_sha256": "8d15ed394f0322b3f19ad3021e0694f26a3d1898bc08d7e7dbe33ac424aeeeae",
+      "current_sha256": "cf34447e3ed28dab77de6fdc5f41ab7b5279b19430fc59ca1ccfcbd28e270942"
+    },
+    {
+      "old": "verification/QH-05.md",
+      "new": "project/plans/P002-quality-first-harness/evidence/QH-05.md",
+      "original_sha256": "84584e0713255cc9f85536a70297aa10a2d42c4bb810b5e8c01bb01ebeec379b",
+      "current_sha256": "3f03e0224329bfde5c8fcb957fb206f5b757d695870305de3570cc8d2d2180ba"
+    },
+    {
+      "old": "verification/QH-06.md",
+      "new": "project/plans/P002-quality-first-harness/evidence/QH-06.md",
+      "original_sha256": "b325d7478e001c705402dbd7f5e97a6e2ad6335355bdcd966c8e8a257ae42174",
+      "current_sha256": "b325d7478e001c705402dbd7f5e97a6e2ad6335355bdcd966c8e8a257ae42174"
+    },
+    {
+      "old": "verification/QH-07.md",
+      "new": "project/plans/P002-quality-first-harness/evidence/QH-07.md",
+      "original_sha256": "97f1fc39b12da032385e57915ce0b8ac410f8035229b5238ce85f8a412d95d79",
+      "current_sha256": "97f1fc39b12da032385e57915ce0b8ac410f8035229b5238ce85f8a412d95d79"
+    },
+    {
+      "old": "verification/QH-08.md",
+      "new": "project/plans/P002-quality-first-harness/evidence/QH-08.md",
+      "original_sha256": "b8efc3e0bd48c6135d308662467c39e8d1c0eabfa6c97b609c0e66b997c413cc",
+      "current_sha256": "f6be29d14fd178b0bb55edc8e8320b68a79f5549b2206eacb165914a0436d09c"
+    },
+    {
+      "old": "verification/QH-09.md",
+      "new": "project/plans/P002-quality-first-harness/evidence/QH-09.md",
+      "original_sha256": "a50118cc25dd4537b0dafd0d402b061a76e010c52deaf7b85e524daf7cc1517e",
+      "current_sha256": "a50118cc25dd4537b0dafd0d402b061a76e010c52deaf7b85e524daf7cc1517e"
+    },
+    {
+      "old": "verification/QH-10.md",
+      "new": "project/plans/P002-quality-first-harness/evidence/QH-10.md",
+      "original_sha256": "0d452510f2604bf29f10b595759bf6094b5b04827b4af024028d66b34629c21c",
+      "current_sha256": "0d452510f2604bf29f10b595759bf6094b5b04827b4af024028d66b34629c21c"
+    },
+    {
+      "old": "verification/QH-11.md",
+      "new": "project/plans/P002-quality-first-harness/evidence/QH-11.md",
+      "original_sha256": "dfc17e22ebb3ae0c9b518dee92ebf54f95551573467f3e16fba54a20f7c20014",
+      "current_sha256": "0337a4deddfafd6430f3c7dbaa1612c346bec28dc1b5fa200e69581fec380bbf"
+    },
+    {
+      "old": "verification/QH-12.md",
+      "new": "project/plans/P002-quality-first-harness/evidence/QH-12.md",
+      "original_sha256": "8f3168d186c45b76a9b021e8bcd4661435d0216e5dbb33e1fd207da732e7fd08",
+      "current_sha256": "8f3168d186c45b76a9b021e8bcd4661435d0216e5dbb33e1fd207da732e7fd08"
+    },
+    {
+      "old": "verification/QH-13.md",
+      "new": "project/plans/P002-quality-first-harness/evidence/QH-13.md",
+      "original_sha256": "9eb73937f869ac6b3005dfb6b44fd8c3a4eef402c0695540c1abc0710dfee777",
+      "current_sha256": "9eb73937f869ac6b3005dfb6b44fd8c3a4eef402c0695540c1abc0710dfee777"
+    },
+    {
+      "old": "verification/REPORT_TEMPLATE.md",
+      "new": "project/templates/report-template.md",
+      "original_sha256": "621e61071215ca152d0ed37887ae84b29f78c3567e5f73fdc26d0075b0563671",
+      "current_sha256": "621e61071215ca152d0ed37887ae84b29f78c3567e5f73fdc26d0075b0563671"
+    },
+    {
+      "old": "verification/REVIEWABLE_WORK.md",
+      "new": "project/archive/P003-reviewable-work/evidence/REVIEWABLE_WORK.md",
+      "original_sha256": "3b4cc0a320bcacdeb30da3a41b969468ce3ba0fded07bb261a30c821b4b9e167",
+      "current_sha256": "9b54ab8b78d3cbebaea58c7d8238def2c797613add986365c126f48091d6ea41"
+    },
+    {
+      "old": "verification/VISION_2026_10_01.md",
+      "new": "project/plans/P002-quality-first-harness/evidence/VISION_2026_10_01.md",
+      "original_sha256": "4ad58c8db54b77116cda1c147444d430cc2286a968b80e9a5d3544a238ca0755",
+      "current_sha256": "55b9981031d6ec7ae30242513922e64affde1d1fd27e4aed3e88209de2bfae6d"
+    },
+    {
+      "old": "verification/audit-2026-10-01-probes.json",
+      "new": "project/plans/P002-quality-first-harness/evidence/audit-2026-10-01-probes.json",
+      "original_sha256": "393aa7971976b7326c65ca993b4c63edaf5b464ce12feb124a76a3e21035133b",
+      "current_sha256": "393aa7971976b7326c65ca993b4c63edaf5b464ce12feb124a76a3e21035133b"
+    },
+    {
+      "old": "verification/audit-2026-10-01-probes.py",
+      "new": "project/plans/P002-quality-first-harness/evidence/audit-2026-10-01-probes.py",
+      "original_sha256": "45a9ef41ba7587a5dac3e78df6c5c6e9e2a5b6aac3e64d9b0f0fd795fd3ca13f",
+      "current_sha256": "45a9ef41ba7587a5dac3e78df6c5c6e9e2a5b6aac3e64d9b0f0fd795fd3ca13f"
+    },
+    {
+      "old": "verification/qh-01-baseline.json",
+      "new": "project/plans/P002-quality-first-harness/evidence/qh-01-baseline.json",
+      "original_sha256": "03848371218094351e8367465eeb1191eebda55d7a172915bf1ec5bba92870f4",
+      "current_sha256": "03848371218094351e8367465eeb1191eebda55d7a172915bf1ec5bba92870f4"
+    },
+    {
+      "old": "verification/qh-01-collect.py",
+      "new": "project/plans/P002-quality-first-harness/evidence/qh-01-collect.py",
+      "original_sha256": "95cf759ee2884856352b31266fd014b90e8bb907e2ba3e52370de81c5516d12d",
+      "current_sha256": "95cf759ee2884856352b31266fd014b90e8bb907e2ba3e52370de81c5516d12d"
+    },
+    {
+      "old": "verification/qh-01-final.json",
+      "new": "project/plans/P002-quality-first-harness/evidence/qh-01-final.json",
+      "original_sha256": "f82e8b647d69cf929b15365de091e1639c7cb946892b45a8ed03ca9576e5ddeb",
+      "current_sha256": "f82e8b647d69cf929b15365de091e1639c7cb946892b45a8ed03ca9576e5ddeb"
+    },
+    {
+      "old": "verification/qh-01-review.json",
+      "new": "project/plans/P002-quality-first-harness/evidence/qh-01-review.json",
+      "original_sha256": "335fd7e2b30625e5569589b1abb132111e2224ce3b2e999955af62780732cfb0",
+      "current_sha256": "335fd7e2b30625e5569589b1abb132111e2224ce3b2e999955af62780732cfb0"
+    },
+    {
+      "old": "verification/qh-01-smoke-retry.json",
+      "new": "project/plans/P002-quality-first-harness/evidence/qh-01-smoke-retry.json",
+      "original_sha256": "31225bb06bbc047edc29691815aa542221b392c6ef2523a95d9f89b67af57621",
+      "current_sha256": "31225bb06bbc047edc29691815aa542221b392c6ef2523a95d9f89b67af57621"
+    },
+    {
+      "old": "verification/qh-02-after.json",
+      "new": "project/plans/P002-quality-first-harness/evidence/qh-02-after.json",
+      "original_sha256": "cf9abf0921b9866411f2b13aa3405cf57a987b18b982c5ac38299f33499f4f03",
+      "current_sha256": "cf9abf0921b9866411f2b13aa3405cf57a987b18b982c5ac38299f33499f4f03"
+    },
+    {
+      "old": "verification/qh-02-before.json",
+      "new": "project/plans/P002-quality-first-harness/evidence/qh-02-before.json",
+      "original_sha256": "2940cdae84998cc3694e661a8d1d66a958e3a735155c4427e6861ccf25eaa253",
+      "current_sha256": "2940cdae84998cc3694e661a8d1d66a958e3a735155c4427e6861ccf25eaa253"
+    },
+    {
+      "old": "verification/qh-02-final.json",
+      "new": "project/plans/P002-quality-first-harness/evidence/qh-02-final.json",
+      "original_sha256": "5ee731dad514a85ca611db3f05b5de8ddc779bcdf55f5ed0c5f1b6318f8b3360",
+      "current_sha256": "5ee731dad514a85ca611db3f05b5de8ddc779bcdf55f5ed0c5f1b6318f8b3360"
+    },
+    {
+      "old": "verification/qh-02-green-cases.jsonl",
+      "new": "project/plans/P002-quality-first-harness/evidence/qh-02-green-cases.jsonl",
+      "original_sha256": "13f948093183b7662d0d85cc09c38acecb0c2896d4f5250e8d84f1675a3d392f",
+      "current_sha256": "13f948093183b7662d0d85cc09c38acecb0c2896d4f5250e8d84f1675a3d392f"
+    },
+    {
+      "old": "verification/qh-02-green.json",
+      "new": "project/plans/P002-quality-first-harness/evidence/qh-02-green.json",
+      "original_sha256": "bbc5522aea6efe6ed30ea1cd4424ed627c857ba5d6cfa1c8e2e665f909ff1a9c",
+      "current_sha256": "bbc5522aea6efe6ed30ea1cd4424ed627c857ba5d6cfa1c8e2e665f909ff1a9c"
+    },
+    {
+      "old": "verification/qh-02-iteration-1.json",
+      "new": "project/plans/P002-quality-first-harness/evidence/qh-02-iteration-1.json",
+      "original_sha256": "521b5f7bb52a8ad44397581091b35ec0f09f090d0017ab7f66fbc4f284336fd5",
+      "current_sha256": "521b5f7bb52a8ad44397581091b35ec0f09f090d0017ab7f66fbc4f284336fd5"
+    },
+    {
+      "old": "verification/qh-02-iteration-1.jsonl",
+      "new": "project/plans/P002-quality-first-harness/evidence/qh-02-iteration-1.jsonl",
+      "original_sha256": "f47785224f9ff46ed19ea873ce11d26107db3ed3f72270151cdc61a5ade34788",
+      "current_sha256": "f47785224f9ff46ed19ea873ce11d26107db3ed3f72270151cdc61a5ade34788"
+    },
+    {
+      "old": "verification/qh-02-manifest-diff.json",
+      "new": "project/plans/P002-quality-first-harness/evidence/qh-02-manifest-diff.json",
+      "original_sha256": "5fbfad204e0f6f61084dc25a085d3a56dbe835d20234bf6c050d9e9a1bd4e8c9",
+      "current_sha256": "5fbfad204e0f6f61084dc25a085d3a56dbe835d20234bf6c050d9e9a1bd4e8c9"
+    },
+    {
+      "old": "verification/qh-02-manifest-final.json",
+      "new": "project/plans/P002-quality-first-harness/evidence/qh-02-manifest-final.json",
+      "original_sha256": "9d77df183c1b76cad37e1f5249345cacd52a9aac3044cd2bc9f6c3df93113917",
+      "current_sha256": "9d77df183c1b76cad37e1f5249345cacd52a9aac3044cd2bc9f6c3df93113917"
+    },
+    {
+      "old": "verification/qh-02-manifest-iteration-2.json",
+      "new": "project/plans/P002-quality-first-harness/evidence/qh-02-manifest-iteration-2.json",
+      "original_sha256": "40a4d0b6772a975be46b5fada3198be3eb3c8ffec5f23e72e48c5920a8c4ac18",
+      "current_sha256": "40a4d0b6772a975be46b5fada3198be3eb3c8ffec5f23e72e48c5920a8c4ac18"
+    },
+    {
+      "old": "verification/qh-02-red.json",
+      "new": "project/plans/P002-quality-first-harness/evidence/qh-02-red.json",
+      "original_sha256": "fb859e5f605b45b3837840363291a882b73b71b4c60fe6f622f5196c540f62d7",
+      "current_sha256": "fb859e5f605b45b3837840363291a882b73b71b4c60fe6f622f5196c540f62d7"
+    },
+    {
+      "old": "verification/qh-02-setup.json",
+      "new": "project/plans/P002-quality-first-harness/evidence/qh-02-setup.json",
+      "original_sha256": "d595e9750758f96f6f0017582d10fb8c2ba5e7b47bdc558289e8e29240d4de61",
+      "current_sha256": "d595e9750758f96f6f0017582d10fb8c2ba5e7b47bdc558289e8e29240d4de61"
+    },
+    {
+      "old": "verification/qh-02-smoke-retry.json",
+      "new": "project/plans/P002-quality-first-harness/evidence/qh-02-smoke-retry.json",
+      "original_sha256": "ff9a243bcf8b88c0f04aab2c82bd7b5abf6275079479603a9c7a9fd665aa900c",
+      "current_sha256": "ff9a243bcf8b88c0f04aab2c82bd7b5abf6275079479603a9c7a9fd665aa900c"
+    },
+    {
+      "old": "verification/qh-03-before.json",
+      "new": "project/plans/P002-quality-first-harness/evidence/qh-03-before.json",
+      "original_sha256": "d6a84e0cd0ff3cd9f65954a70b40a0459159c345b6428245e8e82b1a41c3cb74",
+      "current_sha256": "d6a84e0cd0ff3cd9f65954a70b40a0459159c345b6428245e8e82b1a41c3cb74"
+    },
+    {
+      "old": "verification/qh-03-final.json",
+      "new": "project/plans/P002-quality-first-harness/evidence/qh-03-final.json",
+      "original_sha256": "17415aa0d2c9e5aee059ed5020b8eb9c19341383bacc4a49e1e515542a9bd580",
+      "current_sha256": "17415aa0d2c9e5aee059ed5020b8eb9c19341383bacc4a49e1e515542a9bd580"
+    },
+    {
+      "old": "verification/qh-03-green-cases.jsonl",
+      "new": "project/plans/P002-quality-first-harness/evidence/qh-03-green-cases.jsonl",
+      "original_sha256": "3e27757fc6fa3dc446305264e0bc0ae38c4f8988d17367f5747ae8d0cc67be68",
+      "current_sha256": "3e27757fc6fa3dc446305264e0bc0ae38c4f8988d17367f5747ae8d0cc67be68"
+    },
+    {
+      "old": "verification/qh-03-green.json",
+      "new": "project/plans/P002-quality-first-harness/evidence/qh-03-green.json",
+      "original_sha256": "b261cb2bb6cdeff85dfe342a9dbcd8318d77e92f1fe0fcf0bdc37de730cfbc3d",
+      "current_sha256": "b261cb2bb6cdeff85dfe342a9dbcd8318d77e92f1fe0fcf0bdc37de730cfbc3d"
+    },
+    {
+      "old": "verification/qh-03-inspect.json",
+      "new": "project/plans/P002-quality-first-harness/evidence/qh-03-inspect.json",
+      "original_sha256": "97abb25b7a0a40b9bfb11f37f7ef8fb6a654c0d8449fa1a3bbb92b1ba80579bb",
+      "current_sha256": "97abb25b7a0a40b9bfb11f37f7ef8fb6a654c0d8449fa1a3bbb92b1ba80579bb"
+    },
+    {
+      "old": "verification/qh-03-iteration-1-cases.jsonl",
+      "new": "project/plans/P002-quality-first-harness/evidence/qh-03-iteration-1-cases.jsonl",
+      "original_sha256": "6f77e68df73cef1816aa50b247e40d9cf2dab5e466b5c423d4ebfc2f3766eb43",
+      "current_sha256": "6f77e68df73cef1816aa50b247e40d9cf2dab5e466b5c423d4ebfc2f3766eb43"
+    },
+    {
+      "old": "verification/qh-03-iteration-1.json",
+      "new": "project/plans/P002-quality-first-harness/evidence/qh-03-iteration-1.json",
+      "original_sha256": "8c8e90fcf54a55ee984897c8e7c1f0f0eb5010fadd58cf97656b5a503367995c",
+      "current_sha256": "8c8e90fcf54a55ee984897c8e7c1f0f0eb5010fadd58cf97656b5a503367995c"
+    },
+    {
+      "old": "verification/qh-03-kit-tools.json",
+      "new": "project/plans/P002-quality-first-harness/evidence/qh-03-kit-tools.json",
+      "original_sha256": "f4d5a8d2bd52b100448ae9771f69130f00c52588759c7683618c6b795833b7b2",
+      "current_sha256": "f4d5a8d2bd52b100448ae9771f69130f00c52588759c7683618c6b795833b7b2"
+    },
+    {
+      "old": "verification/qh-03-manifest-diff.json",
+      "new": "project/plans/P002-quality-first-harness/evidence/qh-03-manifest-diff.json",
+      "original_sha256": "2ebb5371a4d34b568a5c9b72609b1dde8b3803d61fa620630632ff6b2820cb45",
+      "current_sha256": "2ebb5371a4d34b568a5c9b72609b1dde8b3803d61fa620630632ff6b2820cb45"
+    },
+    {
+      "old": "verification/qh-03-manifest-iteration-1.json",
+      "new": "project/plans/P002-quality-first-harness/evidence/qh-03-manifest-iteration-1.json",
+      "original_sha256": "6a67f483087a0cc71dff56ac8e9fada2f68496865b2e322744da5cbedd74a39c",
+      "current_sha256": "6a67f483087a0cc71dff56ac8e9fada2f68496865b2e322744da5cbedd74a39c"
+    },
+    {
+      "old": "verification/qh-03-matrix.json",
+      "new": "project/plans/P002-quality-first-harness/evidence/qh-03-matrix.json",
+      "original_sha256": "b8607a6b2c88bde1cffcd2574c9f4082de99c662f9676b1523c5902176059f7f",
+      "current_sha256": "b8607a6b2c88bde1cffcd2574c9f4082de99c662f9676b1523c5902176059f7f"
+    },
+    {
+      "old": "verification/qh-03-preservation.json",
+      "new": "project/plans/P002-quality-first-harness/evidence/qh-03-preservation.json",
+      "original_sha256": "7ae0950751b778c930f031561dfe3b43ae670681f58c2043df9ee9b8f7b7beec",
+      "current_sha256": "7ae0950751b778c930f031561dfe3b43ae670681f58c2043df9ee9b8f7b7beec"
+    },
+    {
+      "old": "verification/qh-03-red-cases.jsonl",
+      "new": "project/plans/P002-quality-first-harness/evidence/qh-03-red-cases.jsonl",
+      "original_sha256": "aa42a6a5ae440bfc344053344280c50a9d236b41af9a865040b1104a9c5e491b",
+      "current_sha256": "aa42a6a5ae440bfc344053344280c50a9d236b41af9a865040b1104a9c5e491b"
+    },
+    {
+      "old": "verification/qh-03-red.json",
+      "new": "project/plans/P002-quality-first-harness/evidence/qh-03-red.json",
+      "original_sha256": "8334712c8a8e31a2e183f90a7b299dbacc19a1c02618c9daeede5eca4ee33180",
+      "current_sha256": "8334712c8a8e31a2e183f90a7b299dbacc19a1c02618c9daeede5eca4ee33180"
+    },
+    {
+      "old": "verification/qh-03-reproduction-after.json",
+      "new": "project/plans/P002-quality-first-harness/evidence/qh-03-reproduction-after.json",
+      "original_sha256": "462a1605c2631dbd1233ccd627989a576981f5299c09044120ae16328316ad2a",
+      "current_sha256": "462a1605c2631dbd1233ccd627989a576981f5299c09044120ae16328316ad2a"
+    },
+    {
+      "old": "verification/qh-03-reproduction-before.json",
+      "new": "project/plans/P002-quality-first-harness/evidence/qh-03-reproduction-before.json",
+      "original_sha256": "e512aea8f52e3ce8e77b6e729d9766c6e971d2982b8cdc483d0f2882b5553b3d",
+      "current_sha256": "e512aea8f52e3ce8e77b6e729d9766c6e971d2982b8cdc483d0f2882b5553b3d"
+    },
+    {
+      "old": "verification/qh-03-smoke-retry.json",
+      "new": "project/plans/P002-quality-first-harness/evidence/qh-03-smoke-retry.json",
+      "original_sha256": "09c29b07e4a4899cc0c76271f246d619a2c24a5e01715443b4561c19c8d49b8c",
+      "current_sha256": "09c29b07e4a4899cc0c76271f246d619a2c24a5e01715443b4561c19c8d49b8c"
+    },
+    {
+      "old": "verification/qh-04-before.json",
+      "new": "project/plans/P002-quality-first-harness/evidence/qh-04-before.json",
+      "original_sha256": "dc25d0d4a6b566f2b7336376c55250ed58e0af6a3e1fb5baa7cf7f2753a9e6a0",
+      "current_sha256": "dc25d0d4a6b566f2b7336376c55250ed58e0af6a3e1fb5baa7cf7f2753a9e6a0"
+    },
+    {
+      "old": "verification/qh-04-final-link-attempt.json",
+      "new": "project/plans/P002-quality-first-harness/evidence/qh-04-final-link-attempt.json",
+      "original_sha256": "3df15c62b3ada3c5e92aab52496c8191b6063f0601c5d946eb2d9d1759472bc2",
+      "current_sha256": "3df15c62b3ada3c5e92aab52496c8191b6063f0601c5d946eb2d9d1759472bc2"
+    },
+    {
+      "old": "verification/qh-04-final.json",
+      "new": "project/plans/P002-quality-first-harness/evidence/qh-04-final.json",
+      "original_sha256": "e497cc6f6161ef60c12243394675010c05d472b534b21224e78f4729dcab5e12",
+      "current_sha256": "e497cc6f6161ef60c12243394675010c05d472b534b21224e78f4729dcab5e12"
+    },
+    {
+      "old": "verification/qh-04-green-cases.jsonl",
+      "new": "project/plans/P002-quality-first-harness/evidence/qh-04-green-cases.jsonl",
+      "original_sha256": "b59a6b4e2bcafb7092dbd2fdbb977028b65330f2f9171c163ff703fd3f7d366e",
+      "current_sha256": "b59a6b4e2bcafb7092dbd2fdbb977028b65330f2f9171c163ff703fd3f7d366e"
+    },
+    {
+      "old": "verification/qh-04-matrix.json",
+      "new": "project/plans/P002-quality-first-harness/evidence/qh-04-matrix.json",
+      "original_sha256": "fdf6da0291a9e810d5b7663ba99b1d78c866b3290345f9f9d5eaeb6f46958d3e",
+      "current_sha256": "fdf6da0291a9e810d5b7663ba99b1d78c866b3290345f9f9d5eaeb6f46958d3e"
+    },
+    {
+      "old": "verification/qh-04-native.json",
+      "new": "project/plans/P002-quality-first-harness/evidence/qh-04-native.json",
+      "original_sha256": "6a8ebcd5a9261c36c4e883a4d8f5b92f2e9b2f79415aec5a5ba3260983797cd5",
+      "current_sha256": "6a8ebcd5a9261c36c4e883a4d8f5b92f2e9b2f79415aec5a5ba3260983797cd5"
+    },
+    {
+      "old": "verification/qh-04-preservation.json",
+      "new": "project/plans/P002-quality-first-harness/evidence/qh-04-preservation.json",
+      "original_sha256": "830d6334aa390fb60645930fe37c49a809f1d4adacc776de015eb14d32756dc4",
+      "current_sha256": "830d6334aa390fb60645930fe37c49a809f1d4adacc776de015eb14d32756dc4"
+    },
+    {
+      "old": "verification/qh-04-red-cases.jsonl",
+      "new": "project/plans/P002-quality-first-harness/evidence/qh-04-red-cases.jsonl",
+      "original_sha256": "24f94674f54b9fb79a484db1f7aab55e5419c25611eb84763a6af77031ce557b",
+      "current_sha256": "24f94674f54b9fb79a484db1f7aab55e5419c25611eb84763a6af77031ce557b"
+    },
+    {
+      "old": "verification/qh-04-red.json",
+      "new": "project/plans/P002-quality-first-harness/evidence/qh-04-red.json",
+      "original_sha256": "90504f41829a10bc4f5fa996ff191e8432a775f63422939cb556bfb786523227",
+      "current_sha256": "90504f41829a10bc4f5fa996ff191e8432a775f63422939cb556bfb786523227"
+    },
+    {
+      "old": "verification/qh-04-reproduction-after.json",
+      "new": "project/plans/P002-quality-first-harness/evidence/qh-04-reproduction-after.json",
+      "original_sha256": "f38dac5033bd36585583259106951c0200e50dfd8611d00a8f86cab4e7f808d7",
+      "current_sha256": "f38dac5033bd36585583259106951c0200e50dfd8611d00a8f86cab4e7f808d7"
+    },
+    {
+      "old": "verification/qh-04-reproduction-before.json",
+      "new": "project/plans/P002-quality-first-harness/evidence/qh-04-reproduction-before.json",
+      "original_sha256": "648ce8163a6fbd0bd44c7f06bf86ea86b236099c31a6226eb498aa807c343404",
+      "current_sha256": "648ce8163a6fbd0bd44c7f06bf86ea86b236099c31a6226eb498aa807c343404"
+    },
+    {
+      "old": "verification/qh-04-run.py",
+      "new": "project/plans/P002-quality-first-harness/evidence/qh-04-run.py",
+      "original_sha256": "b439020ce941c6c5c602f445cc39341e2b23980425d2152fe70fcafb18d2a214",
+      "current_sha256": "b439020ce941c6c5c602f445cc39341e2b23980425d2152fe70fcafb18d2a214"
+    },
+    {
+      "old": "verification/qh-04-smoke-retry.json",
+      "new": "project/plans/P002-quality-first-harness/evidence/qh-04-smoke-retry.json",
+      "original_sha256": "a5a08a0e4b1e7af49ddc81b823e8017609f6f138ea87402c69f683809421bb27",
+      "current_sha256": "a5a08a0e4b1e7af49ddc81b823e8017609f6f138ea87402c69f683809421bb27"
+    },
+    {
+      "old": "verification/qh-05-clean-logs.tar.gz",
+      "new": "project/plans/P002-quality-first-harness/evidence/qh-05-clean-logs.tar.gz",
+      "original_sha256": "4ba992388747217e1d52877a5656e8da1207c2ef749c6c461671bc3a0e9eee10",
+      "current_sha256": "4ba992388747217e1d52877a5656e8da1207c2ef749c6c461671bc3a0e9eee10"
+    },
+    {
+      "old": "verification/qh-05-clean-results.jsonl",
+      "new": "project/plans/P002-quality-first-harness/evidence/qh-05-clean-results.jsonl",
+      "original_sha256": "691aa76d65b7814e654dd2e602b8ab87976caf684a1b6e848f5317922a9c0609",
+      "current_sha256": "691aa76d65b7814e654dd2e602b8ab87976caf684a1b6e848f5317922a9c0609"
+    },
+    {
+      "old": "verification/qh-05-local-logs.tar.gz",
+      "new": "project/plans/P002-quality-first-harness/evidence/qh-05-local-logs.tar.gz",
+      "original_sha256": "fb84f328b3da5e57a535b5d80f50725eecbe59e0b415f94a4f82f11e680c1de1",
+      "current_sha256": "fb84f328b3da5e57a535b5d80f50725eecbe59e0b415f94a4f82f11e680c1de1"
+    },
+    {
+      "old": "verification/qh-05-local-results.jsonl",
+      "new": "project/plans/P002-quality-first-harness/evidence/qh-05-local-results.jsonl",
+      "original_sha256": "09987992c1b0de45ae7220d0f37b6c558fecf214263c4aa0246205284fb8378d",
+      "current_sha256": "09987992c1b0de45ae7220d0f37b6c558fecf214263c4aa0246205284fb8378d"
+    },
+    {
+      "old": "verification/qh-05-source.json",
+      "new": "project/plans/P002-quality-first-harness/evidence/qh-05-source.json",
+      "original_sha256": "c5b26415dc618a4bea3789ebf9189ad3695c55f1c8645c61e14c98f0b07fa0a5",
+      "current_sha256": "c5b26415dc618a4bea3789ebf9189ad3695c55f1c8645c61e14c98f0b07fa0a5"
+    },
+    {
+      "old": "verification/qh-06-logs.tar.gz",
+      "new": "project/plans/P002-quality-first-harness/evidence/qh-06-logs.tar.gz",
+      "original_sha256": "a51944c90d353826aa6dc7a8170fa2acd7ee7e9523f97720dd66649131083bc1",
+      "current_sha256": "a51944c90d353826aa6dc7a8170fa2acd7ee7e9523f97720dd66649131083bc1"
+    },
+    {
+      "old": "verification/qh-06-results.jsonl",
+      "new": "project/plans/P002-quality-first-harness/evidence/qh-06-results.jsonl",
+      "original_sha256": "ed4e1369711dcee458137644bb0f77fa662b73567f29e9de19424237b3b67fcc",
+      "current_sha256": "ed4e1369711dcee458137644bb0f77fa662b73567f29e9de19424237b3b67fcc"
+    },
+    {
+      "old": "verification/qh-06-source.json",
+      "new": "project/plans/P002-quality-first-harness/evidence/qh-06-source.json",
+      "original_sha256": "6baf4b4344d4d4276fd77d1815931d44d5f7f0dfd595d755e4413ef1ba719cc1",
+      "current_sha256": "6baf4b4344d4d4276fd77d1815931d44d5f7f0dfd595d755e4413ef1ba719cc1"
+    },
+    {
+      "old": "verification/qh-07-logs.tar.gz",
+      "new": "project/plans/P002-quality-first-harness/evidence/qh-07-logs.tar.gz",
+      "original_sha256": "a28f4ed56849b72db252bdebc8cbdccfd5e63599f98277af6854b39112bbc7be",
+      "current_sha256": "a28f4ed56849b72db252bdebc8cbdccfd5e63599f98277af6854b39112bbc7be"
+    },
+    {
+      "old": "verification/qh-07-results.jsonl",
+      "new": "project/plans/P002-quality-first-harness/evidence/qh-07-results.jsonl",
+      "original_sha256": "78818bd5dd81697dea394f7ddd3b071fd135d926e76586c580b84e8d9e79ae99",
+      "current_sha256": "78818bd5dd81697dea394f7ddd3b071fd135d926e76586c580b84e8d9e79ae99"
+    },
+    {
+      "old": "verification/qh-07-source.json",
+      "new": "project/plans/P002-quality-first-harness/evidence/qh-07-source.json",
+      "original_sha256": "594a1cc40bdb1a65c71874b716a10b03f8a18ebc4d63b77afd19c1bad56ea1cb",
+      "current_sha256": "594a1cc40bdb1a65c71874b716a10b03f8a18ebc4d63b77afd19c1bad56ea1cb"
+    },
+    {
+      "old": "verification/reviewable-work-link-audit.txt",
+      "new": "project/archive/P003-reviewable-work/evidence/reviewable-work-link-audit.txt",
+      "original_sha256": "e735b75d16637690849ae5849dd2f19adc64f71f7f2eb255c0c99207ff49a8f2",
+      "current_sha256": "e735b75d16637690849ae5849dd2f19adc64f71f7f2eb255c0c99207ff49a8f2"
+    },
+    {
+      "old": "verification/reviewable-work-logs.tar.gz",
+      "new": "project/archive/P003-reviewable-work/evidence/reviewable-work-logs.tar.gz",
+      "original_sha256": "3269fd6690bea789cba65d5681ae0432b7b9afdbf2fa5176dff4aff1009c02cb",
+      "current_sha256": "3269fd6690bea789cba65d5681ae0432b7b9afdbf2fa5176dff4aff1009c02cb"
+    },
+    {
+      "old": "verification/reviewable-work-source.json",
+      "new": "project/archive/P003-reviewable-work/evidence/reviewable-work-source.json",
+      "original_sha256": "88086ef6860d03eadc6e2848d63c7582aeb506fedbac21e49cc9212f6d992476",
+      "current_sha256": "88086ef6860d03eadc6e2848d63c7582aeb506fedbac21e49cc9212f6d992476"
+    }
+  ],
+  "note": "Markdown links rebased; machine artifacts/log archives retained byte-for-byte."
+}

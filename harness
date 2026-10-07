@@ -19,6 +19,7 @@ Commands:
   self-test Run the executing harness's contract tests independently.
   smoke    Run the smallest user-visible health check.
   verify   Coordinate applicable controls and write validated native evidence.
+  project  Check/sync work indexes or archive a completed plan bundle.
   help     Show this help.
 
 The target defaults to the current directory.
@@ -36,6 +37,10 @@ fi
 
 subcommand=$1
 shift
+
+if [ "${subcommand}" = project ]; then
+  exec python3 "${root}/.harness/bin/project.py" "$@"
+fi
 
 # Verify owns bounded evidence options rather than an arbitrary override.
 if [ "${subcommand}" = verify ]; then

@@ -22,28 +22,35 @@ rather than rewriting history.
   missing optional tools as degraded coverage. Size findings request cohesion
   review but do not fail. Scoped tool-native suppressions carry rationale until
   Phase 6 adds the governed exception register.
-- **Evidence:** `tasks/TASK-003-ENGINEERING-STANDARDS.md`, the standards under
+- **Evidence:**
+  `project/archive/P001-harness-foundation/tasks/P001-T003-engineering-standards.md`,
+  the standards under
   `.harness/standards/`, Phase 3 contract tests, and
-  `verification/PHASE_3_ENGINEERING_STANDARDS.md`.
+  `project/archive/P001-harness-foundation/evidence/PHASE_3_ENGINEERING_STANDARDS.md`.
 - **Supersedes:** none.
 
 ### ADR-001: Use versioned TOML configuration and a checksum manifest
 
 - **Date:** 2026-09-08
 - **Status:** accepted
-- **Context:** The harness needs deterministic project overrides, offline version
-  identity, strict validation, and a future-safe way to distinguish managed files
+- **Context:** The harness needs deterministic project overrides, offline
+  version
+  identity, strict validation, and a future-safe way to distinguish managed
+  files
   from project-owned context during installation and updates.
 - **Decision:** Store the semantic harness version in `.harness/VERSION`, use a
   complete schema-versioned `.harness/config.toml`, and record relative managed
-  file paths with SHA-256 checksums in `.harness/manifest.json`. Configuration is
+  file paths with SHA-256 checksums in `.harness/manifest.json`. Configuration
+  is
   project-owned after creation and is excluded from managed-file checksums.
 - **Consequences:** Configuration requires Python 3.11 or newer for standard
   library TOML parsing. Unknown and missing keys fail early. Future updates can
   detect managed-file drift without treating normal project configuration as
   corruption.
-- **Evidence:** `tasks/TASK-002-VERSIONED-CONFIGURATION.md`,
-  `verification/PHASE_2_VERSIONED_CONFIGURATION.md`, and the Phase 2 contract
+- **Evidence:**
+  `project/archive/P001-harness-foundation/tasks/P001-T002-versioned-configuration.md`,
+  `project/archive/P001-harness-foundation/evidence/PHASE_2_VERSIONED_CONFIGURATION.md`,
+  and the Phase 2 contract
   tests under `.harness/tests/`.
 - **Supersedes:** none.
 
@@ -62,12 +69,15 @@ rather than rewriting history.
   Repair gate reliability and prove real application journeys before expanding
   adoption/update infrastructure.
 - **Consequences:** No LLM judge or secondary reviewer agent is a required test
-  stage. Existing project tools and customer design systems remain authoritative.
+  stage. Existing project tools and customer design systems remain
+  authoritative.
   Shared UI behaviour can vary through customer themes. Missing verification
   cannot count as a pass. The detailed new-project tool choices are recommended
   defaults requiring compatibility tests, not imposed migrations.
-- **Evidence:** User direction on 2026-10-01; [audit](../verification/AUDIT_2026_10_01.md);
-  [product vision](PRODUCT.md); [delivery plan](../plans/active/QUALITY_FIRST_HARNESS.md).
+- **Evidence:** User direction on 2026-10-01;
+  [audit](../project/plans/P002-quality-first-harness/evidence/AUDIT_2026_10_01.md);
+  [product vision](PRODUCT.md); [delivery
+  plan](../project/plans/P002-quality-first-harness/README.md).
 - **Supersedes:** the remaining implementation order in Project Harness v2;
   ADR-001 and ADR-002 remain in force. Required-tool CI behaviour will replace
   degraded success only when implemented and verified.
@@ -91,8 +101,10 @@ rather than rewriting history.
   repository-only test command. Harness regression setup requires pinned pytest;
   offline test execution never installs or silently skips it. Arbitrary native
   scripts own their exits/collection until broader evidence enforcement arrives.
-- **Evidence:** [TASK-005](../tasks/TASK-005-APPLICATION-TEST-ROUTING.md),
-  [QH-02](../verification/QH-02.md), installed-copy runner regressions.
+- **Evidence:**
+  [TASK-005](../project/plans/P002-quality-first-harness/tasks/P002-T002-application-test-routing.md),
+  [QH-02](../project/plans/P002-quality-first-harness/evidence/QH-02.md),
+  installed-copy runner regressions.
 - **Supersedes:** ADR-001's use of the project config as the external fallback;
   its schema and ownership rules remain in force.
 
@@ -115,8 +127,10 @@ rather than rewriting history.
   policy requirements. Syntax fallback remains degraded coverage, not lint or
   type verification. The walker is not a runtime sandbox or a concurrent
   filesystem mutation defence. Managed ownership repair remains Step 04.
-- **Evidence:** [TASK-006](../tasks/TASK-006-DISCOVERY-AND-CHECK-PRECEDENCE.md),
-  [QH-03](../verification/QH-03.md), installed-copy discovery regressions.
+- **Evidence:**
+  [TASK-006](../project/plans/P002-quality-first-harness/tasks/P002-T003-discovery-and-check-precedence.md),
+  [QH-03](../project/plans/P002-quality-first-harness/evidence/QH-03.md),
+  installed-copy discovery regressions.
 - **Supersedes:** ADR-002's generic analysis description with explicit directory
   semantics; native configuration authority remains in force.
 
@@ -135,8 +149,10 @@ rather than rewriting history.
   Modified/missing shipped files remain conflicts. Schema 1/version `0.1.0`
   stay unchanged; older kits need an explicit reviewed verifier/inventory
   update. Legacy `generate` exits 2. Metadata is not signed or race-proof.
-- **Evidence:** [TASK-007](../tasks/TASK-007-RELEASE-OWNERSHIP.md),
-  [QH-04](../verification/QH-04.md), installed-copy ownership regressions.
+- **Evidence:**
+  [TASK-007](../project/plans/P002-quality-first-harness/tasks/P002-T004-release-ownership.md),
+  [QH-04](../project/plans/P002-quality-first-harness/evidence/QH-04.md),
+  installed-copy ownership regressions.
 - **Supersedes:** Broad managed-folder descriptions in ADR-001 and the previous
   roadmap. Project/native configuration ownership remains unchanged.
 
@@ -155,8 +171,10 @@ rather than rewriting history.
   to consumer release ownership. Fixture-native Markdown configs are shipped;
   dependency/runtime directories are excluded, not maintained sources. Local
   passes do not prove remote execution or branch protection.
-- **Evidence:** [TASK-008](../tasks/TASK-008-CORE-CI.md),
-  [QH-05](../verification/QH-05.md), [CI guide](../.harness/ci/README.md).
+- **Evidence:**
+  [TASK-008](../project/plans/P002-quality-first-harness/tasks/P002-T005-core-ci.md),
+  [QH-05](../project/plans/P002-quality-first-harness/evidence/QH-05.md), [CI
+  guide](../.harness/ci/README.md).
 - **Supersedes:** None; ownership and native configuration authority remain.
 
 ### ADR-008: Resolve applicability without rewriting reviewed requirements
@@ -169,9 +187,11 @@ rather than rewriting history.
   Opt in to schema 2 through a reviewed side-file merge; retain schema 1 reads.
 - **Consequences:** Doctor is prerequisite diagnosis, not quality verification.
   Next.js/browser/security assurance remains unsupported. Readiness flags now
-  affect required unfinished context. No project-owned configuration replacement.
-- **Evidence:** [TASK-009](../tasks/TASK-009-PROFILES-AND-DOCTOR.md),
-  [QH-06](../verification/QH-06.md).
+  affect required unfinished context. No project-owned configuration
+  replacement.
+- **Evidence:**
+  [TASK-009](../project/plans/P002-quality-first-harness/tasks/P002-T006-profiles-and-doctor.md),
+  [QH-06](../project/plans/P002-quality-first-harness/evidence/QH-06.md).
 - **Supersedes:** Earlier explicit-profile omission behaviour only; native tool
   authority and ownership remain unchanged.
 
@@ -182,23 +202,27 @@ rather than rewriting history.
 - **Decision:** Preserve one reviewed native implementation and project package
   managers. Add optional format config, require local default static tools and
   ship separate compatible native starting configs/locks. Missing controls fail;
-  check defaults never request edits. Native rule IDs, not regex parsing, enforce
+  check defaults never request edits. Native rule IDs, not regex parsing,
+  enforce
   demonstrated boundary conventions. Source-size guidance remains advisory.
 - **Consequences:** Legacy configs read unchanged but missing static tools no
   longer count as degraded success. Reviewed arbitrary commands own complete,
   non-mutating coverage. Application formatting excludes managed kit; authoring
   CI covers it explicitly. Pyright executes its installed bundled native entry
   point without wrapper downloads. Adoption is manual and reviewable.
-- **Evidence:** [TASK-010](../tasks/TASK-010-NATIVE-STATIC-TOOLS.md),
-  [QH-07](../verification/QH-07.md).
-- **Supersedes:** Optional-tool success and syntax fallback from ADR-002/005/007;
+- **Evidence:**
+  [TASK-010](../project/plans/P002-quality-first-harness/tasks/P002-T007-native-static-tools.md),
+  [QH-07](../project/plans/P002-quality-first-harness/evidence/QH-07.md).
+- **Supersedes:** Optional-tool success and syntax fallback from
+  ADR-002/005/007;
   preserves native authority, ownership and single implementation precedence.
 
 ### ADR-010: Bind native verification outcomes to current inputs
 
 - **Date:** 2026-10-01
 - **Status:** accepted; implemented in Step 08
-- **Decision:** Coordinate shared required controls without a scheduler; preserve
+- **Decision:** Coordinate shared required controls without a scheduler;
+  preserve
   native unittest/JUnit outcomes and fail missing evidence/zero/skips/retries.
   Use fixed output paths, conservative source/config/lock identities, bounded
   redacted artifacts and POSIX owned-group cleanup. Custom native evidence argv
@@ -206,8 +230,10 @@ rather than rewriting history.
 - **Consequences:** Successful shell exit alone cannot establish collection.
   Full root verification stays incomplete without root smoke. Reports remain
   editable provenance, not signed authenticity, test adequacy or a sandbox.
-- **Evidence:** [TASK-011](../tasks/TASK-011-VERIFICATION-EVIDENCE.md),
-  [QH-08](../verification/QH-08.md), [contract](../.harness/verification/README.md).
+- **Evidence:**
+  [TASK-011](../project/plans/P002-quality-first-harness/tasks/P002-T008-verification-evidence.md),
+  [QH-08](../project/plans/P002-quality-first-harness/evidence/QH-08.md),
+  [contract](../.harness/verification/README.md).
 - **Supersedes:** ADR-004's deferred evidence requirement only.
 
 ### ADR-011: Separate offline security evidence from test network isolation
@@ -218,7 +244,8 @@ rather than rewriting history.
   few Ruff/ESLint rules. Explicit registry setup records source/time/version,
   native package coverage and lock/manifest identity; offline verify rejects
   stale/missing data. Critical/high/unknown block; exact source/dependency
-  exceptions need owner/reason/expiry within 90 days. Secrets cannot be excepted.
+  exceptions need owner/reason/expiry within 90 days. Secrets cannot be
+  excepted.
   Project-owned security.json is explicit schema 1 opt-in; schema 2 mode selects
   required controls. No automatic project-file replacement or fixes.
 - **Consequences:** Application verify/CI test phases use synthetic allowlisted
@@ -226,8 +253,10 @@ rather than rewriting history.
   preflight. Seatbelt is deprecated, unavailable launch fails closed, and no
   hostile-code filesystem/VM or IPC-escape guarantee is made. Plain developer
   test/smoke are unisolated. Capability-specific security remains unsupported.
-- **Evidence:** [TASK-012](../tasks/TASK-012-SECURITY-AND-ISOLATION.md),
-  [QH-09](../verification/QH-09.md), [contract](../.harness/security/README.md).
+- **Evidence:**
+  [TASK-012](../project/plans/P002-quality-first-harness/tasks/P002-T009-security-and-isolation.md),
+  [QH-09](../project/plans/P002-quality-first-harness/evidence/QH-09.md),
+  [contract](../.harness/security/README.md).
 - **Supersedes:** ADR-008's unsupported security-mode result only. Ownership,
   native tool authority, unsigned evidence and independent runtime trust remain.
 
@@ -247,9 +276,11 @@ rather than rewriting history.
   remain required unsupported results. This is not complete browser assurance.
   Use maintained ESLint 10 with native Next/hooks rules: the bundled Next plugin
   set currently requires unsupported ESLint 9. No incompatible peer overrides.
-- **Evidence:** [TASK-013](../tasks/TASK-013-NEXTJS-REFERENCE-APP.md),
+- **Evidence:**
+  [TASK-013](../project/plans/P002-quality-first-harness/tasks/P002-T010-nextjs-reference-app.md),
   [reference](../examples/nextjs-app/README.md),
-  [partial verification](../verification/QH-10.md).
+  [partial
+  verification](../project/plans/P002-quality-first-harness/evidence/QH-10.md).
 - **Supersedes:** ADR-008's initial Next.js/browser unsupported result only;
   full accessibility/performance, aggregation and application security remain
   unimplemented. Native coverage/config ownership and Step 09 trust limits stay.
@@ -261,16 +292,19 @@ rather than rewriting history.
 - **Decision:** Replace the app's fixture-only edits with SQLite, versioned
   atomic save/audit, pure owner/tenant/editor policy and fresh private reads.
   Iron-session owns encrypted cookie verification; Argon2 owns password hashes.
-  Opaque sessions load current identity/role/tenant and hard expiry from storage.
+  Opaque sessions load current identity/role/tenant and hard expiry from
+  storage.
   Generated local credentials use the same actual sign-in path as every user.
-- **Consequences:** Only private marked disposable loopback targets are supported;
+- **Consequences:** Only private marked disposable loopback targets are
+  supported;
   migration/seed/reset refuse production/unsafe/symlink targets. No handmade
   cryptography, impersonation route, shared user cache or production SSO bypass.
   Node's SQLite API is experimental on the pinned runtime. Native direct HTTP
   tests prove storage and denials; browser execution remains owner-paused.
   Declared identity/tenant/persistence controls require a separate native JUnit
   adapter, not merely successful UI tests or test-file presence.
-- **Evidence:** [TASK-014](../tasks/TASK-014-SECURE-PERSISTENCE.md),
+- **Evidence:**
+  [TASK-014](../project/plans/P002-quality-first-harness/tasks/P002-T011-secure-persistence.md),
   [app security](../examples/nextjs-app/docs/SECURITY.md).
 - **Supersedes:** ADR-012's no-persistence/auth boundary only; ownership, native
   tool authority and external macOS isolation limits remain unchanged.
@@ -285,12 +319,14 @@ rather than rewriting history.
   scripts own unique storage and recorded server processes. Optional reviewed
   smoke-evidence.json reuses the native evidence contract; the reference adapter
   runs full journeys while smoke stays one meaningful case.
-- **Consequences:** Unexpected console/page errors fail with one exact deliberate
+- **Consequences:** Unexpected console/page errors fail with one exact
+  deliberate
   503 resource-error allowance. Disposable save/ownership mutants must fail
   intended assertions. Renewed authorization closes the current browser gap
   without rewriting historical partial evidence. Chromium/macOS only; full UI
   quality controls and human acceptance remain separate.
-- **Evidence:** [TASK-015](../tasks/TASK-015-USER-JOURNEYS.md).
+- **Evidence:**
+  [TASK-015](../project/plans/P002-quality-first-harness/tasks/P002-T012-user-journeys.md).
 - **Supersedes:** ADR-013's owner-paused current browser status only; security,
   ownership and unsigned/native evidence trust limits remain unchanged.
 
@@ -306,8 +342,52 @@ rather than rewriting history.
   native full suite and block verify completeness. Forty-four pinned candidates
   and synthetic disposable comparator tests do not establish human acceptance.
   Lab budgets are reviewable proposals, not field performance or conformance.
-- **Evidence:** [QH-13](../verification/QH-13.md), app quality/baseline procedure.
+- **Evidence:**
+  [QH-13](../project/plans/P002-quality-first-harness/evidence/QH-13.md), app
+  quality/baseline procedure.
 - **Supersedes:** Step 12's pending programmatic UI controls only.
+
+### ADR-016: Separate work navigation from implementation review detail
+
+- **Date:** 2026-10-07
+- **Status:** accepted; repository workflow implementation
+- **Context:** Long roadmaps mixed sequence, prompts and progress history;
+  reviewers lacked a short route from intent to implementation boundaries.
+- **Decision:** Keep one concise roadmap table, stable task IDs, separate step
+  guides and explicit completed/superseded directories. Tasks own acceptance and
+  change-specific reviewer briefs; canonical architecture owns linked component
+  maps, important flows, choices and operational limits. Reports own evidence.
+- **Consequences:** Update incoming links and indexes on state/move changes.
+  Maps and briefs require source inspection and maintenance; no generated
+  inventory, additional status database or runtime command is introduced.
+  Mechanical checks do not replace human challenge of intent, context and risk.
+  Apply the brief/map workflow to new work; historical evidence stays intact.
+- **Evidence:**
+  [TASK-017](../project/archive/P003-reviewable-work/tasks/P003-T001-reviewable-work.md),
+  [work index](../project/README.md), [reviewer entry](README.md).
+- **Rationale:** [Allspaw's review
+  essay](https://www.adaptivecapacitylabs.com/2026/08/24/there-is-more-to-code-review-than-automatable-detection/)
+  motivates maintaining shared understanding and discussion alongside automated
+  detection. This is our workflow interpretation, not a measured productivity
+  claim or a substitute for inspecting code.
+- **Supersedes:** Plan/task document organisation only; existing implementation
+  and verification contracts and approval boundaries remain authoritative.
+
+### ADR-017: Plan-owned work bundles with derived navigation
+
+- **Date:** 2026-10-07
+- **Status:** accepted; requested project organisation
+- **Decision:** Keep project management in `project/`. Use project-wide PNNN
+  plans with per-plan PNNN-TNNN tasks/evidence. Shared current architecture lives
+  outside bundles. Archive whole complete/superseded bundles; retain IDs/history.
+- **Formalism:** Markdown fields and fixed headings; task state owns progress.
+  Stdlib helpers validate records/dependencies/evidence and generate indexes.
+  `FORMAT.md` opts projects in; legacy layouts remain supported.
+- **Operations:** Explicit sync writes navigation. Archive checks completion,
+  repairs links and rolls back ordinary write failures. Process-crash atomicity
+  and semantic architecture validation are not claimed.
+- **Evidence:** [P004](../project/archive/P004-project-organisation/README.md).
+- **Supersedes:** ADR-016's separate plan/task folders and manual progress indexes.
 
 ## Decision template
 

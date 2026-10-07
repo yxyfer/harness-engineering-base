@@ -8,6 +8,18 @@ description: Review a code change for concrete correctness, security, maintainab
 Read `AGENTS.md`, the relevant context, and the complete change against its target
 base. Inspect callers and tests needed to understand behaviour.
 
+Start with the task's reviewer brief and canonical architecture map when
+present. Challenge necessity, scope and the implementation choice; trace the
+affected boundaries to source and ADRs. Assess operational context, deployment
+and recovery, and surface material missing context for human discussion.
+Automated checks support review; they do not establish human understanding or
+approval. Missing briefs/maps in older work do not alone establish a defect.
+
+For adopted projects, start at `project/README.md` and follow the selected plan's
+`PNNN-TNNN` task. Read shared systems/feature maps in `project/architecture/`, then
+task-specific evidence. Check IDs, status/dependencies and derived navigation with
+`./harness project check`; mechanical consistency is not semantic approval.
+
 Prioritise defects that can produce incorrect behaviour, data loss, security or
 privacy exposure, broken compatibility, misleading demo behaviour, or an
 unverified acceptance claim. Do not report a preference as a defect.

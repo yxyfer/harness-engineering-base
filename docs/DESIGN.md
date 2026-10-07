@@ -10,6 +10,16 @@ Status: current; Step 10 synthetic reference foundation
 
 ## Key journeys
 
+For harness maintainers, the [work index](../project/README.md) leads to a
+concise
+plan and one bounded task. The [reviewer entry](README.md) leads from task
+intent
+to architecture/source, choices, risk and evidence. Keep long prompts in
+selected
+step guides, state in one roadmap table, and incomplete human acceptance
+visible.
+These are repository documentation journeys, not a new application interface.
+
 | Journey | Entry | Success state | Failure or empty state |
 | --- | --- | --- | --- |
 | Browse synthetic work | Work-item list | Detail snapshot | Real unknown-item 404 |
@@ -19,11 +29,13 @@ Status: current; Step 10 synthetic reference foundation
 ## Interface system
 
 The [standalone app](../examples/nextjs-app/README.md) owns its small
-shadcn-style Radix foundation: button variants, labelled field/error, confirmation
+shadcn-style Radix foundation: button variants, labelled field/error,
+confirmation
 dialog, semantic navigation/list, theme switch and edit/state patterns.
 Component APIs and reuse rules are in its
 [design context](../examples/nextjs-app/docs/DESIGN.md). No customer assets were
-available; system fonts, owned text mark and semantic CSS tokens avoid downloads.
+available; system fonts, owned text mark and semantic CSS tokens avoid
+downloads.
 Paper uses warm light/forest tokens; Ink uses navy/pale-blue tokens. Components
 and behavior are shared, not cloned per theme. No shared package is extracted.
 
@@ -47,4 +59,4 @@ the existing two-theme/mobile/desktop reflow evidence. This is not human visual
 acceptance. Step 13 adds pinned candidates and native comparisons that require
 intentional human baseline acceptance; absence blocks full verify. No masks,
 AI grading or automatic diff approval are used. See the app's baseline procedure
-and [QH-13](../verification/QH-13.md).
+and [QH-13](../project/plans/P002-quality-first-harness/evidence/QH-13.md).

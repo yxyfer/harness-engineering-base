@@ -11,7 +11,8 @@ full native report fails visibly rather than claiming visual acceptance.
 Step 08 implements full/partial verify reports with typed per-control states,
 native counts and artifact/input hashes. Zero collection, skips, retries,
 missing/malformed evidence and unsupported controls block completeness. No
-silent retry occurs. Static results stay aggregate; no underlying tool collection
+silent retry occurs. Static results stay aggregate; no underlying tool
+collection
 is invented. [Evidence contract](../.harness/verification/README.md) documents
 scope, adapter responsibility, timeout cleanup, redaction and stale validation.
 
@@ -31,7 +32,8 @@ the engine delegates, never grades screenshots or invents browser case counts.
 Vitest JUnit reports 25 application cases (14 server plus 11 domain/component);
 Playwright independently reports 22 production/UI cases; four visual cases
 require pending human acceptance. The nine-case independent UI subset is not
-complete verification. See [app quality](../examples/nextjs-app/docs/QUALITY.md).
+complete verification. See [app
+quality](../examples/nextjs-app/docs/QUALITY.md).
 Accessibility conformance and field performance remain unverified.
 Step 11 adds required native
 direct-server
@@ -40,7 +42,8 @@ missing/zero/failing native reports cannot pass these declared capabilities.
 Root checks explicitly exclude
 independent `examples/` packages from aggregation; invoke each package root.
 
-For schema 2, review profiles/frameworks (`auto` or explicit lists), capabilities
+For schema 2, review profiles/frameworks (`auto` or explicit lists),
+capabilities
 and roots in the example side file. Keep existing command overrides and native
 tool settings when merging. Only `roots = ["."]` is executable; nested package
 manifests/workspaces block even without a declared aggregate. Paths reject
@@ -50,14 +53,17 @@ Schema 2 always requires AGENTS, PRODUCT, ARCHITECTURE, QUALITY and DECISIONS.
 Browser UI adds DESIGN; persistence/jobs add DATA; identity, tenancy, uploads
 and integrations add relevant DATA/SECURITY. Unknown capabilities require
 SECURITY and fail unsupported. Explicit extra context remains required.
-`readiness.fail_on_needs_input` now blocks unfinished required context when true;
+`readiness.fail_on_needs_input` now blocks unfinished required context when
+true;
 false permits unfinished (not missing/unsafe) context. Presence is not prose QA.
 
 Schema 1 without security.json preserves reviewed documents and warns that
-security.mode was inert. Explicit side-file opt-in (or schema 2 local/ci) selects
+security.mode was inert. Explicit side-file opt-in (or schema 2 local/ci)
+selects
 required offline security and external test isolation. Off means no assurance.
 Neither removes capability requirements or changes project-owned files.
-Explicit profile lists now cannot silently suppress detected applicable controls;
+Explicit profile lists now cannot silently suppress detected applicable
+controls;
 review contradictions before proceeding. Step 07 removes optional static-tool
 success. Native defaults require project-local tools; reviewed equivalent
 commands retain precedence and coverage responsibility.
@@ -85,20 +91,30 @@ through project-owned tools.
 
 Contract tests cover configuration, manifests, profile selection, exclusions,
 and exit behaviour. Both fixture projects exercise static checks, automated
-tests, and smoke paths. Changes to command behaviour require regression coverage;
+tests, and smoke paths. Changes to command behaviour require regression
+coverage;
 documentation-only changes require link and consistency checks.
+
+Work indexes, task reviewer briefs and architecture maps support human review.
+Adopted project checks validate IDs, parents, dependencies, acceptance, evidence
+and derived indexes. Link/lint gates do not establish semantic map accuracy,
+operational context or human understanding. Reviewers trace affected flows to
+source and challenge choices; maps/briefs are maintained with implementation.
 
 Step 02 regressions use disposable installed copies, real no-pip environments,
 and real pytest collection. They cover failing/healthy app tests, mixed suites,
 missing local runners, declared unittest, zero collection and independent
 self-tests. Required pytest cases fail visibly if setup is missing; they do not
-download dependencies or skip. [QH-02](../verification/QH-02.md) records evidence.
+download dependencies or skip.
+[QH-02](../project/plans/P002-quality-first-harness/evidence/QH-02.md) records
+evidence.
 
 Step 03 regressions exercise installed disposable targets, supported shebangs,
 pruned nested exclusions, spaced paths, symlink boundaries, policy failures and
 single project command resolution. Tool-call recorders prove argv/scope routing;
 they do not establish native tool correctness. Real installed native tools and
-missing coverage are reported separately in [QH-03](../verification/QH-03.md).
+missing coverage are reported separately in
+[QH-03](../project/plans/P002-quality-first-harness/evidence/QH-03.md).
 
 ## Core CI
 
@@ -111,15 +127,19 @@ remain unverified; protection settings unchanged.
 
 Step 05 adds a pinned macOS GitHub Actions workflow and
 [locked native CI setup](../.harness/ci/README.md). Its static phase requires
-ShellCheck, shfmt, Markdownlint, Ruff and Pyright; the existing Node fixture runs
+ShellCheck, shfmt, Markdownlint, Ruff and Pyright; the existing Node fixture
+runs
 Prettier, ESLint and TypeScript. Both contract commands, fixture tests/smokes
 and disposable negative controls run without model-based grading. Unique logs
-retain failed attempts. [QH-05](../verification/QH-05.md) distinguishes local
+retain failed attempts.
+[QH-05](../project/plans/P002-quality-first-harness/evidence/QH-05.md)
+distinguishes local
 evidence from unverified remote execution; no branch protection is configured.
 
 ## Known limitations
 
-- Setup is explicit; format/check do not install. Missing required defaults fail.
+- Setup is explicit; format/check do not install. Missing required defaults
+  fail.
   Reviewed commands are editable and must remain complete and non-mutating.
 - Generic function-size analysis is Python-aware only. Other profiles rely on
   their project linters rather than fragile harness parsing.
@@ -132,7 +152,8 @@ limitations.
 
 Harness changes also require `./harness self-test`. Native overrides/scripts
 need reviewed native report adapters for complete verify claims. Verify rejects
-zero cases/skips/retries/invalid evidence but does not prove critical-case coverage.
+zero cases/skips/retries/invalid evidence but does not prove critical-case
+coverage.
 Static defaults fail missing tools;
 arbitrary reviewed commands retain their native coverage contract.
 Steps 02–03 repair F1–F5; managed-file
@@ -142,14 +163,16 @@ Step 04 uses full disposable installations, a real no-pip environment and
 synthetic project additions to prove health remains intact. Shipped edits/loss,
 unsafe paths, JSON duplicates, inventory drift and symlink destinations fail.
 Deterministic release generation includes exactly reviewed inputs and leaves
-consumer files/metadata untouched. [QH-04](../verification/QH-04.md) records
+consumer files/metadata untouched.
+[QH-04](../project/plans/P002-quality-first-harness/evidence/QH-04.md) records
 before/after evidence and native coverage limits.
 
 ## Target quality policy agreed on 2026-10-01
 
 The following is the intended policy from the [product vision](PRODUCT.md).
 Current enforcement remains limited to the implementation described above and
-the [audit findings](../verification/AUDIT_2026_10_01.md).
+the [audit
+findings](../project/plans/P002-quality-first-harness/evidence/AUDIT_2026_10_01.md).
 
 - Automated test execution and grading are entirely programmatic. No secondary
   AI calls, LLM reviewers, or model-based screenshot judgments are permitted in

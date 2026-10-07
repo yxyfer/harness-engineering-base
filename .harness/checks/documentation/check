@@ -8,8 +8,15 @@ sys.path.insert(0, str(Path(__file__).resolve().parents[2] / "bin"))
 from source_paths import load_config, walk_files
 from profiles import resolve
 from readiness import context_status
+from project_work import check_indexes
+from project_records import WorkError
 
 target = Path(sys.argv[1] if len(sys.argv) > 1 else ".").resolve()
+try:
+    check_indexes(target)
+except (WorkError, OSError) as error:
+    print(f"documentation: project structure: {error}", file=sys.stderr)
+    raise SystemExit(1)
 config = load_config(target)
 selection = resolve(target, config)
 markdown_files = [

@@ -1,0 +1,168 @@
+from pathlib import Path
+import json,os,re,shutil,hashlib
+from urllib.parse import unquote,quote
+root=Path.cwd(); before=Path('/tmp/harness-project-before')
+project=root/'project'; project.mkdir(exist_ok=True)
+p1=Path('project/archive/P001-harness-foundation')
+p2=Path('project/plans/P002-quality-first-harness')
+p3=Path('project/archive/P003-reviewable-work')
+p4=Path('project/plans/P004-project-organisation')
+for bundle in (p1,p2,p3,p4):
+ for sub in ('tasks','evidence'):(bundle/sub).mkdir(parents=True,exist_ok=True)
+Path('project/templates').mkdir(exist_ok=True);Path('project/architecture').mkdir(exist_ok=True)
+mapping={}; payload={}
+def move(old,new):
+ old=Path(old);new=Path(new)
+ mapping[old.as_posix()]=new.as_posix()
+ payload[new.as_posix()]=old.read_bytes()
+ new.parent.mkdir(parents=True,exist_ok=True)
+ shutil.move(str(old),str(new))
+# Verification stays with the plan which produced it. Artifact bytes are immutable.
+for old in sorted(Path('verification').iterdir()):
+ if not old.is_file():continue
+ if old.name in ('REPORT_TEMPLATE.md','MEASUREMENT_TEMPLATE.md'):
+  dst=Path('project/templates')/old.name.lower().replace('_','-')
+ elif old.name.startswith('PHASE_'):
+  dst=p1/'evidence'/old.name
+ elif old.name=='REVIEWABLE_WORK.md' or old.name.startswith('reviewable-work-'):
+  dst=p3/'evidence'/old.name
+ else:dst=p2/'evidence'/old.name
+ move(old,dst)
+# The predecessor structures remain traceable in bundle evidence, not active indexes.
+for old in sorted(Path('plans').rglob('*')):
+ if not old.is_file():continue
+ if old.name=='PLAN_TEMPLATE.md':dst=Path('project/templates/plan.md')
+ elif old.name=='technical-debt.md':dst=Path('project/debt.md')
+ elif old.name=='PROJECT_HARNESS_V2.md':dst=p1/'evidence/legacy-plan.md'
+ elif old.name=='QUALITY_FIRST_HARNESS.md':dst=p2/'evidence/legacy-plan.md'
+ elif old.name=='REVIEWABLE_WORK.md':dst=p3/'evidence/legacy-plan.md'
+ elif 'guides' in old.parts:dst=p2/'evidence/instructions'/old.name
+ elif old.name=='quality-first-progress.md':dst=p2/'evidence'/old.name
+ else:dst=p4/'evidence/navigation-before'/('-'.join(old.parts)+'.md')
+ move(old,dst)
+oldtasks=sorted(Path('tasks').glob('TASK-[0-9]*.md'))
+newtasks={}
+for old in oldtasks:
+ n=int(old.name.split('-')[1]); bundle=p1 if n<=3 else p2 if n<=16 else p3
+ local=n if n<=3 else n-3 if n<=16 else 1
+ plan=bundle.name[:4];tid=f'{plan}-T{local:03}'
+ text=old.read_text();title=text.splitlines()[0].split(': ',1)[1]
+ slug=re.sub(r'[^a-z0-9]+','-',old.stem.split('-',2)[2].lower()).strip('-')
+ legacy=bundle/'evidence'/('legacy-'+old.name)
+ move(old,legacy)
+ target=bundle/'tasks'/f'{tid}-{slug}.md'
+ mapping[old.as_posix()]=target.as_posix()
+ newtasks[tid]=(target,text,legacy,title)
+move('tasks/TASK_TEMPLATE.md','project/templates/task.md')
+move('tasks/README.md',p4/'evidence/navigation-before/tasks-README.md')
+# Navigation references target canonical plans, while legacy copies remain in evidence.
+mapping['plans/active/QUALITY_FIRST_HARNESS.md']=(p2/'README.md').as_posix()
+mapping['plans/superseded/PROJECT_HARNESS_V2.md']=(p1/'README.md').as_posix()
+mapping['plans/completed/REVIEWABLE_WORK.md']=(p3/'README.md').as_posix()
+# Root architecture context becomes a compatibility entry into the shared view.
+move('docs/ARCHITECTURE.md',p4/'evidence/architecture-before.md')
+mapping['docs/ARCHITECTURE.md']='docs/ARCHITECTURE.md'
+# Rebase local Markdown links from their original directory to their new location.
+link_re=re.compile(r'(?<!!)\[[^\]]+\]\(([^)]+)\)')
+all_markdown=[]
+excluded={'.agents','.git','.venv','node_modules','.next','__pycache__','.ruff_cache','.pytest_cache'}
+for directory,dirs,names in os.walk(root):
+ dirs[:]=[d for d in dirs if d not in excluded and not (Path(directory).name=='.harness' and d in {'tmp','reports'})]
+ all_markdown.extend(Path(directory)/name for name in names if name.endswith('.md'))
+reverse={new:old for old,new in mapping.items() if new in payload}
+# Original task records need their original source base despite their canonical alias.
+for target,text,legacy,title in newtasks.values():
+ reverse[legacy.as_posix()]=next(old for old,new in mapping.items() if new==target.as_posix())
+for file in all_markdown:
+ rel=file.relative_to(root).as_posix();oldrel=reverse.get(rel,rel)
+ text=file.read_text()
+ def rewrite(m):
+  raw=m[1]
+  if raw.startswith(('http://','https://','mailto:','#')):return m[0]
+  url,sep,fragment=raw.strip('<>').partition('#')
+  oldtarget=Path(os.path.abspath(root/Path(oldrel).parent/unquote(url))).relative_to(root).as_posix()
+  target=mapping.get(oldtarget,oldtarget)
+  value=quote(os.path.relpath(root/target,file.parent),safe='/-._')+sep+fragment
+  return m[0].replace(raw,value)
+ text=link_re.sub(rewrite,text)
+ # Literal root-relative file references in historical execution instructions.
+ for old,new in sorted(mapping.items(),key=lambda p:-len(p[0])):
+  text=text.replace('`'+old+'`','`'+new+'`')
+ file.write_text(text)
+# Compact tasks use the same headers; historical criteria/constraints stay in evidence.
+def task(tid,title,outcome,status,dep,evidence,implementation,acceptance,review):
+ target=next((v[0] for k,v in newtasks.items() if k==tid),None)
+ if target is None:
+  bundle=p2 if tid.startswith('P002') else p4
+  target=bundle/'tasks'/f'{tid}-{re.sub(r"[^a-z0-9]+","-",title.lower()).strip("-")}.md'
+ parent=tid[:4]
+ target.write_text(f'# {tid} — {title}\n\n- **ID:** {tid}\n- **Plan:** {parent}\n- **Status:** {status}\n- **Depends on:** {dep or "none"}\n- **Evidence:** {evidence}\n\n## Outcome\n\n{outcome}\n\n## Implementation\n\n{implementation}\n\n## Acceptance\n\n{acceptance}\n\n## Review\n\n{review}\n')
+ return target
+for tid,(target,text,legacy,title) in newtasks.items():
+ n=int(tid[-3:]); plan=tid[:4]
+ outcome=re.search(r'## Outcome\n(.*?)(?=\n## |\Z)',text,re.S)[1].strip()
+ outcome=' '.join(outcome.split())
+ if plan=='P002' and n==10:outcome='Buildable Next.js foundation with server-rendered work items and one shared UI kit.'
+ if plan=='P001':report={1:'PHASE_1_THREE_LAYER_STRUCTURE.md',2:'PHASE_2_VERSIONED_CONFIGURATION.md',3:'PHASE_3_ENGINEERING_STANDARDS.md'}[n]
+ elif plan=='P002':report=f'QH-{n:02}.md'
+ else:report='REVIEWABLE_WORK.md'
+ status='blocked' if tid=='P002-T013' else 'complete'
+ dependency='none' if n==1 or plan=='P003' else f'{plan}-T{n-1:03}'
+ guide=sorted((p2/'evidence/instructions').glob(f'{n:02}-*.md')) if plan=='P002' else []
+ code={'P001':'../../../architecture/README.md','P002':'../../../architecture/features.md','P003':'../../../architecture/README.md'}[plan]
+ impl=f'[Implementation map]({code}) · [Original task](../evidence/{legacy.name})'
+ if guide:impl+=f' · [Step instructions](../evidence/instructions/{guide[0].name})'
+ acceptance='\n'.join(line for line in text.splitlines() if re.match(r'^- \[[ x]\] ',line))
+ # Retain full original multiline acceptance in immutable-context legacy record.
+ if not acceptance:acceptance='- [x] Original outcome and acceptance are evidenced in the linked report.'
+ if tid in ('P002-T010','P002-T011'):
+  acceptance='- [x] Original non-browser acceptance is evidenced in its report.\n- [x] Current production browser journeys are evidenced in QH-12.'
+  impl+='\n\n[Current journey evidence](../evidence/QH-12.md) supersedes the historical\nbrowser pause; original reports retain their original scope.'
+ elif tid=='P002-T013':
+  acceptance='- [x] Native UI controls and negative cases are evidenced in QH-13.\n- [ ] Human accepts the 44 candidates and full native visual comparisons pass.'
+ # Do not truncate criteria continuations: original remains linked for all tasks.
+ acceptance+='\n\nFull original criteria and verification limits remain in the linked task/report.'
+ evidence=f'../evidence/{report}'
+ if tid in ('P002-T010','P002-T011'):evidence+=', ../evidence/QH-12.md'
+ review='Preserve existing verification/approval limits. Source recovery is a reviewed\nrevert; operational/data recovery remains in the architecture map.'
+ if tid=='P002-T013':review='Blocked on human baseline acceptance; never approve images automatically.\nChromium/macOS only; no accessibility conformance or field-performance claim.'
+ task(tid,title,outcome,status,dependency,evidence,impl,acceptance,review)
+# Every future phase is a task, not a detached roadmap prompt.
+deps={14:'P002-T009',15:'P002-T012, P002-T014',16:'P002-T013, P002-T015',17:'P002-T016',18:'P002-T017',19:'P002-T018'}
+for n in range(14,20):
+ guide=next((p2/'evidence/instructions').glob(f'{n:02}-*.md'));text=guide.read_text()
+ title=text.splitlines()[0].split(': ',1)[1]
+ outcome=' '.join(text.split('**Outcome:**',1)[1].split('**Done when:**',1)[0].split('\n\n',1)[0].split())
+ task(f'P002-T{n:03}',title,outcome,'ready' if n==14 else 'planned',deps[n],'pending',
+      f'[Implementation instructions](../evidence/instructions/{guide.name})\nExecute this phase only; read the shared contract linked there.',
+      '- [ ] Phase-specific acceptance in the linked instructions is demonstrated.\n- [ ] Required checks and source-bound evidence are recorded.',
+      'Planned implementation; no capability or verification is claimed yet.\nRecord changed boundaries, risk and recovery before implementation.')
+# Bundle plans: one short human summary and one machine-derived task table.
+def plan(bundle,title,status,outcome,approach,impact):
+ (bundle/'README.md').write_text(f'# {bundle.name[:4]} — {title}\n\n- **ID:** {bundle.name[:4]}\n- **Status:** {status}\n\n## Outcome\n\n{outcome}\n\n## Approach\n\n{approach}\n\n## Architecture impact\n\n{impact}\n')
+plan(p1,'Harness foundation','superseded','Establish repository layers, configuration and engineering standards.',
+ '[Original roadmap](evidence/legacy-plan.md). Phases 1–3 were delivered; the\nremaining sequence was replaced by P002 and is not marked complete.',
+ '[Shared architecture](../../architecture/README.md). No active implementation\nsequence remains in this archived direction.')
+plan(p2,'Quality-first harness','active','Deliver reliable verification and reusable Next.js and Python foundations.',
+ 'Execute one numbered task at a time. [Shared execution contract](evidence/instructions/execution.md).\nP002-T013 needs human visual acceptance; P002-T014 is independently ready.\nRemote CI and security approval remain unverified/blocked as documented.',
+ '[Systems](../../architecture/systems.md) · [Features](../../architecture/features.md).\nTasks record changed boundaries; shared architecture records current behaviour.')
+plan(p3,'Reviewable work','complete','Make work navigation and implementation choices easier to review.',
+ '[Original completed plan](evidence/legacy-plan.md) · [Evidence](evidence/REVIEWABLE_WORK.md).',
+ 'Documentation/workflow only; this layout is superseded by P004.')
+plan(p4,'Project organisation','active','Unify plans, tasks, architecture and evidence with checked IDs and derived progress.',
+ 'Migrate existing records, retain historical evidence, validate the fixed format,\nand archive complete bundles with link repair. One task owns this outcome.',
+ 'Add small stdlib record/index helpers and a public project command. Native\ndocumentation checks enforce the format when project/FORMAT.md opts in.\nNo application, security policy, dependency or production change.')
+# Current task records this turn's acceptance before implementation closure.
+current=task('P004-T001','Organise project work','Navigate one project folder with plan-owned tasks/evidence and a current architecture view.','active','none','pending',
+ '[Record contract](../../../../.harness/bin/project_records.py) ·\n[Index/archive helper](../../../../.harness/bin/project_work.py).',
+ '- [ ] All existing records migrate with old/new path provenance.\n- [ ] IDs, dependencies, acceptance, evidence and generated indexes are checked.\n- [ ] Complete-plan archive preserves evidence and repairs links.\n- [ ] Required native, contract and fixture checks pass.',
+ 'Migration is reversible from the saved pre-change tree; artifacts retain bytes.\nArchive has guarded completion and ordinary write-error rollback. Process crash\natomicity is not claimed. Human visual approval remains pending for P002-T013.')
+# Historical artifacts' raw identities are preserved; Markdown links are rebased.
+records=[]
+for old,new in sorted(mapping.items()):
+ dst=root/new;src=before/old
+ if src.is_file() and dst.is_file():records.append({'old':old,'new':new,'original_sha256':hashlib.sha256(src.read_bytes()).hexdigest(),'current_sha256':hashlib.sha256(dst.read_bytes()).hexdigest()})
+(p4/'evidence/migration.json').write_text(json.dumps({'records':records,'note':'Markdown links rebased; machine artifacts/log archives retained byte-for-byte.'},indent=2)+'\n')
+for name in ('plans','tasks','verification'):
+ shutil.rmtree(name)
+print(f'Migrated {len(records)} paths; 4 plans and 24 tasks.')

@@ -1,4 +1,0 @@
-title = "Pinned built-in Gitleaks rules; no project blanket suppressions"
-
-[extend]
-useDefault = true

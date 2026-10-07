@@ -1,7 +1,0 @@
-node_modules/
-.next/
-next-env.d.ts
-.harness/tmp/
-.harness/reports/
-!.node-version
-!.prettierignore

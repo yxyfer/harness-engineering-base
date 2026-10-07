@@ -1,4 +1,0 @@
-shell=sh
-enable=all
-external-sources=true
-source-path=SCRIPTDIR

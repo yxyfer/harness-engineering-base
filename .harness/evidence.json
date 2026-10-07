@@ -1,9 +1,0 @@
-{
-  "adapter": "unittest",
-  "command": [
-    "python3",
-    ".harness/bin/python-tests.py",
-    "unittest",
-    ".harness/tests"
-  ]
-}

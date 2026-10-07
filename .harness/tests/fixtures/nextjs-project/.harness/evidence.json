@@ -1,9 +1,0 @@
-{
-  "adapter": "junit",
-  "command": [
-    "node",
-    "--test",
-    "--test-reporter=junit",
-    "--test-reporter-destination={report}"
-  ]
-}

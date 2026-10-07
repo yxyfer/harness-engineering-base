@@ -1,6 +1,0 @@
-node_modules
-.next
-next-env.d.ts
-.harness/reports
-.harness/tmp
-package-lock.json

@@ -2,8 +2,8 @@
 
 ## Current state
 
-The reset commit `0516ee6` retained `.editorconfig` and `.gitignore`. The rebuild
-adds a working agreement and plan. The old GitHub CI workflow was removed.
+The reset commit `0516ee6` retained `.editorconfig` and `.gitignore`.
+The rebuild adds a working agreement and plan. The old GitHub CI was removed.
 No runtime, database, project scanner, installer or `harness` command exists.
 P001-T002 adds native checks for the files actually shipped.
 

@@ -106,8 +106,7 @@ checks. Introduce one formatting, one type and one behaviour error to show the
 appropriate command fails; fix them and rerun. Demonstrate the commands in the
 kit and reference project. CI is outside this initial task.
 
-**Reviewer brief:** Changes native configuration and a minimal reference
-project.
+**Reviewer brief:** Changes native configuration and a small reference app.
 Start with a known rule tested before implementation and one exploratory UI.
 Keep template settings distinct from consumer-owned settings. Recovery is
 reverting the kit change; no existing application configuration is overwritten.
@@ -260,7 +259,21 @@ the actual Vercel and Neon setup when executing the relevant task.
 
 ## Foundation verification
 
-Verification for P001-T001 is pending the final document checks. No executable
-`harness` command exists after the reset, so `./harness check`, `./harness test`
-and `./harness project sync` cannot run yet. No application, browser, database
-or deployment acceptance is claimed by this documentation task.
+P001-T001 verification on 2026-10-07:
+
+| Check | Result |
+| --- | --- |
+| `python3` document inspection | Passed for all six Markdown files: UTF-8, final newlines, whitespace, 80-column prose and paired code fences |
+| Relative link inspection | All 12 local file links resolve |
+| Plan and agreement inspection | Five task IDs include their parent plan ID; all three modes are defined |
+| Filesystem inspection | The removed GitHub CI workflow is absent |
+| `git diff --check` | Passed |
+
+The Python inspection was a one-off read-only check, not a new harness command.
+Tables and URLs use the agreed width exceptions. Diagrams have not been
+rendered, and user comprehension has not been tested; those are T004 outcomes.
+
+No executable `harness` command exists after the reset. `./harness check`,
+`./harness test` and `./harness project sync` were not run because their
+implementation is absent. No application, database or deployment acceptance
+is claimed by this documentation task.

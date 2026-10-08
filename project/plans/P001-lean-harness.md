@@ -1,12 +1,12 @@
 # P001 Lean harness rebuild
 
-Status: In progress. T001 is complete; T002 is next.
+Status: In progress. T001 and T002 are complete; T003 is next.
 
 Make it quick to try an idea, safe to discard it, and straightforward to retain
 and improve it. Keep the code readable and give the user a reliable view of how
-the application works. The first version consists of a working agreement,
-native tool settings, isolation recipes and architecture views, proven on one
-small feature using React, Next.js, Vercel and Neon.
+the application works. The first version consists of a working agreement, native
+tool settings, isolation recipes and architecture views, proven on one small
+feature using React, Next.js, Vercel and Neon.
 
 The reset is complete. This plan builds forward from commit `0516ee6`; it does
 not restore the old harness wholesale. The
@@ -16,10 +16,10 @@ responsibilities.
 
 ## What changes by mode
 
-| Mode | What we need to learn or deliver | Evidence required |
-| --- | --- | --- |
-| Explore | Does this idea or integration work? | A visible result, stated data boundary and a discard path |
-| Build | Can we retain and extend it reliably? | Meaningful tests, edge cases and the real user journey |
+| Mode    | What we need to learn or deliver       | Evidence required                                             |
+| ------- | -------------------------------------- | ------------------------------------------------------------- |
+| Explore | Does this idea or integration work?    | A visible result, stated data boundary and a discard path     |
+| Build   | Can we retain and extend it reliably?  | Meaningful tests, edge cases and the real user journey        |
 | Release | Is it ready for its intended exposure? | Applicable security, recovery, migration and deployment proof |
 
 Readability, native formatting and safe handling of secrets apply throughout.
@@ -52,12 +52,11 @@ problem. Keep the distinction between code recovery and external side effects.
 
 **Deliver:** The [agreement](../../docs/WORKFLOW.md), an initial
 [architecture map](../../docs/ARCHITECTURE.md), and this plan with embedded
-tasks.
-Use one plan file instead of a new document for every task or agent run.
+tasks. Use one plan file instead of a new document for every task or agent run.
 
 **Proof:** Each mode states its purpose and required evidence. The plan gives
-each remaining task an outcome, investigation, dependencies and acceptance.
-The current map labels proposed behaviour and records that CI was removed.
+each remaining task an outcome, investigation, dependencies and acceptance. The
+current map labels proposed behaviour and records that CI was removed.
 
 **Reviewer brief:** This changes project guidance, not application behaviour.
 The agreement uses the modes already discussed. Its main risk is becoming
@@ -69,7 +68,8 @@ task proves that the foundation is recorded, not that it improves development.
 
 ## P001 T002 Make native quality checks runnable
 
-Task ID: `P001-T002`. State: Next. Depends on: `P001-T001`.
+Task ID: `P001-T002`. State: Complete. Depends on: `P001-T001`. Completed:
+2026-10-07.
 
 **Outcome:** Formatting, lint, types and relevant tests run through familiar
 project commands, with clear failures and no bespoke policy platform.
@@ -83,8 +83,8 @@ their configuration.
 TypeScript strict settings, and an existing compatible test runner. Define
 concise BASE, NAMING, TESTING and ARCHITECTURE standards with relevant language
 profiles before source implementation. Put tool settings in native files and
-create a short agent entrypoint that links to the agreement and standards.
-Test application settings in a tiny reference project rather than adding app
+create a short agent entrypoint that links to the agreement and standards. Test
+application settings in a tiny reference project rather than adding app
 dependencies to the kit root. Run native checks locally first.
 
 **Framework decisions to check:** Components follow responsibilities; derived
@@ -111,9 +111,110 @@ Start with a known rule tested before implementation and one exploratory UI.
 Keep template settings distinct from consumer-owned settings. Recovery is
 reverting the kit change; no existing application configuration is overwritten.
 
+**Implementation choice:** Use separate locked kit and reference packages,
+native Prettier and ESLint configuration, strict TypeScript, Node behaviour
+tests and one Playwright browser journey. The reference is a searchable catalog
+with labelled synthetic data. Keep SQL integration and migration-tool selection
+in T003, where an actual database connection can verify them. See
+[decisions](../../docs/DECISIONS.md). No CI or installer is added, and Data
+Miner is inspected read only.
+
+The following proof describes the initial validation app before its removal. The
+cleanup record below and the current architecture own today's layout and
+commands. App settings were retained as native adoption templates.
+
+**Verification on 2026-10-07:**
+
+| Command or inspection                                                | Result                                                                                                          |
+| -------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------- |
+| `npm run setup`                                                      | Both locks reproduced with lifecycle scripts disabled and strict peer checks                                    |
+| `npm ls --all` in kit and reference                                  | Both dependency trees valid                                                                                     |
+| `npm run check`                                                      | Prettier, kit and React lint, generated route types and strict TypeScript passed                                |
+| `npm test`                                                           | Five behaviour tests passed; the initial empty implementation failed four before the rule was written           |
+| `npm run self-test`                                                  | Seven tests passed, including four deliberate failure probes and successful checks before and after restoration |
+| `PLAYWRIGHT_CHANNEL=chrome NEXT_TELEMETRY_DISABLED=1 npm run verify` | Combined checks, tests, self-tests, production build and both browser journeys passed                           |
+| Desktop and mobile screenshots                                       | Inspected at 1280 and 390 pixels; readable layout, no horizontal overflow                                       |
+| Browser diagnostics                                                  | No console or page errors after fixing the missing icon                                                         |
+| Source links and Git inventory                                       | Local links resolve; native dotfile settings are included despite the global ignore rule                        |
+| `git diff --check`                                                   | Passed                                                                                                          |
+
+The failure probes ran in a disposable copy: formatting and conditional React
+hooks exited 1, the type mismatch exited 2, and the broken rule exited 1 with
+assertion failures. Source was restored and checked again. A discovered nested
+Node-runner false success was fixed; self-tests now clear its inherited context
+and verify that behaviour tests execute.
+
+Browser screenshots were generated in the validation app's ignored
+`test-results/` directory by the smoke command. Verification used macOS, Node
+24.10.0, npm 11.6.0 and installed Chrome with temporary browser profiles.
+Chromium's default configuration, other browsers and other operating systems
+were not run. The local server required sandbox permission to listen on its test
+port.
+
+The reference's ESLint 9 compatibility debt is explicit in
+[project/debt.md](../debt.md). No consumer configuration, production data or
+deployment was changed. SQL guidance is present; database correctness,
+migrations, authorisation, Neon and Vercel remain unverified until the relevant
+later task. The old `harness` and project sync commands were not restored;
+native equivalents were exercised and navigation was maintained directly.
+
+**Latest stable follow-up:** Complete, requested and verified on 2026-10-07. The
+reference now pins Next.js and its lint config at 16.4.0, with React and React
+DOM at 19.3.0. Both React type packages are also current at 19.3.0. Setup and
+the full check compare exact pins, lock entries and installed packages with
+npm's public `latest` stable releases. Ranges, prereleases, mismatched versions,
+outdated pins and unavailable registry evidence fail. The checker performs no
+installation or writes. `check:local` remains available for offline iteration;
+it does not prove freshness. Scope is the reference and adoption guidance;
+consumer commands need explicit wiring. Recovery is restoring the previous pins
+and lock and reinstalling them. No deployed app or database changes.
+
+**Follow-up verification:** The real registry gate first exited 1 for Next.js
+and its lint config at 16.3.7, reporting 16.4.0 as required. Strict peer
+installation and `npm ls --all` passed after the upgrade. `npm run setup`
+reproduced both locks and passed the live gate. Then
+`PLAYWRIGHT_CHANNEL=chrome NEXT_TELEMETRY_DISABLED=1 npm run verify` passed
+formatting, kit and React lint, route types, strict TypeScript, five behaviour
+tests, sixteen harness tests, the Next.js 16.4.0 production build and two
+browser journeys. The nine new version-policy tests use synthetic metadata and
+cover success, drift, prereleases, unavailable or malformed registry responses,
+matching companion packages, missing lock entries, non-mutation and CLI failure.
+Their initial stub failed all seven initial cases before implementation. Both
+built screenshots were inspected again; browser diagnostics remained clear. The
+prior browser and environment limitations still apply. Next.js 16.4.0's
+experimental upgrade reminder was inspected; it can be skipped and does not
+replace the explicit four-package verification gate. No CI was added.
+
+**Keep the kit focused:** Complete, requested and verified on 2026-10-07.
+Removed the permanent example app, its lock, installed framework dependencies
+and build output. Kept the verified ESLint and TypeScript configurations as
+native adoption templates. Kit setup installs only kit tools; kit check covers
+formatting and JavaScript lint. Kit tests use disposable configurations and
+synthetic package metadata. Removed app dev, types, build and smoke commands.
+The version checker requires an explicit installed app directory; receiving apps
+must wire it into their own setup and full verification. Previous React and
+browser proof above is historical. No consumer app or external resource changes.
+
+**Cleanup proof:** A recovery archive of the uncommitted app source and lock was
+created outside the repository and verified against all fifteen source files
+before removal. Its SHA-256 is
+`755ea1d301fa4583c082bd833ef2adb132d2e8aec72d22b15e0d87d18df0ab3b`. Both
+adoption configs matched their tested originals before removal. The
+explicit-target command passed against the real installed app and live npm
+metadata before cleanup. A new missing-target CLI test initially caught a silent
+no-op through the macOS temporary path; Node's native main-module flag fixed
+entry detection. Missing targets now exit 1 with usage information. Offline
+`npm run setup` reproduced the kit lock, and `npm run verify` passed formatting,
+lint and fifteen tests after the app was removed. Inventory checks confirmed no
+example directory, no framework packages in the kit lock or installed dependency
+directory, and no app command delegation. Browser and application types are no
+longer kit checks; receiving apps need their own evidence. The source archive is
+local recovery material, not a distributed template or permanent retention
+promise.
+
 ## P001 T003 Make experiments isolated and recoverable
 
-Task ID: `P001-T003`. State: Planned. Depends on: `P001-T002`.
+Task ID: `P001-T003`. State: Next. Depends on: `P001-T002`.
 
 **Outcome:** Try a feature without disturbing retained work; discard its code,
 data and temporary resources through a documented, verified procedure.
@@ -124,12 +225,12 @@ data inheritance, migration timing and resource cleanup in the actual
 integration. Check which system owns branch deletion rather than assuming
 cleanup follows Git.
 
-**Reuse or build:** Start with Git worktrees and a short resource inventory.
-Use a disposable PostgreSQL database locally. Prepare a Vercel Preview and
-isolated Neon database recipe with synthetic seed data. Use schema-only
-branching when a parent contains data that should not enter an experiment.
-Promote code and schema changes deliberately, not experiment data. Add a small
-helper only if the manual recipe proves error-prone.
+**Reuse or build:** Start with Git worktrees and a short resource inventory. Use
+a disposable PostgreSQL database locally. Prepare a Vercel Preview and isolated
+Neon database recipe with synthetic seed data. Use schema-only branching when a
+parent contains data that should not enter an experiment. Promote code and
+schema changes deliberately, not experiment data. Add a small helper only if the
+manual recipe proves error-prone.
 
 **Needs:** A disposable test project and PostgreSQL runtime. Live acceptance
 also needs an authorised Vercel test project and Neon test database with access
@@ -137,15 +238,15 @@ to their configuration. Prepare the recipe and local checks before requesting
 service access. Production access is outside this task.
 
 **Proof:** Run an experiment from a checkout with unrelated changes. Confirm the
-parent files are preserved. Make an isolated database write and show it does
-not alter the retained database. Apply a migration in isolation. Discard the
+parent files are preserved. Make an isolated database write and show it does not
+alter the retained database. Apply a migration in isolation. Discard the
 experiment and verify every resource in its inventory is removed or retained
 intentionally. Recreate it from recorded inputs. Demonstrate application and
 database recovery separately. Label local-only proof if live access is absent.
 
-**Reviewer brief:** This introduces checkout, runtime and database boundaries.
-A worktree alone is insufficient. Confirm target identifiers before cleanup;
-never use shared history resets or inherited production credentials. Keep a
+**Reviewer brief:** This introduces checkout, runtime and database boundaries. A
+worktree alone is insufficient. Confirm target identifiers before cleanup; never
+use shared history resets or inherited production credentials. Keep a
 recoverable snapshot for any retained changes before deleting an experiment.
 
 ## P001 T004 Explain the architecture and each change
@@ -155,10 +256,11 @@ Task ID: `P001-T004`. State: Planned. Depends on: `P001-T002`.
 **Outcome:** The user can understand how the app works and what a change enables
 without reading the entire codebase.
 
-**Inspect:** One reference feature's source owners, state, data flow and failure
-paths. Compare what can be extracted reliably from code with what needs a human
-or agent explanation. Identify the information the user actually needs to judge
-a change; an exhaustive import graph is unlikely to answer that question.
+**Inspect:** One receiving application's feature owners, state, data flow and
+failure paths. Compare what can be extracted reliably from code with what needs
+a human or agent explanation. Identify the information the user actually needs
+to judge a change; an exhaustive import graph is unlikely to answer that
+question.
 
 **Reuse or build:** Begin with Mermaid diagrams and source links in existing
 project context. Provide an application overview, one input-to-result feature
@@ -167,16 +269,15 @@ affected boundaries, benefit and proof alongside it. Label fixtures, intended
 designs and currently exercised integrations. Reuse these views in task briefs.
 
 **Proof:** Match every node and arrow to source or an explicit planned label.
-Open the diagrams in a renderer and follow the source links. The user should
-be able to identify where state lives, where a write happens and what changed
-from the view alone. Use two minutes as an initial comprehension target, not
-a proven benchmark; user feedback is required to establish success.
+Open the diagrams in a renderer and follow the source links. The user should be
+able to identify where state lives, where a write happens and what changed from
+the view alone. Use two minutes as an initial comprehension target, not a proven
+benchmark; user feedback is required to establish success.
 
 **Reviewer brief:** This adds explanation, not an application runtime
-dependency.
-The risk is a convincing but stale diagram. Update it with boundary changes and
-compare it to source during review. Drop unnecessary detail before introducing
-a scanner or dashboard. Recovery is a document edit.
+dependency. The risk is a convincing but stale diagram. Update it with boundary
+changes and compare it to source during review. Drop unnecessary detail before
+introducing a scanner or dashboard. Recovery is a document edit.
 
 ## P001 T005 Prove the approach on a real feature
 
@@ -188,15 +289,16 @@ use.
 
 **Inspect:** The completed recipes and native checks. Choose a small feature
 with a visible interaction, one persisted operation and a meaningful failure
-case. A candidate is editing a saved item through a reusable modal. Start in
-a disposable reference app; inspect Data Miner as a subsequent adoption target
-without modifying it during the kit pilot.
+case. A candidate is editing a saved item through a reusable modal. Use an
+isolated application project outside this kit, with disposable data. Inspect
+Data Miner as a subsequent adoption target without modifying it during the kit
+pilot.
 
 **Run:** Explore the interaction and demonstrate discard. Recreate or promote
 the useful result in Build; add tests for validation, duplicates or concurrent
 updates as applicable. Extend it without duplicating its modal or data rules.
-Prepare Release evidence in an authorised preview environment, including
-access boundaries, migration and recovery. Production deployment is a separate
+Prepare Release evidence in an authorised preview environment, including access
+boundaries, migration and recovery. Production deployment is a separate
 authorised action. Perform a refactoring review; record either a justified small
 refactor or why no refactor is needed.
 
@@ -228,8 +330,8 @@ service. Agree a comparable feature scope before judging speed.
 - Files, dependencies and documentation added, with reasons. Fewer files alone
   is not proof of better design; judge cohesion and ease of change.
 
-Use a recorded baseline when available; otherwise say that the first pilot is
-a feasibility result and establishes a baseline. Three comparable later changes
+Use a recorded baseline when available; otherwise say that the first pilot is a
+feasibility result and establishes a baseline. Three comparable later changes
 can give a directional comparison, with task differences recorded. Keep the
 workflow only if it supports useful results with acceptable rework and overhead.
 Remove a rule when its cost is evident and its benefit is not.
@@ -261,13 +363,13 @@ the actual Vercel and Neon setup when executing the relevant task.
 
 P001-T001 verification on 2026-10-07:
 
-| Check | Result |
-| --- | --- |
+| Check                         | Result                                                                                                       |
+| ----------------------------- | ------------------------------------------------------------------------------------------------------------ |
 | `python3` document inspection | Passed for all six Markdown files: UTF-8, final newlines, whitespace, 80-column prose and paired code fences |
-| Relative link inspection | All 12 local file links resolve |
-| Plan and agreement inspection | Five task IDs include their parent plan ID; all three modes are defined |
-| Filesystem inspection | The removed GitHub CI workflow is absent |
-| `git diff --check` | Passed |
+| Relative link inspection      | All 12 local file links resolve                                                                              |
+| Plan and agreement inspection | Five task IDs include their parent plan ID; all three modes are defined                                      |
+| Filesystem inspection         | The removed GitHub CI workflow is absent                                                                     |
+| `git diff --check`            | Passed                                                                                                       |
 
 The Python inspection was a one-off read-only check, not a new harness command.
 Tables and URLs use the agreed width exceptions. Diagrams have not been
@@ -275,5 +377,5 @@ rendered, and user comprehension has not been tested; those are T004 outcomes.
 
 No executable `harness` command exists after the reset. `./harness check`,
 `./harness test` and `./harness project sync` were not run because their
-implementation is absent. No application, database or deployment acceptance
-is claimed by this documentation task.
+implementation is absent. No application, database or deployment acceptance is
+claimed by this documentation task.

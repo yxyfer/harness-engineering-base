@@ -2,8 +2,8 @@
 
 Optimise for a useful result, readable code and fast feedback. Choose the mode
 from the request and state it briefly. Ask only when ambiguity changes the
-outcome, exposure or recovery. A mode changes the required evidence; it does
-not excuse unreadable code or unsafe access to real systems.
+outcome, exposure or recovery. A mode changes the required evidence; it does not
+excuse unreadable code or unsafe access to real systems.
 
 ## Working modes
 
@@ -17,9 +17,9 @@ requires the real integration in an isolated environment.
 
 Run the available formatter and relevant lint or type checks. Demonstrate the
 intended interaction or result. Add a targeted test when a known rule or defect
-needs protection. Finish with a keep, change or discard recommendation and
-label what was actually exercised. A formal test suite or plan document must
-not become a prerequisite for trying an uncertain idea.
+needs protection. Finish with a keep, change or discard recommendation and label
+what was actually exercised. A formal test suite or plan document must not
+become a prerequisite for trying an uncertain idea.
 
 ### Build
 
@@ -30,48 +30,51 @@ rules, edge cases and integration boundaries with tests, then exercise the
 actual user journey. Handle loading, empty, error and retry behaviour where
 relevant. Update the architecture view when responsibilities or flows change.
 
-Promote the useful implementation and findings from Explore deliberately.
-Rework shortcuts whose assumptions no longer hold; merging an experiment is
-not itself proof that it is ready to maintain.
+Promote the useful implementation and findings from Explore deliberately. Rework
+shortcuts whose assumptions no longer hold; merging an experiment is not itself
+proof that it is ready to maintain.
 
 ### Release
 
 Prepare a retained feature for its intended users and environment. Add evidence
 for applicable authorisation, validation, accessibility, concurrency, failure
-recovery, migrations and deployment behaviour. Verify the built application
-in the target class of environment. Define application recovery and database
+recovery, migrations and deployment behaviour. Verify the built application in
+the target class of environment. Define application recovery and database
 recovery separately. Capacity work follows actual demand and consequences.
 
 Prepare a concrete release and its verification before requesting any required
-production approval. A preview deployment is evidence for the preview tested;
-it does not prove that production configuration or data migration works.
+production approval. A preview deployment is evidence for the preview tested; it
+does not prove that production configuration or data migration works.
 
 ## Code quality in every mode
 
 - Use the project's native formatter, linter and type checker. Default to an
   80-character width; allow indivisible URLs and generated content. Existing
   tool settings are authoritative when more specific.
-- Choose clear names and cohesive responsibilities. Review functions above
-  50 lines and files above 350 maintained source lines for cohesion. Splitting
-  code solely to meet a line count is not an improvement.
+- Choose clear names and cohesive responsibilities. Review functions above 50
+  lines and files above 350 maintained source lines for cohesion. Splitting code
+  solely to meet a line count is not an improvement.
 - Prefer the smallest coherent change. Each new file, dependency and layer
   should have a reason. Reuse an existing owner before creating a parallel one.
 - Apply KISS and YAGNI. Extract shared knowledge when the common concept is
   clear. Similar syntax alone is not enough reason to create an abstraction.
-- Use TDD for defects and stable core rules when it gives useful feedback.
-  For an uncertain UI, try the interaction first and test retained behaviour.
-  Tests should protect outcomes rather than mirror implementation details.
+- Use TDD for defects and stable core rules when it gives useful feedback. For
+  an uncertain UI, try the interaction first and test retained behaviour. Tests
+  should protect outcomes rather than mirror implementation details.
 - Keep secrets on the server, parameterise SQL, and validate untrusted inputs.
   Real data, external users and consequential actions require safeguards from
   the first experiment that exposes them.
 
-Stack-specific settings and examples will be selected in P001-T002 against the
-installed versions. These principles do not certify an implementation.
+Stack-specific guidance lives in `.harness/standards/languages/`; native
+adoption configurations live in `.harness/templates/`. P001-T002 originally
+exercised them on a disposable validation app. Receiving applications install
+their own dependencies and run their own quality checks and relevant journeys.
+Kit checks cover kit code. These principles do not certify an implementation.
 
 ## Refactoring
 
-Make small local improvements during the current change when their behaviour
-can be checked and their scope stays coherent. Fix repeated knowledge, unclear
+Make small local improvements during the current change when their behaviour can
+be checked and their scope stays coherent. Fix repeated knowledge, unclear
 ownership and avoidable coupling where they obstruct the requested work.
 
 Start with a short review after about three completed retained features, or
@@ -98,9 +101,9 @@ it cannot establish business meaning or prove that a user journey works.
 ## Recovery and feedback
 
 Git protects code history, not database writes, provider actions or deployed
-configuration. An experiment needs an inventory of any resources it creates,
-its data boundary and its cleanup procedure. Preserve user changes and use
-normal commits and branches rather than rewriting shared history.
+configuration. An experiment needs an inventory of any resources it creates, its
+data boundary and its cleanup procedure. Preserve user changes and use normal
+commits and branches rather than rewriting shared history.
 
 At completion, state the result, its proof, remaining limitations and recovery.
 Use failures to improve the smallest relevant test, component or tool setting.

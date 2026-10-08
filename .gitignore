@@ -65,4 +65,13 @@ yarn-error.log*
 next-env.d.ts
 **/.harness/reports/
 !.harness/tests/fixtures/nextjs-project/.prettierignore
-!examples/nextjs-app/.gitignore
+
+# browser test output
+**/playwright-report/
+**/test-results/
+
+# native configuration also tracked when a global ignore excludes dotfiles
+!.npmrc
+!.node-version
+!.prettierrc.json
+!.prettierignore

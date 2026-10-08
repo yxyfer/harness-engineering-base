@@ -98,6 +98,13 @@ Keep intended designs separate from current behaviour. Mark real integrations,
 fixtures and simulated results clearly. An import graph can assist inspection;
 it cannot establish business meaning or prove that a user journey works.
 
+Use [the native view format](../.harness/templates/architecture.md) and
+[the Data Miner example](architecture/data-miner.md) as a starting point. Reuse
+the existing system view; add a feature flow or change view when it reveals a
+new boundary. Update the affected view in the same change that moves state,
+ownership, persistence or integrations. A styling edit or tiny experiment can
+link the current view and explain its delta in a few lines.
+
 ## Recovery and feedback
 
 Git protects code history, not database writes, provider actions or deployed

@@ -1,6 +1,6 @@
 # P001 Lean harness rebuild
 
-Status: In progress. T001 and T002 are complete; T003 is next.
+Status: In progress. T001, T002 and T004 are complete; T003 is next.
 
 Make it quick to try an idea, safe to discard it, and straightforward to retain
 and improve it. Keep the code readable and give the user a reliable view of how
@@ -251,7 +251,8 @@ recoverable snapshot for any retained changes before deleting an experiment.
 
 ## P001 T004 Explain the architecture and each change
 
-Task ID: `P001-T004`. State: Planned. Depends on: `P001-T002`.
+Task ID: `P001-T004`. State: Complete. Depends on: `P001-T002`. Completed:
+2026-10-08.
 
 **Outcome:** The user can understand how the app works and what a change enables
 without reading the entire codebase.
@@ -278,6 +279,45 @@ benchmark; user feedback is required to establish success.
 dependency. The risk is a convincing but stale diagram. Update it with boundary
 changes and compare it to source during review. Drop unnecessary detail before
 introducing a scanner or dashboard. Recovery is a document edit.
+
+**Implementation choice:** Use the existing architecture entry point, a small
+native diagram template and a read-only Data Miner walkthrough. Show current
+system owners, the company-save path and this task's before-and-after review
+experience. Tie every runtime node and arrow to inspected source. Record the
+source revision, state owner, write owner, guards and failure behaviour.
+Maintain views when boundaries change; a minor experiment can link the existing
+view and explain its delta without new paperwork. Diagrams remain Markdown
+source; rendering tools are temporary and add no kit or app dependency.
+
+**Acceptance:** Render the diagrams, resolve source links, compare flows with
+their owners, preserve the inspected application's files, and pass kit checks
+and tests. Human readability remains a separate check: the user must be able to
+find the state owner, persistent write and change without inspecting every file.
+The two-minute goal is provisional and requires feedback.
+
+**Verification on 2026-10-08:**
+
+| Check                      | Result                                                                                                                     |
+| -------------------------- | -------------------------------------------------------------------------------------------------------------------------- |
+| Source comparison          | Runtime owners and arrows matched to Data Miner revision `a047ea4`; manual guidance and template placeholders are labelled |
+| Local links                | All 58 local links across the nine changed Markdown files resolve                                                          |
+| Diagram rendering          | Nine Mermaid blocks rendered with Mermaid 12.1.0 in isolated Chrome at a 1280-pixel viewport; no page errors               |
+| Visual inspection          | All nine screenshots inspected; simplified the change view and checked readable labels and paths                           |
+| `npm run verify`           | Formatting, JavaScript lint and all fifteen kit self-tests passed                                                          |
+| `git diff --check`         | Passed                                                                                                                     |
+| Receiving app preservation | Data Miner remained clean at revision `a047ea4`; no application files or configuration changed                             |
+
+**Reader feedback:** The user answered "Yes, the views make it clear" when asked
+about draft state, persistence, research initiation and the changed boundary.
+This establishes clarity for this example. The two-minute goal remains a
+provisional target, not a measured productivity claim or proof that every future
+view will be understandable.
+
+The rendering library and browser script were used outside the repository; no
+dependency, scanner or dashboard was added. The views describe inspected source,
+not verified database, provider or deployed application behaviour. Application
+types, tests, build and journeys were not rerun because this task changed only
+kit documentation.
 
 ## P001 T005 Prove the approach on a real feature
 

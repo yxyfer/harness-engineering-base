@@ -43,6 +43,15 @@ npm run verify
 The kit has no application dev server, type-check, build or browser command. Its
 green verification does not prove a receiving app works.
 
+## Understand the architecture
+
+Start with [the kit boundaries](docs/ARCHITECTURE.md), then inspect
+[Data Miner's system and company-save flow](docs/architecture/data-miner.md).
+That walkthrough identifies browser state, server guards, saved data, failure
+paths and what this documentation change enables. Source owners are linked. Use
+[the small diagram format](.harness/templates/architecture.md) in receiving apps
+and update affected views when responsibilities or data paths change.
+
 ## Use the standards in an application
 
 Inspect the app's existing owners, dependencies and native commands. Merge the
@@ -73,5 +82,6 @@ appropriate application proof. Review
 lint dependencies.
 
 T002's initial React, type and browser proof is recorded as historical evidence
-in [the plan](project/plans/P001-lean-harness.md). Application isolation,
-architecture views and the real feature pilot remain the next work.
+in [the plan](project/plans/P001-lean-harness.md). T004 is complete with source,
+rendering and kit checks plus the user's clarity feedback. Application isolation
+and the real feature pilot remain the next work.

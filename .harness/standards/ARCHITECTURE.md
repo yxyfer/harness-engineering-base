@@ -14,3 +14,10 @@ behaviour; content and visual variants should compose it rather than copy it.
 An architecture explanation must link to source and distinguish current, planned
 and simulated behaviour. An import graph is supporting evidence, not a complete
 explanation of the application.
+
+Use [the architecture view format](../templates/architecture.md) when a feature
+needs explanation. Link the existing system view, trace one input-to-result
+flow, and show the affected boundary before and after. Name state and write
+owners, meaningful guards and failure paths. Small experiments can explain their
+delta briefly. Render the views, check source links and distinguish technical
+verification from the reader's understanding.

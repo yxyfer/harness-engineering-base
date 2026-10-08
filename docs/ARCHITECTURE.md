@@ -20,6 +20,32 @@ dependencies. Application runtime and dependencies belong to receiving apps.
 | Disposable kit failure probes      | [native-checks.test.mjs](../tests/native-checks.test.mjs)                                                   |
 | Rebuild outcomes and evidence      | [P001](../project/plans/P001-lean-harness.md)                                                               |
 
+## Current boundaries
+
+```mermaid
+flowchart TB
+  Agreement["Contract and standards"] -.->|guide the agent| Adoption
+  Templates["Native configuration templates"] -.->|merge by hand| Adoption
+  Adoption["Receiving app: owns code, data and app checks"]
+  Commands["Kit verify command"] -->|format and lint| Tools
+  Commands -->|test| Tests
+  Tools["Prettier and JavaScript ESLint"]
+  Tests["Disposable kit and version-policy fixtures"]
+  Adoption -.->|wire checker with explicit app path| Gate
+  Gate["Version checker: read only"] -->|read| AppFiles
+  Gate -->|query latest stable| Registry
+  AppFiles["App manifest, lock and installed packages"]
+  Registry["Public npm metadata"]
+```
+
+Solid arrows are implemented kit commands and reads. Dashed arrows are manual
+adoption guidance; this kit has no installer that wires consumer checks. The
+command, tool, test and checker nodes link to the owners in the table above. The
+adoption boundary is defined by the
+[Next.js instructions](../.harness/templates/nextjs/README.md). The checker
+compares versions and prints a result or exits with an error; it writes no app
+files or data. Tests create and remove only their temporary fixtures.
+
 Kit checks cover kit formatting, JavaScript lint and behaviour tests. Native
 failure probes copy only kit configuration into a unique temporary directory,
 reuse the kit's installed tools, inject faults and remove that fixture.
@@ -58,6 +84,12 @@ Programming tools check precise properties; the agent explains responsibilities
 and choices; the user judges whether the result is useful and understandable. An
 import graph can assist inspection but cannot establish business meaning.
 
-The initial architecture views will be maintained diagrams in the project.
-P001-T004 will test whether they are sufficient. A dashboard or automatic
-scanner is deferred until we observe a gap they cannot address.
+The architecture views are maintained diagrams in the project. The
+[Data Miner walkthrough](architecture/data-miner.md) shows a current system
+overview, company-save flow and the effect of this documentation change. The
+[reusable format](../.harness/templates/architecture.md) explains how to
+maintain those views in a receiving application. Link a source owner for each
+runtime node and trace each arrow to its function. Update views when state,
+writes, ownership or integrations change. The user confirmed this walkthrough is
+clear on 2026-10-08. Future views still need reader feedback; a dashboard or
+scanner remains deferred.

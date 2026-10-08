@@ -70,3 +70,22 @@ proof.
 Preserve an archive of the uncommitted validation source and lock before
 removing it. Consumer-owned configuration, external projects, Git history and
 database resources are outside this change.
+
+## Source backed architecture views
+
+Date: 2026-10-08. Scope: P001-T004. Status: Accepted. The user confirmed the
+example views are clear; this is qualitative feedback, not a timed benchmark.
+
+Keep the kit overview in `docs/ARCHITECTURE.md`. Demonstrate the format on a
+read-only Data Miner source walkthrough, and ship one Markdown adoption
+template. Use small Mermaid diagrams for system responsibilities, a feature from
+input to result, and the effect of the change. Keep source owners and
+verification limits beside each view. An import graph does not replace these
+explanations.
+
+Receiving applications keep their own canonical architecture context and update
+affected views with boundary changes. Minor experiments can reuse the overview
+and explain the delta briefly. No new runtime, scanner, dashboard or automatic
+diagram extraction is introduced. Rendering uses temporary tools without adding
+a dependency to this kit. Source and rendering checks establish correspondence;
+reader feedback establishes comprehension. Recovery is a documentation revert.

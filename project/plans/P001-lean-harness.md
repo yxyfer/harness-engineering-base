@@ -66,6 +66,15 @@ edit. No data or deployed resources are affected.
 **Verification:** See the verification section at the end of this plan. This
 task proves that the foundation is recorded, not that it improves development.
 
+**Navigation follow-up on 2026-10-08:** At the user's request, use NBCU's In
+progress, Planned and Completed navigation in the project README, with short
+outcomes, direct task links and canonical context links. Keep this base's task
+format, agreement, standards and tools. This is an index presentation change;
+task states and dependencies are unchanged. Recovery is reverting the README and
+this record. Verification: `npm run check` and `git diff --check` passed; all
+eleven index links resolve, including task anchors, and task states match this
+plan. No runtime code changed.
+
 ## P001 T002 Make native quality checks runnable
 
 Task ID: `P001-T002`. State: Complete. Depends on: `P001-T001`. Completed:

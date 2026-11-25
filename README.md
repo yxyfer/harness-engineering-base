@@ -69,10 +69,10 @@ application works; each app runs its own `npm run verify`.
 
 ## Open work
 
-- **In progress:** the pilot, moving an existing application onto the template.
-  Outcome: its own verification passes with the layout, document checks, context
-  map and tester-first experiments, and the benchmark shows whether steps and
-  total input fall. Proof: its pull request and benchmark table.
+- **Waiting on the owner:** push the pilot. An existing application was moved
+  onto the template locally and passes its own verification; this session had no
+  push access to it. Outcome: its pull request merged after review, with
+  `EXPERIMENT_TESTERS` set in its deployments.
 - **Next:** prove `new-app` on a new feature from Explore to Build. Outcome: a
   feature built as an experiment, promoted, and the experiment removed cleanly.
   Proof: the app's `npm run verify`, a browser journey, and a benchmark run.
@@ -81,8 +81,13 @@ application works; each app runs its own `npm run verify`.
   variables, with cleanup verified. Depends on a test database and preview
   project. Proof: create, write, discard and recreate, with the parent checkout
   and database untouched.
+- **Next:** fewer steps when locating a defect. In the pilot, bug hunting got
+  worse (8 to 9 steps, input up 24%) while planning and build orientation
+  improved. Outcome: a change that helps that task; proof: `npm run bench` with
+  at least three runs per task.
 - **To decide:** the token budgets (2,500 per README, 5,000 for the
-  architecture) were chosen without data; set them from the pilot.
+  architecture) were chosen without data; the pilot needed 4,500 temporarily for
+  seven READMEs.
 
 ## Evidence and limits
 
@@ -97,6 +102,16 @@ latest stable, format, lint, types, 18 self-tests (eleven forbidden imports
 rejected, document tree and budgets), 8 experiment tests, context check and
 production build. The generators then added two features and an experiment wired
 into a page, and verification passed again. The app was deleted.
+
+Pilot on an existing application (about 300 source files), 2026-11-25: moved
+onto the template with production behaviour unchanged. Its own checks pass:
+version gate, format, lint with generated zones, types, 35 self-tests (11
+forbidden imports rejected, documents), 555 application tests including 3 new
+tester tests, context and build. Benchmark, one run per task before and after
+(directional): total input across four tasks fell 10% (1,297k to 1,172k);
+planning fell 28% and build orientation 30%, each with two fewer steps; status
+fell 5%; locating a defect rose 24%. `AGENTS.md` fell from about 4,700 to 1,600
+tokens.
 
 Not verified: a real feature built with it, an existing app extended by it, CI
 on GitHub, and the Settings component in a browser.

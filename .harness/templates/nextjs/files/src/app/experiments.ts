@@ -6,7 +6,8 @@ import { loadViewer, memoryChoiceStore } from '@/core/experiments';
 // database and sign-in; until then nobody can save a choice and everyone gets
 // the defaults (everyone is a tester under `next dev`).
 
-// TODO: `sqlChoiceStore(pool.query.bind(pool))` from '@/core/experiment-store'.
+// TODO: `sqlChoiceStore(pool.query.bind(pool))` from '@/core/experiment-store',
+// after applying `experimentChoicesTable()`: it keeps choices and the tester list.
 export const choiceStore = memoryChoiceStore();
 
 // TODO: return the signed-in person ({ id, email }) or null.

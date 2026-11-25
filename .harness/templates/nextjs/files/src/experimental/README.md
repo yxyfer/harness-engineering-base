@@ -23,8 +23,16 @@ One decision, `experimentActive` in
 | Tester | on by default, can opt out | on by default, can opt out | off   |
 | Other  | not visible                | off by default, can opt in | off   |
 
-- Testers are listed in `EXPERIMENT_TESTERS` (user IDs or emails, or `*`). When
-  it is unset, everyone is a tester under `next dev` and nobody is elsewhere.
+- A tester is a person with a row in `experiment_testers` (user ID or email,
+  lower case), or listed in `EXPERIMENT_TESTERS` (`*` for everyone, useful for
+  previews). When neither applies, everyone is a tester under `next dev` and
+  nobody elsewhere. To add or remove yourself, no redeploy:
+
+  ```sql
+  insert into experiment_testers (person) values ('you@example.com');
+  delete from experiment_testers where person = 'you@example.com';
+  ```
+
 - Only explicit choices are stored; no choice means the default.
 - `billed: true` is never on by default, not even for testers.
 - `stage: 'off'` switches it off for everyone in code. In an incident,

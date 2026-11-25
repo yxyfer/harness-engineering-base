@@ -2,6 +2,19 @@
 
 Newest first. Read by heading.
 
+## Testers live in the database
+
+Date: 2026-11-25. Status: Accepted user request.
+
+A tester is a row in `experiment_testers` (a user ID or an email, lower case),
+read by the same store as the choices. Adding or removing one is a single SQL
+statement with no redeploy, and the list sits beside the data it governs.
+`EXPERIMENT_TESTERS` stays as a second source for previews (`*`) and for an app
+without a database; `next dev` still makes everyone a tester. Cost: one indexed
+query per request for a signed-in person, skipped when the variable already says
+yes. Rejected: a boolean on the user's profile, which every app shapes
+differently and which cannot name someone before they sign up.
+
 ## Context is generated per checkout and measured
 
 Date: 2026-11-25. Status: Accepted. Supersedes the committed context map and its

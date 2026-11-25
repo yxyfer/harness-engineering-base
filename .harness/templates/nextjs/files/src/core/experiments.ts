@@ -187,12 +187,35 @@ export function requireExperiment(
 export interface ExperimentChoiceStore {
   read(personId: string): Promise<Map<string, boolean>>;
   write(personId: string, id: string, choice: boolean | null): Promise<void>;
+  /**
+   * Whether the database lists this person as a tester, by user ID or email.
+   * Adding or removing a tester is one row; no redeploy.
+   */
+  isTester?(person: Person & { readonly id: string }): Promise<boolean>;
+}
+
+/** A tester by the database, by EXPERIMENT_TESTERS, or under `next dev`. */
+export async function testerStatus(
+  store: ExperimentChoiceStore,
+  person: (Person & { readonly id: string }) | null,
+  env: Environment = process.env,
+): Promise<boolean> {
+  if (isTester(person ?? {}, env)) return true;
+  return person && store.isTester ? store.isTester(person) : false;
 }
 
 /** For tests and local prototypes only: choices vanish on restart. */
-export function memoryChoiceStore(): ExperimentChoiceStore {
+export function memoryChoiceStore(
+  testers: Iterable<string> = [],
+): ExperimentChoiceStore {
   const rows = new Map<string, Map<string, boolean>>();
+  const listed = new Set([...testers].map((entry) => entry.toLowerCase()));
   return {
+    async isTester(person) {
+      return [person.id, person.email].some(
+        (value) => !!value && listed.has(value.toLowerCase()),
+      );
+    },
     async read(personId) {
       return new Map(rows.get(personId) ?? []);
     },
@@ -220,7 +243,7 @@ export async function loadViewer(
     [...stored].filter(([id]) => find(id, registry) !== undefined),
   );
   return {
-    tester: isTester(person ?? {}, env),
+    tester: await testerStatus(store, person, env),
     choices,
     off: switchedOff(env),
   };
@@ -240,7 +263,7 @@ export async function chooseExperiment(
 ): Promise<void> {
   const experiment = find(id, registry);
   const viewer = {
-    tester: isTester(person, env),
+    tester: await testerStatus(store, person, env),
     choices: new Map(),
     off: switchedOff(env),
   };

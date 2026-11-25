@@ -18,28 +18,52 @@ function checked(table: string): string {
   return table;
 }
 
-/** The migration for the table, PostgreSQL syntax. */
-export function experimentChoicesTable(table = 'experiment_choices'): string {
+/** The migration for both tables, PostgreSQL syntax. */
+export function experimentChoicesTable(
+  table = 'experiment_choices',
+  testers = 'experiment_testers',
+): string {
   return `create table if not exists ${checked(table)} (
   person_id text not null,
   experiment_id text not null,
   enabled boolean not null,
   updated_at timestamptz not null default now(),
   primary key (person_id, experiment_id)
+);
+
+-- One row per tester: a user ID or an email, in lower case.
+--   insert into ${checked(testers)} (person) values ('you@example.com');
+--   delete from ${checked(testers)} where person = 'you@example.com';
+create table if not exists ${checked(testers)} (
+  person text primary key check (person = lower(person)),
+  note text,
+  added_at timestamptz not null default now()
 );`;
 }
 
 /**
- * A choice store over any client that runs parameterised SQL, such as
+ * A choice and tester store over any client that runs parameterised SQL, such as
  * `pool.query` from `pg` or a Neon client. A missing row means "follow the
  * default", so clearing a choice deletes its row.
  */
 export function sqlChoiceStore(
   query: Query,
   table = 'experiment_choices',
+  testers = 'experiment_testers',
 ): ExperimentChoiceStore {
   const name = checked(table);
+  const testerTable = checked(testers);
   return {
+    async isTester(person) {
+      const keys = [person.id, person.email]
+        .filter((value): value is string => !!value)
+        .map((value) => value.toLowerCase());
+      const { rows } = await query(
+        `select 1 from ${testerTable} where person = any($1) limit 1`,
+        [keys],
+      );
+      return rows.length > 0;
+    },
     async read(personId) {
       const { rows } = await query(
         `select experiment_id, enabled from ${name} where person_id = $1`,

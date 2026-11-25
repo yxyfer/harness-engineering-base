@@ -255,3 +255,73 @@ test('the SQL store keeps explicit choices only, with parameters', async () => {
     /plain table name/,
   );
 });
+
+test('a tester listed in the database gets testers-stage experiments, no env needed', async () => {
+  const env = { NODE_ENV: 'production' };
+  const listed = memoryChoiceStore(['Ada@Example.com']);
+  const ada = await loadViewer(
+    listed,
+    { id: 'u1', email: 'ada@example.com' },
+    registry,
+    env,
+  );
+  assert.equal(experimentActive('early', ada, registry), true);
+  const other = await loadViewer(
+    listed,
+    { id: 'u2', email: 'bo@example.com' },
+    registry,
+    env,
+  );
+  assert.equal(experimentActive('early', other, registry), false);
+  await chooseExperiment(
+    listed,
+    { id: 'u1', email: 'ada@example.com' },
+    'early',
+    false,
+    registry,
+    env,
+  );
+  await assert.rejects(
+    chooseExperiment(
+      listed,
+      { id: 'u2', email: 'bo@example.com' },
+      'early',
+      true,
+      registry,
+      env,
+    ),
+    ExperimentUnavailableError,
+  );
+});
+
+test('the SQL store reads testers by user ID or email, in lower case', async () => {
+  const testers = new Set(['ada@example.com']);
+  const seen: unknown[][] = [];
+  const query: Query = async (text, values) => {
+    seen.push([...values]);
+    if (text.startsWith('select 1')) {
+      const keys = values[0] as string[];
+      return {
+        rows: keys.some((key) => testers.has(key)) ? [{ '?column?': 1 }] : [],
+      };
+    }
+    return { rows: [] };
+  };
+  const store = sqlChoiceStore(query);
+  assert.equal(
+    await store.isTester?.({ id: 'u1', email: 'Ada@Example.com' }),
+    true,
+  );
+  assert.equal(await store.isTester?.({ id: 'u2' }), false);
+  testers.delete('ada@example.com');
+  assert.equal(
+    await store.isTester?.({ id: 'u1', email: 'ada@example.com' }),
+    false,
+    'removing the row removes the tester at once',
+  );
+  assert.deepEqual(seen[0], [['u1', 'ada@example.com']]);
+  assert.match(
+    experimentChoicesTable(),
+    /create table if not exists experiment_testers/,
+  );
+});

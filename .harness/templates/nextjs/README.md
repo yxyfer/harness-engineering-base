@@ -46,10 +46,11 @@ to prove each rule fails.
 
 An experiment starts at stage `testers`: on by default for testers, who can turn
 it off, and invisible to everyone else. `everyone` lets anyone opt in; `off` is
-the kill switch. Testers come from `EXPERIMENT_TESTERS` (IDs or emails, or `*`);
-when it is unset, everyone is a tester under `next dev`. Only explicit choices
-are stored, through an `ExperimentChoiceStore` the app implements. A `billed`
-experiment is never on by default.
+the kill switch. Testers are rows in an `experiment_testers` table (ID or email;
+one SQL line to add or remove, no redeploy) or entries in `EXPERIMENT_TESTERS`
+(`*` for previews); when it is unset, everyone is a tester under `next dev`.
+Only explicit choices are stored, through an `ExperimentChoiceStore` the app
+implements. A `billed` experiment is never on by default.
 
 ## Context and token budgets
 

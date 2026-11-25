@@ -1,0 +1,42 @@
+name: CI
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version-file: .node-version
+          cache: npm
+      - name: Install with the lockfile
+        run: npm ci --ignore-scripts
+      # Format, lint (including the module boundaries) and types.
+      - name: Check
+        run: npm run check
+      # Boundary failure probes, the document tree and its budgets.
+      - name: Self-test
+        run: npm run self-test
+      - name: Test
+        run: npm test
+      # The committed context map matches the code and READMEs.
+      - name: Context
+        run: npm run context:check
+      - name: Build
+        run: npm run build
+      # Needs the public npm registry; last so it cannot mask the rest.
+      - name: Framework versions
+        run: npm run check:versions -- .

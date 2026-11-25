@@ -17,7 +17,8 @@
     "check": "npm run format:check && npm run lint",
     "test": "node --test tests/*.test.mjs",
     "self-test": "npm test",
-    "verify": "npm run check && npm test"
+    "verify": "npm run check && npm test",
+    "new-app": "node scripts/new-app.mjs"
   },
   "devDependencies": {
     "@eslint/js": "10.0.1",

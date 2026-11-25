@@ -1,12 +1,14 @@
 # Agent operating contract
 
-Start at `project/README.md`; read `project/FORMAT.md`, the active plan and its
-task. Before source edits, read `docs/WORKFLOW.md`, `docs/ARCHITECTURE.md`, the
-four standards in `.harness/standards/`, and relevant language profiles. Read
-installed framework documentation before changing framework behaviour.
+This repository is the harness kit: the engineering contract, standards and the
+Next.js application template that `npm run new-app` sets up. Start at
+[README.md](README.md): what the kit holds, its open work and evidence. Before
+changing the template or scripts, read `docs/WORKFLOW.md`,
+`docs/ARCHITECTURE.md`, the four standards in `.harness/standards/` and the
+relevant language profile.
 
-Use the user's current request first, then this contract, canonical context,
-accepted decisions, the active task, and existing code and tests. Stop at a
+Use the user's current request first, then this contract, accepted decisions in
+`docs/DECISIONS.md` (read by heading) and existing code and tests. Stop at a
 consequential unresolved ambiguity. State assumptions and record durable
 choices.
 
@@ -15,19 +17,20 @@ choices.
 - Infer Explore, Build or Release from the request and state the mode briefly.
 - Inspect before editing; preserve user changes and existing project owners.
 - Keep one bounded outcome in focus and define observable proof before coding.
-- Keep the task brief current: intent, choice, boundaries, risk and recovery.
-- Use native commands and settings from the project being changed. A non-zero
-  exit is a failed check; fix it rather than weaken the gate.
+- Use native commands. A non-zero exit is a failed check; fix it rather than
+  weaken the gate.
 - For Next.js applications, keep Next.js and React on npm's latest stable
-  releases with exact tested pins. Run the version checker with the application
-  directory and wire it into that app's setup and full verification. Kit checks
-  verify the kit; they do not verify a consumer application.
-- Update canonical context, task evidence and the plan index for durable
-  changes.
+  releases with exact tested pins; the template wires the version checker into
+  the app's setup and verification.
+- The template is generic: no product names, domain terms or data from any
+  application belong in it.
+- A template change needs kit proof (`npm run verify`, including the scaffold
+  test) and, when it affects lint, types or build, a disposable app made with
+  `npm run new-app` and verified there, then deleted.
+- Update the README's open work and evidence, `docs/ARCHITECTURE.md` and
+  `docs/DECISIONS.md` with durable changes.
 - Ask before destructive changes, external publication, production access,
-  consequential security trade-offs or irreversible migrations. Existing
-  explicit user authorisation applies; reversible local work needs no extra
-  ceremony.
+  consequential security trade-offs or irreversible migrations.
 
 ## Commands
 
@@ -35,19 +38,13 @@ choices.
 npm run setup
 npm run format
 npm run check
-npm run check:versions -- <app-directory>
 npm test
-npm run self-test
 npm run verify
+npm run new-app -- <directory>
+npm run check:versions -- <app-directory>
 ```
 
-Use self-tests for harness changes independently of application behaviour tests.
-Run application types, behaviour tests, build and the relevant browser journey
-in the receiving application. The kit uses native npm scripts; there is no
-`harness` wrapper, project sync engine, installer or CI workflow or installed
-demo application in this slice. Maintain the plan index directly. See
-`docs/DECISIONS.md`.
-
-Do not overwrite consumer-owned instructions or native configuration during
-adoption. Work is done when the requested outcome has evidence, relevant checks
-pass, durable context is current and remaining limitations are explicit.
+Kit checks verify the kit; they do not verify an application. Do not overwrite
+consumer-owned instructions or configuration: `new-app` only adds missing files
+to an existing app. Work is done when the outcome has evidence, relevant checks
+pass, durable context is current and remaining limits are explicit.

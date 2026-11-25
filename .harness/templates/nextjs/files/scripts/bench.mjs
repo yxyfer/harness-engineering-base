@@ -71,7 +71,7 @@ function runTask(prompt, model) {
   return summarise(result.stdout.split('\n'));
 }
 
-const k = (n) => `${Math.round(n / 1000)}k`;
+const k = (n) => (n < 10000 ? String(n) : `${Math.round(n / 1000)}k`);
 
 if (import.meta.main) {
   const { values } = parseArgs({

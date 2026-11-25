@@ -227,7 +227,10 @@ test('new-app lays out an existing app and the generators keep it consistent', a
       ),
     );
     const map = readFileSync(join(app, 'context/README.md'), 'utf8');
-    assert.match(map, /features\/orders.*`index\.ts`.*catalogue/);
+    assert.match(
+      map,
+      /features\/orders[\s\S]*?`index\.ts`[\s\S]*?uses catalogue/,
+    );
     assert.match(map, /experimental\/quick-add/);
   });
 

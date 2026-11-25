@@ -14,6 +14,9 @@ freshness check in [the entry below](#generated-context-and-token-budgets).
   proves the map can be generated.
 - Each README names the files to open first ("Start with"); the map shows them.
   Measured sessions spent their extra steps searching for these files.
+- The map lists areas one per line instead of in a table. Prettier pads table
+  cells to align columns; on the pilot application the padded table cost about
+  3,400 tokens and the list about 2,500 for the same facts.
 - Status groups items by whom they wait on, oldest first, with ages from Git; at
   most five Next items per document. Labels alone did not prioritise the 49
   owner items in the measured application.

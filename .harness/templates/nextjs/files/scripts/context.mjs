@@ -112,7 +112,15 @@ function readDoc(folder) {
   const purpose = sentence(
     section(text, 'what it does') || lines.slice(1).join(' '),
   );
-  const startWith = (text.match(/^Start with:\s*(.+)$/m) ?? [])[1] ?? '';
+  // The paragraph after "Start with:", with links reduced to their text: the
+  // map lives in another folder, and names are cheaper than paths.
+  const startWith = (
+    (text.match(/^Start with:\s*([\s\S]*?)(?:\n\s*\n|$)/m) ?? [])[1] ?? ''
+  )
+    .replace(/\[([^\]]+)\]\([^)]*\)/g, '$1')
+    .replace(/\s+/g, ' ')
+    .trim()
+    .replace(/[.,]$/, '');
   const dates = lineDates(file);
   const open = [];
   let inOpen = false;
@@ -334,21 +342,26 @@ const start = [
   '',
   'Dependencies point down: app → experimental → features → components → core → config.',
   '',
-  '| Area | What it is | Start with | Uses | Tests | Open |',
-  '| --- | --- | --- | --- | --- | --- |',
+  'One line per area: what it is, the files to start with, the features it',
+  'uses, how many tests and open items. Parts are indented under their feature.',
+  '',
 ];
 for (const [name, , parent] of areas) {
   if (name === 'app' || name === 'config' || name === 'components') continue;
   const doc = docs.get(name);
   const feature =
     name.startsWith('features/') && !parent ? name.split('/')[1] : null;
-  const uses = feature ? (featureDeps[feature] ?? []).join(', ') || '' : '';
-  const label = parent ? `↳ ${name.split('/').pop()}` : name;
-  const link = doc ? `[${label}](../${doc.file})` : label;
-  const nTests = parent ? '' : (testsByArea.get(name) ?? []).length || '';
-  const open = doc?.open.length || '';
+  const label = parent ? name.split('/').pop() : name;
+  const facts = [
+    doc?.startWith && `start with ${doc.startWith}`,
+    feature && `uses ${(featureDeps[feature] ?? []).join(', ') || 'nothing'}`,
+    !parent && (testsByArea.get(name) ?? []).length
+      ? `${testsByArea.get(name).length} tests`
+      : '',
+    doc?.open.length ? `${doc.open.length} open` : '',
+  ].filter(Boolean);
   start.push(
-    `| ${link} | ${(doc?.purpose ?? '').replace(/\|/g, '/')} | ${(doc?.startWith ?? '').replace(/\|/g, '/')} | ${uses} | ${nTests} | ${open} |`,
+    `${parent ? '  ' : ''}- ${doc ? `[${label}](../${doc.file})` : label}: ${doc?.purpose ?? ''}${facts.length ? ` (${facts.join('; ')})` : ''}`,
   );
 }
 start.push('');

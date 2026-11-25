@@ -167,15 +167,6 @@ for (const [from, to] of Object.entries(SHARED)) {
   else place(source, to);
 }
 
-// Generated context must not be reformatted, or its freshness check fails.
-const ignoreFile = join(target, '.prettierignore');
-if (
-  !fresh &&
-  existsSync(ignoreFile) &&
-  !/^context\/$/m.test(readFileSync(ignoreFile, 'utf8'))
-)
-  merge.push('.prettierignore: add the line "context/"');
-
 // Scripts: add what is missing; in a new app the harness owns them all.
 manifest.scripts ??= {};
 for (const [script, command] of Object.entries(SCRIPTS)) {
@@ -262,7 +253,12 @@ if (fresh) {
   if (pinExact()) run('npm', ['install'], target);
   run('npm', ['run', 'format'], target);
 }
-run('node', ['scripts/context.mjs'], target);
+if (existsSync(join(target, 'node_modules/prettier')))
+  run('node', ['scripts/context.mjs'], target);
+else
+  merge.push(
+    'context/: install the dependencies below, then run `npm run context`',
+  );
 
 const shown = (list) => list.map((item) => `  ${item}`).join('\n');
 console.log(

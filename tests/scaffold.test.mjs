@@ -7,6 +7,7 @@ import {
   readdirSync,
   readFileSync,
   rmSync,
+  symlinkSync,
   writeFileSync,
 } from 'node:fs';
 import { tmpdir } from 'node:os';
@@ -44,6 +45,7 @@ function snapshot(root, prefix = '') {
     withFileTypes: true,
   })) {
     const path = join(prefix, entry.name);
+    if (entry.name === 'node_modules') continue;
     if (entry.isDirectory()) Object.assign(out, snapshot(root, path));
     else
       out[path] = createHash('sha256')
@@ -61,6 +63,8 @@ test('new-app lays out an existing app and the generators keep it consistent', a
     JSON.stringify({ name: 'probe-app', scripts: { lint: 'eslint' } }, null, 2),
   );
   writeFileSync(join(app, 'AGENTS.md'), 'consumer-owned\n');
+  // The app's Prettier formats the context map; reuse the kit's install.
+  symlinkSync(join(kitRoot, 'node_modules'), join(app, 'node_modules'), 'dir');
   const newApp = (args = []) =>
     node([join(kitRoot, 'scripts/new-app.mjs'), app, ...args], kitRoot);
 
@@ -210,6 +214,18 @@ test('new-app lays out an existing app and the generators keep it consistent', a
     fails(node(['scripts/context.mjs', '--check'], app), /Out of date/);
     ok(node(['scripts/context.mjs'], app));
     ok(node(['scripts/context.mjs', '--check'], app));
+    ok(
+      node(
+        [
+          join(kitRoot, 'node_modules/prettier/bin/prettier.cjs'),
+          '--check',
+          'src',
+          'context',
+          'docs',
+        ],
+        app,
+      ),
+    );
     const map = readFileSync(join(app, 'context/README.md'), 'utf8');
     assert.match(map, /features\/orders.*\| catalogue \|/);
     assert.match(map, /experimental\/quick-add/);

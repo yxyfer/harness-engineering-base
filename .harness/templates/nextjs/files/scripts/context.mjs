@@ -14,6 +14,7 @@ import {
   writeFileSync,
 } from 'node:fs';
 import { basename, join, relative, sep } from 'node:path';
+import { formatText } from './format-output.mjs';
 
 const appDir =
   process.argv.slice(2).find((arg) => !arg.startsWith('--')) ?? '.';
@@ -358,19 +359,17 @@ if (routes.length) {
 }
 
 // --- Write or check ------------------------------------------------------------
+// Formatted with the application's Prettier, so it passes format:check and
+// the freshness check compares formatted text.
 const outputs = {
   'README.md': start,
   'status.md': statusLines,
   'files.md': fileLines,
 };
-let stale = [];
+const stale = [];
 for (const [name, lines] of Object.entries(outputs)) {
-  const content =
-    lines
-      .join('\n')
-      .replace(/\n{3,}/g, '\n\n')
-      .trimEnd() + '\n';
   const path = join(outDir, name);
+  const content = await formatText(appDir, path, lines.join('\n'));
   if (check) {
     if (!existsSync(path) || readFileSync(path, 'utf8') !== content)
       stale.push(rel(path));

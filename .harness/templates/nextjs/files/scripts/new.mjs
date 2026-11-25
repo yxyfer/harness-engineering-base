@@ -10,6 +10,7 @@
 import { existsSync, mkdirSync, readFileSync, writeFileSync } from 'node:fs';
 import { join } from 'node:path';
 import { parseArgs } from 'node:util';
+import { formatFiles } from './format-output.mjs';
 
 const NAME = /^[a-z][a-z0-9]*(-[a-z0-9]+)*$/;
 const root = process.cwd();
@@ -19,6 +20,7 @@ function fail(message) {
   process.exit(1);
 }
 const path = (...parts) => join(root, ...parts);
+const touched = new Set();
 const read = (...parts) => readFileSync(path(...parts), 'utf8');
 const title = (name) =>
   name.replace(/-/g, ' ').replace(/^./, (letter) => letter.toUpperCase());
@@ -27,6 +29,7 @@ function create(file, content) {
   if (existsSync(path(file))) fail(`${file} already exists; nothing changed.`);
   mkdirSync(path(file, '..'), { recursive: true });
   writeFileSync(path(file), content);
+  touched.add(path(file));
   console.log(`created ${file}`);
 }
 
@@ -49,6 +52,7 @@ function insertBefore(file, marker, line) {
   }
   const before = text.slice(0, at).replace(/\n*$/, '\n');
   writeFileSync(path(file), `${before}${line}\n\n${text.slice(at)}`);
+  touched.add(path(file));
   console.log(`updated ${file}`);
 }
 
@@ -94,6 +98,7 @@ function newFeature(name, options) {
   );
   registry[name] = uses;
   writeFileSync(path(registryFile), `${JSON.stringify(registry, null, 2)}\n`);
+  touched.add(path(registryFile));
   console.log(`updated ${registryFile}`);
   insertBefore(
     'src/README.md',
@@ -142,6 +147,7 @@ function newExperiment(name, options) {
     path(registryFile),
     text.replace(marker, `${entry}\n${marker}`),
   );
+  touched.add(path(registryFile));
   console.log(`updated ${registryFile}`);
   insertBefore(
     'src/experimental/README.md',
@@ -168,4 +174,5 @@ const { values } = parseArgs({
 });
 if (kind === 'feature') newFeature(name, values);
 else newExperiment(name, values);
+await formatFiles(root, touched);
 console.log('Next: fill in the TODOs, then run `npm run context`.');

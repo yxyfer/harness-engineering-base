@@ -10,10 +10,13 @@ excuse unreadable code or unsafe access to real systems.
 ### Explore
 
 Answer one question with the smallest runnable experiment. State the question,
-scope and how to discard it in a short message. Show the result early. Use an
-isolated checkout and disposable data when the experiment can affect existing
-work. Synthetic data is appropriate for UI exploration; testing an integration
-requires the real integration in an isolated environment.
+scope and how to discard it in a short message. Show the result early. Code that
+may be kept but is not yet proven lives in `src/experimental/<name>/`, off by
+default and on for testers, so it can be tried on the real application and
+removed by deleting its folder and listed call sites. Use an isolated checkout
+and disposable data when the experiment can affect existing work. Synthetic data
+is appropriate for UI exploration; testing an integration requires the real
+integration in an isolated environment.
 
 Run the available formatter and relevant lint or type checks. Demonstrate the
 intended interaction or result. Add a targeted test when a known rule or defect
@@ -30,9 +33,11 @@ rules, edge cases and integration boundaries with tests, then exercise the
 actual user journey. Handle loading, empty, error and retry behaviour where
 relevant. Update the architecture view when responsibilities or flows change.
 
-Promote the useful implementation and findings from Explore deliberately. Rework
-shortcuts whose assumptions no longer hold; merging an experiment is not itself
-proof that it is ready to maintain.
+Promote the useful implementation and findings from Explore deliberately: an
+experiment moves to its stated destination in `src/features` with its document,
+as `src/experimental/README.md` describes. Rework shortcuts whose assumptions no
+longer hold; merging an experiment is not itself proof that it is ready to
+maintain.
 
 ### Release
 
@@ -65,11 +70,9 @@ does not prove that production configuration or data migration works.
   Real data, external users and consequential actions require safeguards from
   the first experiment that exposes them.
 
-Stack-specific guidance lives in `.harness/standards/languages/`; native
-adoption configurations live in `.harness/templates/`. P001-T002 originally
-exercised them on a disposable validation app. Receiving applications install
-their own dependencies and run their own quality checks and relevant journeys.
-Kit checks cover kit code. These principles do not certify an implementation.
+Stack-specific guidance lives in `.harness/standards/languages/`. Each
+application runs its own quality checks and relevant journeys; these principles
+do not certify an implementation.
 
 ## Refactoring
 
@@ -98,12 +101,11 @@ Keep intended designs separate from current behaviour. Mark real integrations,
 fixtures and simulated results clearly. An import graph can assist inspection;
 it cannot establish business meaning or prove that a user journey works.
 
-Use [the native view format](../.harness/templates/architecture.md) and
-[the Data Miner example](architecture/data-miner.md) as a starting point. Reuse
-the existing system view; add a feature flow or change view when it reveals a
-new boundary. Update the affected view in the same change that moves state,
-ownership, persistence or integrations. A styling edit or tiny experiment can
-link the current view and explain its delta in a few lines.
+Use [the native view format](../.harness/templates/architecture.md) as a
+starting point. Reuse the existing system view; add a feature flow or change
+view when it reveals a new boundary. Update the affected view in the same change
+that moves state, ownership, persistence or integrations. A styling edit or tiny
+experiment can link the current view and explain its delta in a few lines.
 
 ## Recovery and feedback
 

@@ -1,0 +1,56 @@
+name: CI
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+  # Weekly, a brand-new app catches drift in create-next-app, npm and the
+  # framework releases that the kit's own tests cannot see.
+  schedule:
+    - cron: '17 6 * * 1'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  kit:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version-file: .node-version
+          cache: npm
+      - run: npm ci --ignore-scripts
+      - run: npm run verify
+
+  new-app:
+    if:
+      github.event_name != 'pull_request' ||
+      contains(github.event.pull_request.labels.*.name, 'template')
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-node@v4
+        with:
+          node-version-file: .node-version
+      - run: npm ci --ignore-scripts
+      - name: Create an app
+        run: npm run new-app -- "$RUNNER_TEMP/probe-app"
+      - name: Add a feature and an experiment
+        working-directory: ${{ runner.temp }}/probe-app
+        run: |
+          npm run new-feature -- orders
+          npm run new-experiment -- quick-add --destination part:orders --server
+      - name: Verify the app
+        working-directory: ${{ runner.temp }}/probe-app
+        run: npm run verify

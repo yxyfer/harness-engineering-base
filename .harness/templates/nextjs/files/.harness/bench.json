@@ -1,0 +1,18 @@
+[
+  {
+    "id": "status",
+    "prompt": "Where are we? Give me the current state of the project: what is in progress, what is waiting on me, and what you would do next."
+  },
+  {
+    "id": "orient",
+    "prompt": "Which feature or experiment owns each page and API route, and which files would you open first to change each of them?"
+  },
+  {
+    "id": "plan",
+    "prompt": "<edit: describe a small, real change to plan, e.g. 'Add a filter that ...'. Tasks containing <edit are skipped.> Tell me which feature owns it, which files you would change, what existing rule you would reuse and what test you would add."
+  },
+  {
+    "id": "locate",
+    "prompt": "<edit: describe a real defect, e.g. 'When I ..., then ... does not appear.'> Find where this flow lives and the most likely places to look, with file and function names."
+  }
+]

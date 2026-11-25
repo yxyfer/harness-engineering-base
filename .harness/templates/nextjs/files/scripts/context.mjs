@@ -4,7 +4,10 @@
 //   context/README.md  start map: areas, status summary, routes  (read first)
 //   context/status.md  every "Open work" item, grouped           (on demand)
 //   context/files.md   every source file and its exports          (on demand)
-// Usage: node scripts/context.mjs [app-dir] [--check]
+// context/ is generated, not committed: `npm run setup` and the session-start
+// hook write it. Usage: node scripts/context.mjs [app-dir] [--print]
+// --print writes the start map to stdout (for a session-start hook) and the
+// progress lines to stderr.
 import {
   existsSync,
   mkdirSync,
@@ -13,12 +16,14 @@ import {
   statSync,
   writeFileSync,
 } from 'node:fs';
+import { spawnSync } from 'node:child_process';
 import { basename, join, relative, sep } from 'node:path';
 import { formatText } from './format-output.mjs';
 
 const appDir =
   process.argv.slice(2).find((arg) => !arg.startsWith('--')) ?? '.';
-const check = process.argv.includes('--check');
+const print = process.argv.includes('--print');
+const log = print ? console.error : console.log;
 const src = join(appDir, 'src');
 const outDir = join(appDir, 'context');
 const MAX_EXPORTS = 6;
@@ -78,38 +83,67 @@ function sentence(text, max = 150) {
     ? clean
     : clean.slice(0, max).replace(/\s+\S*$/, '') + '…';
 }
-const STATES = [
-  ['In progress', /progress/i],
-  ['Next', /^next/i],
-  ['Waiting on the owner', /waiting|owner/i],
-  ['To decide', /decide/i],
-];
+// An open item starts with its state in bold (docs/FORMAT.md).
+const STATE = /^(Next|In progress|Waiting on ([^:*.]+)|To decide)\s*[:.]?\s*/i;
+const ORDER = ['In progress', 'Next', 'Waiting', 'To decide', 'Unlabelled'];
+
+/** The date each line was last changed, from Git; empty outside a repository. */
+function lineDates(file) {
+  const result = spawnSync(
+    'git',
+    ['blame', '--line-porcelain', '--', relative(appDir, file)],
+    { cwd: appDir, encoding: 'utf8' },
+  );
+  if (result.status !== 0) return [];
+  const dates = [];
+  for (const line of result.stdout.split('\n'))
+    if (line.startsWith('committer-time '))
+      dates.push(
+        new Date(Number(line.slice(15)) * 1000).toISOString().slice(0, 10),
+      );
+  return dates;
+}
+
 function readDoc(folder) {
   const file = join(folder, 'README.md');
   if (!existsSync(file)) return null;
   const text = readFileSync(file, 'utf8');
+  const lines = text.split('\n');
   const purpose = sentence(
-    section(text, 'what it does') || text.split('\n').slice(1).join(' '),
+    section(text, 'what it does') || lines.slice(1).join(' '),
   );
-  const open = section(text, 'open work')
-    .split(/\n(?=[-*] )/)
-    .filter((item) => /^[-*] /.test(item))
-    .map((item) => {
-      const flat = item.replace(/^[-*]\s+/, '').replace(/\s+/g, ' ');
-      const bold = (flat.match(/^\*\*([^*]+?)\*\*/) ?? [])[1] ?? '';
-      const state =
-        STATES.find(([, re]) => re.test(bold.split(':')[0]))?.[0] ??
-        'Unlabelled';
-      const title = bold
-        .replace(
-          /^(Waiting on the owner|Next|In progress|To decide)\s*[:.]?\s*/i,
-          '',
-        )
-        .replace(/[:.]$/, '');
-      const rest = flat.replace(/^\*\*[^*]+\*\*\s*/, '');
-      return { state, title, text: sentence(rest || flat, 140) };
+  const startWith = (text.match(/^Start with:\s*(.+)$/m) ?? [])[1] ?? '';
+  const dates = lineDates(file);
+  const open = [];
+  let inOpen = false;
+  for (let i = 0; i < lines.length; i += 1) {
+    if (/^## /.test(lines[i])) inOpen = /^## open work\s*$/i.test(lines[i]);
+    if (!inOpen || !/^[-*] /.test(lines[i])) continue;
+    let end = i + 1;
+    while (end < lines.length && /^\s+\S/.test(lines[end])) end += 1;
+    const flat = lines
+      .slice(i, end)
+      .join(' ')
+      .replace(/^[-*]\s+/, '')
+      .replace(/\s+/g, ' ');
+    const bold = (flat.match(/^\*\*([^*]+?)\*\*/) ?? [])[1] ?? '';
+    const label = bold.match(STATE);
+    const kind = !label
+      ? 'Unlabelled'
+      : /^waiting/i.test(label[1])
+        ? 'Waiting'
+        : ORDER.find((o) => o.toLowerCase() === label[1].toLowerCase());
+    const title = label ? bold.slice(label[0].length).replace(/[:.]$/, '') : '';
+    const rest = flat.replace(/^\*\*[^*]+\*\*\s*/, '');
+    open.push({
+      state: kind,
+      who: label?.[2]?.trim() ?? '',
+      title,
+      text: sentence(rest || flat, 140),
+      since: dates[i] ?? '',
     });
-  return { file: rel(file), purpose, open };
+  }
+  return { file: rel(file), purpose, startWith, open };
 }
 
 // --- Code -------------------------------------------------------------------
@@ -220,34 +254,39 @@ for (const layer of ['features', 'experimental'])
 const docs = new Map(areas.map(([n, f]) => [n, readDoc(f)]));
 
 // --- context/status.md ---------------------------------------------------------
-const byState = new Map();
+const items = [];
 for (const [name, doc] of docs)
-  for (const item of doc?.open ?? []) {
-    if (!byState.has(item.state)) byState.set(item.state, []);
-    byState.get(item.state).push({ name, ...item });
-  }
-const order = [...STATES.map(([s]) => s), 'Unlabelled'];
+  for (const item of doc?.open ?? []) items.push({ name, ...item });
+const heading = (item) =>
+  item.state === 'Waiting' ? `Waiting on ${item.who}` : item.state;
+const groups = new Map();
+for (const item of [...items].sort(
+  (a, b) => ORDER.indexOf(a.state) - ORDER.indexOf(b.state),
+)) {
+  const key = heading(item);
+  if (!groups.has(key)) groups.set(key, []);
+  groups.get(key).push(item);
+}
+const line = (i) =>
+  `- ${i.name}: ${i.title ? `**${i.title}.** ` : ''}${i.text}${i.since ? ` _(since ${i.since})_` : ''}`;
 const statusLines = [
   '# Status',
   '',
   HEADER,
   '',
-  'Every "Open work" item, by state. The README named on each line has the',
-  'outcome, dependency and proof.',
+  'Every "Open work" item, by state, oldest first within a state. The README',
+  'named on each line has the outcome, dependency and proof.',
   '',
 ];
-for (const state of order)
-  if (byState.has(state))
-    statusLines.push(
-      `## ${state}`,
-      '',
-      ...byState
-        .get(state)
-        .map(
-          (i) => `- ${i.name}: ${i.title ? `**${i.title}.** ` : ''}${i.text}`,
-        ),
-      '',
-    );
+for (const [key, group] of groups)
+  statusLines.push(
+    `## ${key}`,
+    '',
+    ...[...group]
+      .sort((a, b) => (a.since || '9').localeCompare(b.since || '9'))
+      .map(line),
+    '',
+  );
 
 // --- context/files.md ----------------------------------------------------------
 const fileLines = [
@@ -295,8 +334,8 @@ const start = [
   '',
   'Dependencies point down: app → experimental → features → components → core → config.',
   '',
-  '| Area | What it is | Uses | Tests | Open |',
-  '| --- | --- | --- | --- | --- |',
+  '| Area | What it is | Start with | Uses | Tests | Open |',
+  '| --- | --- | --- | --- | --- | --- |',
 ];
 for (const [name, , parent] of areas) {
   if (name === 'app' || name === 'config' || name === 'components') continue;
@@ -309,27 +348,26 @@ for (const [name, , parent] of areas) {
   const nTests = parent ? '' : (testsByArea.get(name) ?? []).length || '';
   const open = doc?.open.length || '';
   start.push(
-    `| ${link} | ${(doc?.purpose ?? '').replace(/\|/g, '/')} | ${uses} | ${nTests} | ${open} |`,
+    `| ${link} | ${(doc?.purpose ?? '').replace(/\|/g, '/')} | ${(doc?.startWith ?? '').replace(/\|/g, '/')} | ${uses} | ${nTests} | ${open} |`,
   );
 }
 start.push('');
-const summary = order
-  .filter((s) => byState.has(s))
-  .map((s) => `${byState.get(s).length} ${s.toLowerCase()}`)
-  .join(' · ');
-if (summary) {
+if (items.length) {
+  const counts = [...groups].map(
+    ([key, g]) => `${g.length} ${key.toLowerCase()}`,
+  );
   start.push(
     '## Status',
     '',
-    `${summary}. Full list: [status](status.md).`,
+    `${counts.join(' · ')}. Full list: [status](status.md).`,
     '',
   );
-  for (const state of ['In progress', 'Next'])
-    if (byState.has(state))
+  for (const key of ['In progress', 'Next'])
+    if (groups.has(key))
       start.push(
-        `${state}:`,
+        `${key}:`,
         '',
-        ...byState.get(state).map((i) => `- ${i.name}: ${i.title || i.text}`),
+        ...groups.get(key).map((i) => `- ${i.name}: ${i.title || i.text}`),
         '',
       );
 }
@@ -358,31 +396,24 @@ if (routes.length) {
   start.push('');
 }
 
-// --- Write or check ------------------------------------------------------------
-// Formatted with the application's Prettier, so it passes format:check and
-// the freshness check compares formatted text.
+// --- Write ---------------------------------------------------------------------
+// Formatted with the application's Prettier when it is installed. context/ is
+// ignored by Git, and so by Prettier, so a fresh clone without dependencies
+// can still produce the map for a session.
 const outputs = {
   'README.md': start,
   'status.md': statusLines,
   'files.md': fileLines,
 };
-const stale = [];
+mkdirSync(outDir, { recursive: true });
 for (const [name, lines] of Object.entries(outputs)) {
   const path = join(outDir, name);
-  const content = await formatText(appDir, path, lines.join('\n'));
-  if (check) {
-    if (!existsSync(path) || readFileSync(path, 'utf8') !== content)
-      stale.push(rel(path));
-  } else {
-    mkdirSync(outDir, { recursive: true });
-    writeFileSync(path, content);
-    console.log(
-      `${rel(path)}: ${content.split('\n').length} lines, ~${Math.round(content.length / 4)} tokens`,
-    );
-  }
+  const content = await formatText(appDir, path, lines.join('\n'), {
+    optional: true,
+  });
+  writeFileSync(path, content);
+  log(
+    `${rel(path)}: ${content.split('\n').length} lines, ~${Math.round(content.length / 4)} tokens`,
+  );
+  if (print && name === 'README.md') process.stdout.write(content);
 }
-if (check && stale.length) {
-  console.error(`Out of date: ${stale.join(', ')}. Run \`npm run context\`.`);
-  process.exit(1);
-}
-if (check) console.log('context/ is current.');

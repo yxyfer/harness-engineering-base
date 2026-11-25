@@ -23,9 +23,12 @@ npm run new-app -- ../my-app
   One stage field opens it to everyone or switches it off.
 - **Plans as documents beside the code.** One `README.md` per feature, part and
   experiment, in one format, with open work labelled by state.
-- **Cheap orientation.** A generated context map (areas, status, files and
-  exports), a contract that routes reads instead of requiring them, and token
-  budgets on the documents every session reads.
+- **Cheap orientation.** A context map generated per checkout (areas, where to
+  start, status by state and age, files and exports), loaded at session start in
+  Claude Code, a contract that routes reads, and token budgets.
+- **Measurement and upkeep.** `npm run bench` measures steps and tokens on fixed
+  tasks; `npm run harness:diff -- <app>` shows which kit changes an app can
+  take.
 - **Native checks.** Format, lint, types, self-tests, tests, context check,
   build and the stable framework version gate, locally and in CI.
 
@@ -54,34 +57,32 @@ application works; each app runs its own `npm run verify`.
 
 ## Choices
 
-- Templates and a one-off scaffold, no sync engine.
+- Templates and a one-off scaffold, no sync engine; a read-only drift report
+  shows what to merge.
   [Decision](docs/DECISIONS.md#a-scaffold-for-new-applications).
 - Layered layout and tester-first experiments.
   [Decisions](docs/DECISIONS.md#layered-source-and-tester-first-experiments).
 - Plans are documents beside the code; the numbered kit plan was retired.
   [Decision](docs/DECISIONS.md#plans-are-documents-beside-the-code).
-- Context is generated and routed, with budgets.
-  [Decision](docs/DECISIONS.md#generated-context-and-token-budgets).
+- Context is generated per checkout, routed, and measured.
+  [Decision](docs/DECISIONS.md#context-is-generated-per-checkout-and-measured).
 
 ## Open work
 
-- **Next:** prove `new-app` on a real feature. Outcome: one small feature with a
-  visible interaction, one persisted operation and a failure case, built in a
-  new app from Explore (as an experiment) to Build (promoted), with the
-  experiment removed cleanly and the context map answering where things are.
-  Proof: the app's `npm run verify`, a browser journey, and a note of time,
-  rework and tokens spent orienting.
-- **Next:** fewer turns per task. Measured: the map and router cut peak context
-  by 9 to 46%, but sessions took more steps, so total input was roughly flat.
-  Outcome: a map that names the function to open, and guidance that batches
-  reads. Proof: the same four tasks re-measured.
+- **In progress:** the pilot, moving an existing application onto the template.
+  Outcome: its own verification passes with the layout, document checks, context
+  map and tester-first experiments, and the benchmark shows whether steps and
+  total input fall. Proof: its pull request and benchmark table.
+- **Next:** prove `new-app` on a new feature from Explore to Build. Outcome: a
+  feature built as an experiment, promoted, and the experiment removed cleanly.
+  Proof: the app's `npm run verify`, a browser journey, and a benchmark run.
 - **Next:** isolated environments for experiments that write data. Outcome: a
   recorded recipe for a worktree, a disposable or branched database and preview
   variables, with cleanup verified. Depends on a test database and preview
   project. Proof: create, write, discard and recreate, with the parent checkout
   and database untouched.
-- **To decide:** whether to offer a Claude Code hook that loads
-  `context/README.md` at session start, or keep the contract agent-neutral.
+- **To decide:** the token budgets (2,500 per README, 5,000 for the
+  architecture) were chosen without data; set them from the pilot.
 
 ## Evidence and limits
 

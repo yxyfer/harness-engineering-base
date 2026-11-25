@@ -2,6 +2,8 @@
 
 Experiment, off by default. Stage: `testers`. Destination: {{destination}}.
 
+Start with: `index.ts`
+
 ## What it does
 
 TODO: what changes for a person who has it on.

@@ -24,6 +24,8 @@ export type ExperimentViewer = {
   readonly tester: boolean;
   /** Explicit choices only. A missing ID means "follow the default". */
   readonly choices: ExperimentChoices;
+  /** Switched off for this deployment by `EXPERIMENTS_OFF`, whatever the stage. */
+  readonly off?: ReadonlySet<string>;
 };
 
 export type Person = {
@@ -34,6 +36,20 @@ export type Person = {
 type Environment = Readonly<Record<string, string | undefined>>;
 
 const warned = new Set<string>();
+
+/**
+ * The emergency switch: `EXPERIMENTS_OFF` lists IDs that are off for everyone
+ * on this deployment, without a code change. Changing an environment variable
+ * still needs the host to restart or redeploy the application.
+ */
+export function switchedOff(env: Environment = process.env): Set<string> {
+  return new Set(
+    (env.EXPERIMENTS_OFF ?? '')
+      .split(',')
+      .map((id) => id.trim())
+      .filter(Boolean),
+  );
+}
 
 /**
  * Whether a person is a tester. `EXPERIMENT_TESTERS` is a comma-separated
@@ -75,6 +91,7 @@ export function experimentVisible(
   experiment: ExperimentDefinition,
   viewer: ExperimentViewer,
 ): boolean {
+  if (viewer.off?.has(experiment.id)) return false;
   if (experiment.stage === 'everyone') return true;
   return experiment.stage === 'testers' && viewer.tester;
 }
@@ -188,18 +205,25 @@ export function memoryChoiceStore(): ExperimentChoiceStore {
   };
 }
 
-/** Loads a person's viewer. Choices for unknown or retired IDs are dropped. */
+/**
+ * Loads the viewer for a person, or for someone not signed in (`null`), who
+ * has no stored choices. Choices for unknown or retired IDs are dropped.
+ */
 export async function loadViewer(
   store: ExperimentChoiceStore,
-  person: Person & { readonly id: string },
+  person: (Person & { readonly id: string }) | null,
   registry: ExperimentRegistry = EXPERIMENTS,
   env: Environment = process.env,
 ): Promise<ExperimentViewer> {
-  const stored = await store.read(person.id);
+  const stored = person ? await store.read(person.id) : new Map();
   const choices = new Map(
     [...stored].filter(([id]) => find(id, registry) !== undefined),
   );
-  return { tester: isTester(person, env), choices };
+  return {
+    tester: isTester(person ?? {}, env),
+    choices,
+    off: switchedOff(env),
+  };
 }
 
 /**
@@ -215,7 +239,11 @@ export async function chooseExperiment(
   env: Environment = process.env,
 ): Promise<void> {
   const experiment = find(id, registry);
-  const viewer = { tester: isTester(person, env), choices: new Map() };
+  const viewer = {
+    tester: isTester(person, env),
+    choices: new Map(),
+    off: switchedOff(env),
+  };
   if (!experiment || !experimentVisible(experiment, viewer))
     throw new ExperimentUnavailableError(id);
   await store.write(person.id, id, choice);

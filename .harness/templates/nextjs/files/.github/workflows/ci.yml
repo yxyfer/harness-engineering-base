@@ -32,9 +32,9 @@ jobs:
         run: npm run self-test
       - name: Test
         run: npm test
-      # The committed context map matches the code and READMEs.
+      # The context map can be generated from the code and READMEs.
       - name: Context
-        run: npm run context:check
+        run: npm run context
       - name: Build
         run: npm run build
       # Needs the public npm registry; last so it cannot mask the rest.

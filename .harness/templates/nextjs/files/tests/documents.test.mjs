@@ -35,6 +35,8 @@ const read = (...path) => {
   return readFileSync(file, 'utf8');
 };
 const required = ['## What it does', '## How it works', '## Open work'];
+// More than this many "Next" items in one document is a backlog, not a plan.
+const MAX_NEXT = 5;
 
 // Every open item starts with its state, so status can be rolled up.
 const STATE = /^[-*] \*\*(Next|In progress|Waiting on [^:*]+|To decide)\b/;
@@ -55,7 +57,13 @@ function openItems(text) {
 function checkDocument(name, text, headings) {
   for (const heading of headings)
     assert.ok(text.includes(heading), `${name}: missing "${heading}"`);
-  for (const item of openItems(text))
+  const items = openItems(text);
+  const next = items.filter((item) => /^[-*] \*\*Next\b/.test(item)).length;
+  assert.ok(
+    next <= MAX_NEXT,
+    `${name}: ${next} items marked Next; keep at most ${MAX_NEXT} and move the rest to To decide or delete them`,
+  );
+  for (const item of items)
     assert.match(
       item,
       STATE,
@@ -71,7 +79,10 @@ test('every feature and part has a document, listed by its parent', () => {
   const index = read('README.md');
   for (const feature of folders('features')) {
     const document = read('features', feature, 'README.md');
-    checkDocument(`features/${feature}`, document, required);
+    checkDocument(`features/${feature}`, document, [
+      ...required,
+      'Start with:',
+    ]);
     assert.ok(
       index.includes(`(features/${feature}/README.md)`),
       `src/README.md does not list ${feature}`,
@@ -98,6 +109,7 @@ test('every experiment has a document that says how to turn it off', () => {
     const document = read('experimental', experiment, 'README.md');
     checkDocument(`experimental/${experiment}`, document, [
       ...required,
+      'Start with:',
       '## Turning it off',
     ]);
     assert.match(

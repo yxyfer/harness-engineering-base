@@ -8,8 +8,8 @@ import { pathToFileURL } from 'node:url';
 
 let prettier;
 
-async function load(appDir) {
-  if (prettier) return prettier;
+async function load(appDir, optional) {
+  if (prettier !== undefined) return prettier;
   try {
     const require = createRequire(join(resolve(appDir), 'package.json'));
     const loaded = await import(
@@ -19,6 +19,8 @@ async function load(appDir) {
     prettier = loaded.format ? loaded : loaded.default;
     return prettier;
   } catch {
+    prettier = null;
+    if (optional) return null;
     console.error(
       'Prettier is not installed in this app. Run `npm install --save-exact --save-dev prettier`.',
     );
@@ -26,9 +28,18 @@ async function load(appDir) {
   }
 }
 
-/** Formats text as the file at `path` would be formatted. */
-export async function formatText(appDir, path, text) {
-  const api = await load(appDir);
+/**
+ * Formats text as the file at `path` would be formatted. With `optional`, a
+ * missing Prettier returns the text tidied but unformatted.
+ */
+export async function formatText(
+  appDir,
+  path,
+  text,
+  { optional = false } = {},
+) {
+  const api = await load(appDir, optional);
+  if (!api) return `${text.replace(/\n{3,}/g, '\n\n').trimEnd()}\n`;
   const options = (await api.resolveConfig(path)) ?? {};
   return api.format(text, { ...options, filepath: path });
 }

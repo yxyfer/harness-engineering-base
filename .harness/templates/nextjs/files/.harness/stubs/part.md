@@ -2,6 +2,8 @@
 
 Part of `{{feature}}`.
 
+Start with: `index.ts`
+
 ## What it does
 
 TODO: what this part is for.

@@ -27,7 +27,23 @@ One decision, `experimentActive` in
   it is unset, everyone is a tester under `next dev` and nobody is elsewhere.
 - Only explicit choices are stored; no choice means the default.
 - `billed: true` is never on by default, not even for testers.
-- `stage: 'off'` switches it off for everyone, whatever they chose.
+- `stage: 'off'` switches it off for everyone in code. In an incident,
+  `EXPERIMENTS_OFF=<id>,<id>` does the same for one deployment without a code
+  change (the host restarts or redeploys to read it).
+
+## Wiring
+
+The template wires the decision once, in `src/app`:
+
+- [`src/app/experiments.ts`](../app/experiments.ts): `currentViewer()`, loaded
+  once per request. Replace its two TODOs with the signed-in person and
+  `sqlChoiceStore` from
+  [`src/core/experiment-store.ts`](../core/experiment-store.ts) over the app's
+  database client; apply `experimentChoicesTable()` with the app's migration
+  tool.
+- [`src/app/experiment-actions.ts`](../app/experiment-actions.ts): the Server
+  Action Settings calls. Render `ExperimentSettings` from `src/components` with
+  `experimentStates(await currentViewer())` and this action.
 
 ## Add
 
@@ -38,17 +54,15 @@ npm run new-experiment -- <name> --destination part:<feature> [--server] [--bill
 
 It creates the folder with `index.ts` (and `server.ts`), a `README.md` stating
 its destination with a "Turning it off" section, a registry entry at stage
-`testers`, and a row above. Then wire it in `src/app` only:
+`testers`, and a row above. Then, in `src/app` only:
 
-1. Load the person's viewer once per request with `loadViewer`, and pass the
-   active IDs (`activeExperimentIds`) to the screens that need them.
-2. A stable screen takes what it needs as a prop or slot it would accept from
-   anyone; it never names an experiment. `src/app` decides what to pass.
-3. Every route or Server Action that runs it calls
-   `requireExperiment('<id>', viewer)` next to its usual access check.
-4. Settings renders `ExperimentSettings` from `src/components` with
-   `experimentStates(viewer)` and a Server Action that calls `chooseExperiment`.
-   Choices are kept by the application's `ExperimentChoiceStore`.
+1. Read `activeExperimentIds(await currentViewer())` and decide there what to
+   render. A stable screen takes what it needs as a prop or slot it would accept
+   from anyone; it never names an experiment.
+2. Every route or Server Action that runs it calls
+   `requireExperiment('<id>', await currentViewer())` next to its usual access
+   check.
+3. List each call site in the experiment's "Turning it off".
 
 ## Open, promote, retire
 

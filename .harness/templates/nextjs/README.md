@@ -16,19 +16,22 @@ revision; later kit changes are merged by hand.
 
 ## What the app gets
 
-| Piece                            | Files                                                                    |
-| -------------------------------- | ------------------------------------------------------------------------ |
-| Contract, as a router            | `AGENTS.md`, `CLAUDE.md`                                                 |
-| Layered source, one doc each     | `src/README.md`, `src/{core,features,experimental}/README.md`            |
-| Experiment registry and decision | `src/config/experiments.ts`, `src/core/experiments.ts`                   |
-| Settings switches                | `src/components/experiment-settings.tsx`                                 |
-| Module boundaries                | `eslint.config.mjs`, `eslint.boundaries.mjs`, `src/config/features.json` |
-| Generators                       | `scripts/new.mjs` (`npm run new-feature`, `npm run new-experiment`)      |
-| Context map                      | `scripts/context.mjs` writes `context/` (`npm run context`)              |
-| Self-tests                       | `tests/boundaries.test.mjs`, `tests/documents.test.mjs`                  |
-| Experiment tests                 | `tests/experiments.test.ts`                                              |
-| CI                               | `.github/workflows/ci.yml`                                               |
-| Architecture and decisions       | `docs/ARCHITECTURE.md`, `docs/DECISIONS.md`, `docs/debt.md`              |
+| Piece                            | Files                                                                                     |
+| -------------------------------- | ----------------------------------------------------------------------------------------- |
+| Contract, as a router            | `AGENTS.md`, `CLAUDE.md`                                                                  |
+| Layered source, one doc each     | `src/README.md`, `src/{core,features,experimental}/README.md`                             |
+| Experiment registry and decision | `src/config/experiments.ts`, `src/core/experiments.ts`                                    |
+| Settings switches                | `src/components/experiment-settings.tsx`                                                  |
+| Module boundaries                | `eslint.config.mjs`, `eslint.boundaries.mjs`, `src/config/features.json`                  |
+| Generators                       | `scripts/new.mjs` (`npm run new-feature`, `npm run new-experiment`)                       |
+| Context map                      | `scripts/context.mjs` writes `context/` (`npm run context`)                               |
+| Self-tests                       | `tests/boundaries.test.mjs`, `tests/documents.test.mjs`                                   |
+| Experiment tests                 | `tests/experiments.test.ts`                                                               |
+| CI                               | `.github/workflows/ci.yml`                                                                |
+| Session-start map (Claude Code)  | `.claude/settings.json`                                                                   |
+| Per-request experiment viewer    | `src/app/experiments.ts`, `src/app/experiment-actions.ts`, `src/core/experiment-store.ts` |
+| Token benchmark                  | `scripts/bench.mjs`, `.harness/bench.json` (`npm run bench`)                              |
+| Architecture and decisions       | `docs/ARCHITECTURE.md`, `docs/DECISIONS.md`, `docs/debt.md`                               |
 
 ## Layout
 
@@ -50,11 +53,13 @@ experiment is never on by default.
 
 ## Context and token budgets
 
-`context/README.md` (start map), `context/status.md` (every open item by state)
-and `context/files.md` (every file and its exports) are generated from the code
-and READMEs and checked in CI. The contract tells an agent to read the map and
-the one README it needs instead of exploring. `tests/documents.test.mjs` keeps
-the always-read documents within token budgets.
+`context/README.md` (start map with "Start with" files), `context/status.md`
+(open items by state, by whom they wait on, with ages) and `context/files.md`
+(every file and its exports) are generated per checkout and ignored by Git. In
+Claude Code the session-start hook regenerates the map and prints it into the
+session. The contract routes reads by task; `tests/documents.test.mjs` keeps
+documents within token budgets and at most five Next items each. Measure with
+`npm run bench` before and after changing documents.
 
 ## Compatibility
 

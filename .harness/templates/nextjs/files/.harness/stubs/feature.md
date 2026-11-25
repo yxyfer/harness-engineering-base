@@ -2,6 +2,8 @@
 
 Stable feature. Uses {{uses}}.
 
+Start with: `index.ts`
+
 ## What it does
 
 TODO: what a person can do, in a few sentences.

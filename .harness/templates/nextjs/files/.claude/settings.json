@@ -1,0 +1,14 @@
+{
+  "hooks": {
+    "SessionStart": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "node \"$CLAUDE_PROJECT_DIR/scripts/context.mjs\" \"$CLAUDE_PROJECT_DIR\" --print 2>/dev/null || true"
+          }
+        ]
+      }
+    ]
+  }
+}

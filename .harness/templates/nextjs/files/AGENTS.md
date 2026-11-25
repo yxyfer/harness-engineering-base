@@ -6,10 +6,12 @@ only. This file is a router: read what the task needs, not everything.
 ## Start here
 
 1. [`context/README.md`](context/README.md): the generated map of every area,
-   what it is for, what is open and the entry points. Read it instead of
-   exploring the tree.
-2. The `README.md` of the area you will touch, linked from the map: how it
-   works, why, and what is open.
+   what it is for, where to start, what is open and the entry points. Read it
+   instead of exploring the tree. `context/` is generated, not committed: Claude
+   Code loads the map at session start (`.claude/settings.json`); otherwise run
+   `npm run context` first if it is missing.
+2. The `README.md` of the area you will touch, linked from the map, and the
+   files its "Start with" line names: how it works, why, and what is open.
 3. To find a file or a name, search [`context/files.md`](context/files.md)
    before searching `src/`. For "where are we", read
    [`context/status.md`](context/status.md).
@@ -66,8 +68,9 @@ Work across features goes in `src/README.md`. Durable decisions go in
 `docs/DECISIONS.md`; constraints nobody is working on in `docs/debt.md`.
 
 Keep these documents cheap to read: present tense, no change logs, within the
-budgets `npm run self-test` enforces. After changing code or a README, run
-`npm run context` and commit `context/`.
+budgets `npm run self-test` enforces. Keep each README's "Start with" line
+pointing at the two or three files a newcomer should open first. After changing
+code or a README, run `npm run context` to refresh your own map.
 
 ## Commands
 

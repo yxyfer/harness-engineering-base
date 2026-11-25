@@ -19,6 +19,11 @@ import {
   memoryChoiceStore,
   requireExperiment,
 } from '../src/core/experiments';
+import {
+  experimentChoicesTable,
+  sqlChoiceStore,
+  type Query,
+} from '../src/core/experiment-store';
 
 const appRoot = fileURLToPath(new URL('../', import.meta.url));
 
@@ -177,5 +182,76 @@ test('choices are stored explicitly, cleared, and refused when hidden', async ()
   await assert.rejects(
     chooseExperiment(store, person, 'retired', true, registry, env),
     ExperimentUnavailableError,
+  );
+});
+
+test('EXPERIMENTS_OFF switches an experiment off for everyone, without a code change', async () => {
+  const store = memoryChoiceStore();
+  const person = { id: 'u1' };
+  const env = { EXPERIMENT_TESTERS: 'u1', EXPERIMENTS_OFF: 'early, open' };
+  await store.write('u1', 'early', true);
+  const viewer = await loadViewer(store, person, registry, env);
+  assert.equal(experimentActive('early', viewer, registry), false);
+  assert.equal(experimentActive('open', viewer, registry), false);
+  assert.deepEqual(
+    experimentStates(viewer, registry).map((state) => state.id),
+    ['paid'],
+    'only the experiments not switched off remain visible',
+  );
+  await assert.rejects(
+    chooseExperiment(store, person, 'early', true, registry, env),
+    ExperimentUnavailableError,
+  );
+});
+
+test('someone not signed in gets the defaults and no stored choices', async () => {
+  const store = memoryChoiceStore();
+  const dev = await loadViewer(store, null, registry, {
+    NODE_ENV: 'development',
+  });
+  assert.equal(experimentActive('early', dev, registry), true);
+  const production = await loadViewer(store, null, registry, {
+    NODE_ENV: 'production',
+  });
+  assert.equal(experimentActive('early', production, registry), false);
+  assert.equal(experimentActive('open', production, registry), false);
+});
+
+test('the SQL store keeps explicit choices only, with parameters', async () => {
+  const table = new Map<string, boolean>();
+  const statements: string[] = [];
+  const query: Query = async (text, values) => {
+    statements.push(text);
+    const [person, id, enabled] = values as [string, string, boolean];
+    if (text.startsWith('select'))
+      return {
+        rows: [...table]
+          .filter(([key]) => key.startsWith(`${person}/`))
+          .map(([key, on]) => ({
+            experiment_id: key.split('/')[1],
+            enabled: on,
+          })),
+      };
+    if (text.startsWith('delete')) table.delete(`${person}/${id}`);
+    else table.set(`${person}/${id}`, enabled);
+    return { rows: [] };
+  };
+  const store = sqlChoiceStore(query);
+  await store.write('u1', 'early', false);
+  await store.write('u1', 'early', true);
+  assert.deepEqual([...(await store.read('u1'))], [['early', true]]);
+  await store.write('u1', 'early', null);
+  assert.deepEqual([...(await store.read('u1'))], []);
+  assert.ok(
+    statements.every((text) => !text.includes('u1')),
+    'values are parameters',
+  );
+  assert.match(
+    experimentChoicesTable(),
+    /primary key \(person_id, experiment_id\)/,
+  );
+  assert.throws(
+    () => sqlChoiceStore(query, 'x; drop table y'),
+    /plain table name/,
   );
 });

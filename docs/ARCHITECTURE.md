@@ -51,12 +51,24 @@ the app owns every copied file: there is no sync.
 - **Documents.** One README per feature, part and experiment, in the format of
   `docs/FORMAT.md`. `tests/documents.test.mjs` checks the tree, the feature
   registry (no unknown names, no cycles), open-item states and token budgets.
-- **Context.** `scripts/context.mjs` reads the READMEs, code exports, tests and
-  routes and writes `context/README.md`, `status.md` and `files.md`. CI fails
-  when they are stale. It infers nothing it cannot read: purpose comes from each
-  README's first sentence, tests are matched by file name and imports. The
-  scripts format what they write with the app's Prettier, so generated files
-  pass `format:check` like any other.
+- **Context.** `scripts/context.mjs` reads the READMEs, code exports, tests,
+  routes and Git history and writes `context/README.md`, `status.md` and
+  `files.md`, formatted with the app's Prettier when installed. `context/` is
+  ignored by Git; `npm run setup` and the Claude Code session-start hook in
+  `.claude/settings.json` generate it, and the hook prints the map into the
+  session. Purpose and "Start with" come from each README; tests are matched by
+  file name and imports.
+- **Measurement.** `scripts/bench.mjs` runs fixed tasks from
+  `.harness/bench.json` with Claude Code headless in plan mode and reports steps
+  and tokens.
+
+## Kit upkeep
+
+`scripts/kit-files.mjs` lists every file the kit copies and where it lands.
+`new-app` uses it to copy; `harness-diff` uses it to compare an app's copies
+with the kit at the app's recorded revision and now, without writing. Kit CI
+runs `npm run verify` on every pull request and, weekly, builds and verifies a
+new app.
 
 ## Evidence boundaries
 

@@ -121,7 +121,8 @@ test('new-app lays out an existing app and the generators keep it consistent', a
         app,
       ),
     );
-    ok(node(['scripts/context.mjs', '--check'], app));
+    ok(node(['scripts/context.mjs'], app));
+    assert.match(readFileSync(join(app, '.gitignore'), 'utf8'), /^context\/$/m);
   });
 
   await t.test('generators add features, parts and experiments', () => {
@@ -211,23 +212,22 @@ test('new-app lays out an existing app and the generators keep it consistent', a
         app,
       ),
     );
-    fails(node(['scripts/context.mjs', '--check'], app), /Out of date/);
-    ok(node(['scripts/context.mjs'], app));
-    ok(node(['scripts/context.mjs', '--check'], app));
+    const printed = node(['scripts/context.mjs', '--print'], app);
+    ok(printed);
+    assert.match(printed.output, /^# Context/m, 'prints the start map');
     ok(
       node(
         [
           join(kitRoot, 'node_modules/prettier/bin/prettier.cjs'),
           '--check',
           'src',
-          'context',
           'docs',
         ],
         app,
       ),
     );
     const map = readFileSync(join(app, 'context/README.md'), 'utf8');
-    assert.match(map, /features\/orders.*\| catalogue \|/);
+    assert.match(map, /features\/orders.*`index\.ts`.*catalogue/);
     assert.match(map, /experimental\/quick-add/);
   });
 
@@ -248,10 +248,57 @@ test('new-app lays out an existing app and the generators keep it consistent', a
       text.replace('## Open work', '## Open work\n\n- untracked idea'),
     );
     fails(node(['--test', 'tests/documents.test.mjs'], app), /needs a state/);
+    const six = Array.from({ length: 6 }, (_, i) => `- **Next:** item ${i}.`);
+    writeFileSync(
+      readme,
+      text.replace('## Open work', `## Open work\n\n${six.join('\n')}`),
+    );
+    fails(
+      node(['--test', 'tests/documents.test.mjs'], app),
+      /6 items marked Next/,
+    );
+    writeFileSync(
+      readme,
+      text.replace(
+        '## Open work',
+        '## Open work\n\n- **Waiting on the owner:** apply the migration.\n- **Next:** add search.',
+      ),
+    );
+    ok(node(['--test', 'tests/documents.test.mjs'], app));
+    ok(node(['scripts/context.mjs'], app));
+    const status = readFileSync(join(app, 'context/status.md'), 'utf8');
+    assert.match(status, /## Next[\s\S]*orders: add search/);
+    assert.match(status, /## Waiting on the owner[\s\S]*apply the migration/);
     writeFileSync(readme, text + 'x'.repeat(12000));
     fails(node(['--test', 'tests/documents.test.mjs'], app), /budget/);
     writeFileSync(readme, text);
     ok(node(['--test', 'tests/documents.test.mjs'], app));
+  });
+
+  await t.test('the drift report sorts copies without changing the app', () => {
+    const before = snapshot(app);
+    const result = node(
+      [join(kitRoot, 'scripts/harness-diff.mjs'), app],
+      kitRoot,
+    );
+    ok(result);
+    assert.match(
+      result.output,
+      /Kit revision recorded by the app: [0-9a-f]{7,}/,
+    );
+    assert.match(result.output, /Current: \d+ files/);
+    const flagged = result.output.split('\nCurrent:')[0];
+    assert.doesNotMatch(
+      flagged,
+      /src\/core\/experiments\.ts/,
+      'an untouched copy is current',
+    );
+    assert.match(
+      flagged,
+      /\n {2}AGENTS\.md\n/,
+      'the consumer-owned AGENTS.md differs',
+    );
+    assert.deepEqual(snapshot(app), before);
   });
 
   await t.test(

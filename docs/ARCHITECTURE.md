@@ -54,7 +54,9 @@ the app owns every copied file: there is no sync.
 - **Context.** `scripts/context.mjs` reads the READMEs, code exports, tests and
   routes and writes `context/README.md`, `status.md` and `files.md`. CI fails
   when they are stale. It infers nothing it cannot read: purpose comes from each
-  README's first sentence, tests are matched by file name and imports.
+  README's first sentence, tests are matched by file name and imports. The
+  scripts format what they write with the app's Prettier, so generated files
+  pass `format:check` like any other.
 
 ## Evidence boundaries
 

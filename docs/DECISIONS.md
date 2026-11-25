@@ -31,6 +31,12 @@ was roughly flat. Choices:
 - Rejected: a hand-written session status file overwritten each session. It goes
   stale silently and duplicates the README open work it would summarise.
 
+Everything the harness scripts write, the context map and the files the
+generators create or update, is formatted with the app's own Prettier and
+settings (`scripts/format-output.mjs`). Nothing generated is excluded from
+`format:check`. Rejected: ignoring `context/` in Prettier; it made one class of
+file an exception to "every file is formatted".
+
 Recovery: delete `context/` and the `context` scripts; the READMEs are
 unchanged.
 

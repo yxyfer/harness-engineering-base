@@ -67,3 +67,22 @@ documents within token budgets and at most five Next items each. Measure with
 [the debt](../../../project/debt.md). Keep React, hooks and TypeScript rules on,
 strict TypeScript and erasable syntax. Read the app's installed Next.js docs
 before changing framework behaviour.
+
+## Adopting in an existing app
+
+Learned moving a real application onto this template:
+
+- Any test that copies `eslint.config.mjs` into a temporary folder must copy
+  `eslint.boundaries.mjs` (and give its synthetic tree a
+  `src/config/features.json`), or ESLint cannot load the config.
+- Map an old public opt-in flag to `stage: 'everyone'` and an internal-only one
+  to `stage: 'testers'`. With `EXPERIMENT_TESTERS` unset in production, public
+  behaviour is unchanged; pass the tester flag as a trailing argument so
+  existing tests keep their meaning.
+- Unlabelled open work is mostly known limitations. Label them `To decide`
+  rather than inventing commitments, and let the owner prune.
+- Over-budget READMEs and a change-log architecture file are real debts: record
+  them as open work with a temporary budget rather than rewriting history in the
+  adoption change.
+- The Next.js build does not follow a symlinked `node_modules`; use a real
+  install (or a hard-linked copy) in a worktree.
